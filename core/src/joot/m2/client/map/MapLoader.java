@@ -26,17 +26,19 @@ public final class MapLoader extends AsynchronousAssetLoader<Map, AssetLoaderPar
 	@Override
 	public void loadAsync(AssetManager manager, String fileName, FileHandle file,
 			AssetLoaderParameters<Map> parameter) {
+		String mapNo = fileName.split("/")[1];
 		String mapPath = Dir;
 		if (!mapPath.endsWith(File.separator)) {
 			mapPath += File.separator;
 		}
-		mapPath += fileName.split("/")[1] + ".map";
-		Maps.get(fileName, mapPath);
+		mapPath += mapNo + ".map";
+		Maps.get(mapNo, mapPath);
 	}
 
 	@Override
 	public Map loadSync(AssetManager manager, String fileName, FileHandle file, AssetLoaderParameters<Map> parameter) {
-		com.github.jootnet.mir2.core.map.Map _map = Maps.get(fileName, null);
+		String mapNo = fileName.split("/")[1];
+		com.github.jootnet.mir2.core.map.Map _map = Maps.get(mapNo, null);
 		Map ret = new Map(_map.getWidth(), _map.getHeight());
 		IntStream.range(0, _map.getWidth()).parallel().forEach(w -> {
 			IntStream.range(0, _map.getHeight()).parallel().forEach(h -> {
@@ -57,6 +59,7 @@ public final class MapLoader extends AsynchronousAssetLoader<Map, AssetLoaderPar
 				}
 			});
 		});
+		Maps.remove(mapNo); // 从底层缓存删除，这样可以节省内存
 		return ret;
 	}
 
