@@ -6,17 +6,14 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-import joot.m2.client.image.W_LLoader;
 import joot.m2.client.map.MapActor;
-import joot.m2.client.map.MapLoader;
 
 public class JootM2C extends ApplicationAdapter {
 	private Stage stage;
 	private MapActor map = new MapActor();
 	
 	public JootM2C() {
-		W_LLoader.DataDir = "D:\\Program Files (x86)\\盛大网络\\热血传奇\\Data";
-		MapLoader.MapDir = "D:\\Program Files (x86)\\盛大网络\\热血传奇\\Map";
+		Assets.init("D:\\Program Files (x86)\\盛大网络\\热血传奇");
 	}
 
 	@Override

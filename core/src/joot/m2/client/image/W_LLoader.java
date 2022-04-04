@@ -17,7 +17,7 @@ import com.github.jootnet.mir2.core.image.ImageLibraries;
 public final class W_LLoader extends AsynchronousAssetLoader<Texture, AssetLoaderParameters<Texture>> {
 
 	/** *.wil/*.wzl/*.wis文件所在文件夹 */
-	public static String DataDir = null;
+	public static String Dir = null;
 	private com.github.jootnet.mir2.core.Texture texture_;
 	
 	public W_LLoader(FileHandleResolver resolver) {
@@ -28,7 +28,7 @@ public final class W_LLoader extends AsynchronousAssetLoader<Texture, AssetLoade
 	public void loadAsync(AssetManager manager, String fileName, FileHandle file,
 			AssetLoaderParameters<Texture> parameter) {
 		String[] lib_idx = fileName.split("/");
-		String libPath = DataDir;
+		String libPath = Dir;
 		if (!libPath.endsWith(File.separator)) {
 			libPath += File.separator;
 		}

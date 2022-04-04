@@ -112,7 +112,7 @@ public final class MapActor extends Group {
 												Math.max(0, objTex.getHeight() - (upIdx + 1) * 32),
 												objTex.getWidth(),
 												Math.min(32, objTex.getHeight() - upIdx * 32));
-										map_.setObjTextureRegion((short) (game.x - 1 + w), (short) (game.y - 1 - upIdx + h), region);
+										map_.addObjTextureRegion((short) (game.x - 1 + w), (short) (game.y - 1 - upIdx + h), region);
 									}
 								}
 							}

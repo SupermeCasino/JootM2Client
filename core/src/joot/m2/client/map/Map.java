@@ -187,13 +187,13 @@ public final class Map {
 	}
 	
 	/**
-	 * 设置特定地图块的对象层补充纹理
+	 * 添加特定地图块的对象层补充纹理
 	 * 
 	 * @param x 地图横坐标
 	 * @param y 地图纵坐标
 	 * @param tex 对象层补充纹理
 	 */
-	public void setObjTextureRegion(short x, short y, TextureRegion tex) {
+	public void addObjTextureRegion(short x, short y, TextureRegion tex) {
 		objTextureRegions2XY.put(tex, new short[] {x, y});
 		objTextureRegions.add(tex);
 		objTextureRegions.sort((tr1, tr2) -> {

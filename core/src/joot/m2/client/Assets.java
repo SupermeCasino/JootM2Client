@@ -1,5 +1,7 @@
 package joot.m2.client;
 
+import java.io.File;
+
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
@@ -64,6 +66,26 @@ public final class Assets {
 		Objects13.setLoader(Texture.class, new W_LLoader(resolver));
 		Objects14.setLoader(Texture.class, new W_LLoader(resolver));
 		Objects15.setLoader(Texture.class, new W_LLoader(resolver));
+	}
+	
+	/**
+	 * 指定客户端安装目录初始化资源加载器
+	 * 
+	 * @param baseDir 客户端安装目录
+	 */
+	public static void init(String baseDir) {
+		String w_lDir = baseDir;
+		if (!w_lDir.endsWith(File.separator)) {
+			w_lDir += File.separator;
+		}
+		w_lDir += "Data";
+		W_LLoader.Dir = w_lDir;
+		String mapDir = baseDir;
+		if (!mapDir.endsWith(File.separator)) {
+			mapDir += File.separator;
+		}
+		mapDir += "Map";
+		MapLoader.Dir = mapDir;
 	}
 	
 	/**

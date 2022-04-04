@@ -17,7 +17,7 @@ import com.github.jootnet.mir2.core.map.Maps;
 public final class MapLoader extends AsynchronousAssetLoader<Map, AssetLoaderParameters<Map>> {
 
 	/** *.map文件的存储路径 */
-	public static String MapDir = null;
+	public static String Dir = null;
 	
 	public MapLoader(FileHandleResolver resolver) {
 		super(resolver);
@@ -26,7 +26,7 @@ public final class MapLoader extends AsynchronousAssetLoader<Map, AssetLoaderPar
 	@Override
 	public void loadAsync(AssetManager manager, String fileName, FileHandle file,
 			AssetLoaderParameters<Map> parameter) {
-		String mapPath = MapDir;
+		String mapPath = Dir;
 		if (!mapPath.endsWith(File.separator)) {
 			mapPath += File.separator;
 		}
