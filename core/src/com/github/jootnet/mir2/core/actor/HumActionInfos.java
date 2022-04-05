@@ -83,14 +83,14 @@ public final class HumActionInfos {
     	StandSouthEast.frameCount = 4;
     	StandSouthEast.duration = 200;
     	StandSouthEast.act = Action.Stand;
-    	StandSouthEast.dir = Direction.South;
+    	StandSouthEast.dir = Direction.SouthEast;
     	
     	StandSouth = new HumActionInfo();
     	StandSouth.frameIdx = 8;
     	StandSouth.frameCount = 4;
     	StandSouth.duration = 200;
     	StandSouth.act = Action.Stand;
-    	StandSouth.dir = Direction.NorthEast;
+    	StandSouth.dir = Direction.South;
     	
     	StandSouthWest = new HumActionInfo();
     	StandSouthWest.frameIdx = 40;
@@ -142,14 +142,14 @@ public final class HumActionInfos {
     	WalkSouthEast.frameCount = 6;
     	WalkSouthEast.duration = 90;
     	WalkSouthEast.act = Action.Walk;
-    	WalkSouthEast.dir = Direction.South;
+    	WalkSouthEast.dir = Direction.SouthEast;
     	
     	WalkSouth = new HumActionInfo();
     	WalkSouth.frameIdx = 96;
     	WalkSouth.frameCount = 6;
     	WalkSouth.duration = 90;
     	WalkSouth.act = Action.Walk;
-    	WalkSouth.dir = Direction.NorthEast;
+    	WalkSouth.dir = Direction.South;
     	
     	WalkSouthWest = new HumActionInfo();
     	WalkSouthWest.frameIdx = 104;
@@ -201,14 +201,14 @@ public final class HumActionInfos {
     	RunSouthEast.frameCount = 6;
     	RunSouthEast.duration = 100;
     	RunSouthEast.act = Action.Run;
-    	RunSouthEast.dir = Direction.South;
+    	RunSouthEast.dir = Direction.SouthEast;
     	
     	RunSouth = new HumActionInfo();
     	RunSouth.frameIdx = 160;
     	RunSouth.frameCount = 6;
     	RunSouth.duration = 100;
     	RunSouth.act = Action.Run;
-    	RunSouth.dir = Direction.NorthEast;
+    	RunSouth.dir = Direction.South;
     	
     	RunSouthWest = new HumActionInfo();
     	RunSouthWest.frameIdx = 168;
