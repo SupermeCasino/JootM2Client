@@ -31,7 +31,8 @@ public class JootM2C extends ApplicationAdapter {
 	private long currentHumActionFrameStartTime;
 	
 	public JootM2C() {
-		Assets.init("D:\\Program Files (x86)\\盛大网络\\热血传奇");
+		//Assets.init("D:\\Program Files (x86)\\盛大网络\\热血传奇");
+		Assets.init("D:\\Program Files\\ShengquGames\\Legend of mir");
 	}
 
 	@Override

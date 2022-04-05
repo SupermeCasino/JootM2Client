@@ -44,13 +44,23 @@ public final class MapLoader extends AsynchronousAssetLoader<Map, AssetLoaderPar
 			IntStream.range(0, _map.getHeight()).parallel().forEach(h -> {
 				MapTileInfo mti = _map.getTiles()[w][h];
 				if (mti.isHasBng()) {
-					ret.setTileFileName((short)w, (short)h, "Tiles/" + mti.getBngImgIdx());
+					String tileFileName = "tiles";
+					if (mti.getBngFileIdx() != 0) {
+						tileFileName += mti.getBngFileIdx();
+					}
+					tileFileName += "/" + mti.getBngImgIdx();
+					ret.setTileFileName((short)w, (short)h, tileFileName);
 				}
 				if (mti.isHasMid()) {
-					ret.setSmTileFileName((short)w, (short)h, "SmTiles/" + mti.getMidImgIdx());
+					String smTileFileName = "smtiles";
+					if (mti.getMidFileIdx() != 0) {
+						smTileFileName += mti.getMidFileIdx();
+					}
+					smTileFileName += "/" + mti.getMidImgIdx();
+					ret.setSmTileFileName((short)w, (short)h, smTileFileName);
 				}
 				if (!mti.isHasAni() && mti.isHasObj()) {
-					String objFileName = "Objects";
+					String objFileName = "objects";
 					if (mti.getObjFileIdx() != 0) {
 						objFileName += mti.getObjFileIdx();
 					}

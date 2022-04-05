@@ -77,7 +77,7 @@ final class WZL implements ImageLibrary {
 		if(!f_wzx.exists()) return;
 		if(!f_wzx.isFile()) return;
 		if(!f_wzx.canRead()) return;
-		File f_wzl = new File(SDK.repairFileName(wzxPath));
+		File f_wzl = new File(SDK.repairFileName(wzlPath));
 		if(!f_wzl.exists()) return;
 		if(!f_wzl.isFile()) return;
 		if(!f_wzl.canRead()) return;
