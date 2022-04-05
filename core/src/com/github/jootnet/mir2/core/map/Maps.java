@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.HashMap;
 
 import com.github.jootnet.mir2.core.BinaryReader;
+import com.github.jootnet.mir2.core.SDK;
 
 /**
  * 地图管理类<br>
@@ -59,7 +60,7 @@ public final class Maps {
 			if(maps.containsKey(mapNo))
 				return maps.get(mapNo);
 			try{
-				BinaryReader br_map = new BinaryReader(new File(mapPath));
+				BinaryReader br_map = new BinaryReader(new File(SDK.repairFileName(mapPath)));
 				Map ret = new Map();
 				ret.setWidth(br_map.readShortLE());
 				ret.setHeight(br_map.readShortLE());
@@ -135,6 +136,7 @@ public final class Maps {
 								mi.setMidFileIdx((byte) (mi.getMidFileIdx() + 1));
 						} else if(tileByteSize > 14) {
 							br_map.skipBytes(tileByteSize - 14);
+							System.err.println(mapPath + " have unkwon tileByteSize " + tileByteSize);
 						}
 						if (width % 2 != 0 || height % 2 != 0)
 							mi.setHasBng(false);

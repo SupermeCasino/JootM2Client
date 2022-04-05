@@ -1,6 +1,8 @@
 package joot.m2.client;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
@@ -78,14 +80,24 @@ public final class Assets {
 		if (!w_lDir.endsWith(File.separator)) {
 			w_lDir += File.separator;
 		}
-		w_lDir += "Data";
-		W_LLoader.Dir = w_lDir;
+		if (Files.exists(Path.of(w_lDir, "Data"))) {
+			W_LLoader.Dir = w_lDir + "Data";
+		} else if (Files.exists(Path.of(w_lDir, "data"))) {
+			W_LLoader.Dir = w_lDir + "data";
+		} else {
+			System.err.println("Data dir not exists");
+		}
 		String mapDir = baseDir;
 		if (!mapDir.endsWith(File.separator)) {
 			mapDir += File.separator;
 		}
-		mapDir += "Map";
-		MapLoader.Dir = mapDir;
+		if (Files.exists(Path.of(mapDir, "Map"))) {
+			MapLoader.Dir = mapDir + "Map";
+		} else if (Files.exists(Path.of(mapDir, "map"))) {
+			MapLoader.Dir = mapDir + "map";
+		} else {
+			System.err.println("Map dir not exists");
+		}
 	}
 	
 	/**

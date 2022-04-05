@@ -73,11 +73,11 @@ final class WZL implements ImageLibrary {
     
     WZL(String wzlPath) {
     	String wzxPath = SDK.changeFileExtension(wzlPath, "wzx");
-		File f_wzx = new File(wzxPath);
+		File f_wzx = new File(SDK.repairFileName(wzxPath));
 		if(!f_wzx.exists()) return;
 		if(!f_wzx.isFile()) return;
 		if(!f_wzx.canRead()) return;
-		File f_wzl = new File(wzlPath);
+		File f_wzl = new File(SDK.repairFileName(wzxPath));
 		if(!f_wzl.exists()) return;
 		if(!f_wzl.isFile()) return;
 		if(!f_wzl.canRead()) return;

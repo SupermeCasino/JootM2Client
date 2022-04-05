@@ -70,7 +70,7 @@ final class WIS implements ImageLibrary {
     private Object wis_locker = new Object();
 	
     WIS(String wisPath) {
-    	File f_wis = new File(wisPath);
+    	File f_wis = new File(SDK.repairFileName(wisPath));
 		if(!f_wis.exists()) return;
 		if(!f_wis.isFile()) return;
 		if(!f_wis.canRead()) return;
