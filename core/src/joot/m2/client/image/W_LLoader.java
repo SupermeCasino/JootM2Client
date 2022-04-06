@@ -1,6 +1,6 @@
 package joot.m2.client.image;
 
-import java.io.File;
+import java.nio.file.Paths;
 
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetLoaderParameters;
@@ -28,12 +28,7 @@ public final class W_LLoader extends AsynchronousAssetLoader<Texture, AssetLoade
 	public void loadAsync(AssetManager manager, String fileName, FileHandle file,
 			AssetLoaderParameters<Texture> parameter) {
 		String[] lib_idx = fileName.split("/");
-		String libPath = Dir;
-		if (!libPath.endsWith(File.separator)) {
-			libPath += File.separator;
-		}
-		libPath += lib_idx[0];
-		texture_ = ImageLibraries.get(lib_idx[0], libPath).tex(Integer.parseInt(lib_idx[1]));
+		texture_ = ImageLibraries.get(lib_idx[0], Paths.get(Dir, lib_idx[0]).toString()).tex(Integer.parseInt(lib_idx[1]));
 	}
 
 	@Override

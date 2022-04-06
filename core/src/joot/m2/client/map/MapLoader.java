@@ -1,6 +1,6 @@
 package joot.m2.client.map;
 
-import java.io.File;
+import java.nio.file.Paths;
 import java.util.stream.IntStream;
 
 import com.badlogic.gdx.assets.AssetDescriptor;
@@ -27,12 +27,7 @@ public final class MapLoader extends AsynchronousAssetLoader<Map, AssetLoaderPar
 	public void loadAsync(AssetManager manager, String fileName, FileHandle file,
 			AssetLoaderParameters<Map> parameter) {
 		String mapNo = fileName.split("/")[1];
-		String mapPath = Dir;
-		if (!mapPath.endsWith(File.separator)) {
-			mapPath += File.separator;
-		}
-		mapPath += mapNo + ".map";
-		Maps.get(mapNo, mapPath);
+		Maps.get(mapNo, Paths.get(Dir, mapNo + ".map").toString());
 	}
 
 	@Override
