@@ -2,12 +2,14 @@ package joot.m2.client;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.github.jootnet.mir2.core.actor.Action;
+import com.github.jootnet.mir2.core.actor.Direction;
 import com.github.jootnet.mir2.core.actor.HumActionInfo;
 import com.github.jootnet.mir2.core.actor.HumActionInfos;
 
@@ -22,6 +24,10 @@ public class JootM2C extends ApplicationAdapter {
 	private short mapY;
 	/** 地图事件 */
 	private InputListener inputListenerInMap = new InputListenerInMap();
+	private boolean mouseDown = false;
+	private int mouseX;
+	private int mouseY;
+	private int mouseButton;
 	
 	/** 当前人物动作 */
 	private HumActionInfo currentHumAction;
@@ -120,6 +126,10 @@ public class JootM2C extends ApplicationAdapter {
 					
 					map.move(mapX, mapY);
 				}
+				// 一步走完或跑完之后稍息！
+				currentHumAction = HumActionInfos.stand(currentHumAction.dir);
+				// 也许是继续跑！
+				calcMove();
 			}
 		}
 		
@@ -135,18 +145,69 @@ public class JootM2C extends ApplicationAdapter {
 	
 	/** 鼠标或手指(移动端)在地图上按下时 */
 	private boolean mapTouchDown (InputEvent event, float x, float y, int pointer, int button) {
-		System.out.println("down");
+		mouseDown = true;
+		mouseX = (int) x;
+		mouseY = (int) y;
+		mouseButton = button;
 		return true;
 	}
 
 	/** 鼠标或手指(移动端)在地图上抬起时 */
 	private void mapTouchUp (InputEvent event, float x, float y, int pointer, int button) {
-		System.out.println("up");
+		mouseDown = false;
 	}
 	
 	/** 鼠标在地图上移动时 */
 	private boolean mapMouseMoved (InputEvent event, float x, float y) {
 		return false;
+	}
+
+	/** 鼠标或手指(移动端)在地图上按下并移动时 */
+	public void mapTouchDragged(InputEvent event, float x, float y, int pointer) {
+		mouseX = (int) x;
+		mouseY = (int) y;
+	}
+	
+	private void calcMove() {
+		if (!mouseDown) return;
+		// 鼠标与屏幕中心x、y轴的距离
+        int xx = mouseX - Gdx.graphics.getWidth() / 2;
+        int yy = mouseY - Gdx.graphics.getHeight() / 2;
+        
+        if (Math.abs(xx) < 48 && Math.abs(yy) < 32) return;
+        
+        // 来自网络的虚拟摇杆算法，计算方向
+        // 勾股定理求斜边
+        double obl = Math.sqrt(Math.pow(xx, 2) + Math.pow(yy, 2));
+        // 求弧度
+        double rad = yy < 0 ? Math.acos(xx / obl) : (Math.PI * 2- Math.acos(xx / obl));
+        // 弧度转角度
+        double angle = 180 / Math.PI * rad;
+
+        Direction dir = null;
+        if ((angle >= 337.5 && angle <= 360) || angle < 22.5) {
+        	dir = Direction.East;
+        } else if (angle >= 22.5 && angle < 67.5) {
+        	dir = Direction.SouthEast;
+        } else if (angle >= 67.5 && angle < 112.5) {
+        	dir = Direction.South;
+        } else if (angle >= 112.5 && angle < 157.5) {
+        	dir = Direction.SouthWest;
+        } else if (angle >= 157.5 && angle < 202.5) {
+        	dir = Direction.West;
+        } else if (angle >= 202.5 && angle < 247.5) {
+        	dir = Direction.NorthWest;
+        } else if (angle >= 247.5 && angle < 292.5) {
+        	dir = Direction.North;
+        } else if (angle >= 292.5 && angle < 337.5) {
+        	dir = Direction.NorthEast;
+        }
+        
+        if (mouseButton == Buttons.LEFT) {
+        	currentHumAction = HumActionInfos.walk(dir);
+        } else if (mouseButton == Buttons.RIGHT) {
+        	currentHumAction = HumActionInfos.run(dir);
+        }
 	}
 	
 	private class InputListenerInMap extends InputListener {
@@ -161,6 +222,10 @@ public class JootM2C extends ApplicationAdapter {
 		@Override
 		public boolean mouseMoved(InputEvent event, float x, float y) {
 			return JootM2C.this.mapMouseMoved(event, x, y);
+		}
+		@Override
+		public void touchDragged(InputEvent event, float x, float y, int pointer) {
+			JootM2C.this.mapTouchDragged(event, x, y, pointer);
 		}
 	}
 

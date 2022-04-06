@@ -54,7 +54,91 @@ public final class HumActionInfos {
     public static HumActionInfo RunWest;
 	/** 人物朝西北(左上)方跑动时的贴图信息 */
     public static HumActionInfo RunNorthWest;
+    
+    /**
+     * 通过方向获取站立动作
+     * 
+     * @param dir 角色朝向
+     * @return 站立动作
+     */
+    public static HumActionInfo stand(Direction dir) {
+    	switch (dir) {
+		case North:
+			return StandNorth;
+		case NorthEast:
+			return StandNorthEast;
+		case East:
+			return StandEast;
+		case SouthEast:
+			return StandSouthEast;
+		case South:
+			return StandSouth;
+		case SouthWest:
+			return StandSouthWest;
+		case West:
+			return StandWest;
+		case NorthWest:
+		default:
+			return StandNorthWest;
+		}
+    }
 
+    /**
+     * 通过方向获取走动动作
+     * 
+     * @param dir 角色朝向
+     * @return 走动动作
+     */
+    public static HumActionInfo walk(Direction dir) {
+    	switch (dir) {
+		case North:
+			return WalkNorth;
+		case NorthEast:
+			return WalkNorthEast;
+		case East:
+			return WalkEast;
+		case SouthEast:
+			return WalkSouthEast;
+		case South:
+			return WalkSouth;
+		case SouthWest:
+			return WalkSouthWest;
+		case West:
+			return WalkWest;
+		case NorthWest:
+		default:
+			return WalkNorthWest;
+		}
+    }
+
+    /**
+     * 通过方向获取跑动动作
+     * 
+     * @param dir 角色朝向
+     * @return 跑动动作
+     */
+    public static HumActionInfo run(Direction dir) {
+    	switch (dir) {
+		case North:
+			return RunNorth;
+		case NorthEast:
+			return RunNorthEast;
+		case East:
+			return RunEast;
+		case SouthEast:
+			return RunSouthEast;
+		case South:
+			return RunSouth;
+		case SouthWest:
+			return RunSouthWest;
+		case West:
+			return RunWest;
+		case NorthWest:
+		default:
+			return RunNorthWest;
+		}
+    }
+    
     static {
     	StandNorth = new HumActionInfo();
     	StandNorth.frameIdx = 0;
