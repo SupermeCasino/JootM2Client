@@ -79,60 +79,8 @@ public class JootM2C extends ApplicationAdapter {
 	public void render () {
 		float delta = Gdx.graphics.getDeltaTime();
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		
-		if (System.currentTimeMillis() - currentHumActionFrameStartTime > currentHumAction.duration) {
-			currentHumActionFrameStartTime = System.currentTimeMillis();
-			if (++currentHumActionTick > currentHumAction.frameCount) {
-				currentHumActionTick = 1;
-				
-				if (currentHumAction.act == Action.Walk || currentHumAction.act == Action.Run) {
-					// 走完或跑完了一步，地图中心坐标更新
-					int step = 1;
-					if (currentHumAction.act == Action.Run) step++;
-					
-					switch (currentHumAction.dir) {
-					case North:
-						mapY -= step;
-						break;
-					case NorthEast:
-						mapY -= step;
-						mapX += step;
-						break;
-					case East:
-						mapX += step;
-						break;
-					case SouthEast:
-						mapY += step;
-						mapX += step;
-						break;
-					case South:
-						mapY += step;
-						break;
-					case SouthWest:
-						mapY += step;
-						mapX -= step;
-						break;
-					case West:
-						mapX -= step;
-						break;
-					case NorthWest:
-						mapY -= step;
-						mapX -= step;
-						break;
-					
-					default:
-						break;
-					}
-					
-					map.move(mapX, mapY);
-				}
-				// 一步走完或跑完之后稍息！
-				currentHumAction = HumActionInfos.stand(currentHumAction.dir);
-				// 也许是继续跑！
-				calcMove();
-			}
-		}
-		
+
+		calcAction();
 		map.setHumAction(currentHumAction, currentHumActionTick);
 		stage.act(delta);
 		stage.draw();
@@ -167,14 +115,76 @@ public class JootM2C extends ApplicationAdapter {
 		mouseX = (int) x;
 		mouseY = (int) y;
 	}
-	
-	private void calcMove() {
-		if (!mouseDown) return;
+
+	// 计算玩家动作
+	private void calcAction() {
+		// 当前动作
+		if (System.currentTimeMillis() - currentHumActionFrameStartTime > currentHumAction.duration) {
+			currentHumActionFrameStartTime = System.currentTimeMillis();
+			if (++currentHumActionTick > currentHumAction.frameCount) {
+				currentHumActionTick = 1;
+
+				if (currentHumAction.act == Action.Walk || currentHumAction.act == Action.Run) {
+					// 走完或跑完了一步，地图中心坐标更新
+					int step = 1;
+					if (currentHumAction.act == Action.Run) step++;
+
+					switch (currentHumAction.dir) {
+						case North:
+							mapY -= step;
+							break;
+						case NorthEast:
+							mapY -= step;
+							mapX += step;
+							break;
+						case East:
+							mapX += step;
+							break;
+						case SouthEast:
+							mapY += step;
+							mapX += step;
+							break;
+						case South:
+							mapY += step;
+							break;
+						case SouthWest:
+							mapY += step;
+							mapX -= step;
+							break;
+						case West:
+							mapX -= step;
+							break;
+						case NorthWest:
+							mapY -= step;
+							mapX -= step;
+							break;
+
+						default:
+							break;
+					}
+
+					map.move(mapX, mapY);
+				}
+			}
+		}
+		// 下一步的动作
+		HumActionInfo nextAction = calcNextAction();
+		if (currentHumAction == nextAction) return;
+		if (currentHumAction.act != Action.Stand && currentHumActionTick != 1) return; // 这一步还没走完，等一下下
+
+		currentHumAction = nextAction;
+		currentHumActionFrameStartTime = System.currentTimeMillis();
+		currentHumActionTick = 1;
+	}
+
+	// 根据鼠标（手指）动作计算当前人物应该进行的动作
+	private HumActionInfo calcNextAction() {
+		if (!mouseDown) return HumActionInfos.stand(currentHumAction.dir);
 		// 鼠标与屏幕中心x、y轴的距离
         int xx = mouseX - Gdx.graphics.getWidth() / 2;
         int yy = mouseY - Gdx.graphics.getHeight() / 2;
         
-        if (Math.abs(xx) < 48 && Math.abs(yy) < 32) return;
+        if (Math.abs(xx) < 48 && Math.abs(yy) < 32) return HumActionInfos.stand(currentHumAction.dir);
         
         // 来自网络的虚拟摇杆算法，计算方向
         // 勾股定理求斜边
@@ -204,10 +214,11 @@ public class JootM2C extends ApplicationAdapter {
         }
         
         if (mouseButton == Buttons.LEFT) {
-        	currentHumAction = HumActionInfos.walk(dir);
+        	return HumActionInfos.walk(dir);
         } else if (mouseButton == Buttons.RIGHT) {
-        	currentHumAction = HumActionInfos.run(dir);
+        	return HumActionInfos.run(dir);
         }
+		return HumActionInfos.stand(currentHumAction.dir);
 	}
 	
 	private class InputListenerInMap extends InputListener {
