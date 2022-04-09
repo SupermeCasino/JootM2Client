@@ -26,13 +26,11 @@ public final class Map {
 	private Texture[][] tilesTexture;
 	/** 地图块小地砖纹理 */
 	private Texture[][] smTilesTexture;
-	/** 地图对象层图片纹理 */
-	private Texture[][] objsTexture;
 	
-	/** 带顺序的纹理补充 */
+	/** 地图对象层图片纹理 */
 	private List<TextureRegion>[] objTextureRegions;
-	/** 纹理补充的xy坐标 */
-	private java.util.Map<TextureRegion, short[]> objTextureRegions2XY = new HashMap<>();
+	/** 对象层图片纹理的xy坐标 */
+	private java.util.Map<TextureRegion, int[]> objTextureRegions2XY = new HashMap<>();
 	
 	/**
 	 * 使用地图宽高初始化地图对象
@@ -49,7 +47,6 @@ public final class Map {
 		objsFileName = new String[width][height];
 		tilesTexture = new Texture[width][height];
 		smTilesTexture = new Texture[width][height];
-		objsTexture = new Texture[width][height];
 		objTextureRegions = new List[height];
 		for (int h = 0; h < height; ++h) {
 			objTextureRegions[h] = new ArrayList<>();
@@ -72,7 +69,7 @@ public final class Map {
 	 * @param y 地图纵坐标
 	 * @param fileName 资源文件名，用于AssetManager的load
 	 */
-	public void setTileFileName(short x, short y, String fileName) {
+	public void setTileFileName(int x, int y, String fileName) {
 		tilesFileName[x][y] = fileName;
 	}
 	/**
@@ -82,7 +79,7 @@ public final class Map {
 	 * @param y 地图纵坐标
 	 * @return 资源文件名，用于AssetManager的load
 	 */
-	public String getTileFileName(short x, short y) {
+	public String getTileFileName(int x, int y) {
 		return tilesFileName[x][y];
 	}
 	
@@ -93,7 +90,7 @@ public final class Map {
 	 * @param y 地图纵坐标
 	 * @param fileName 资源文件名，用于AssetManager的load
 	 */
-	public void setSmTileFileName(short x, short y, String fileName) {
+	public void setSmTileFileName(int x, int y, String fileName) {
 		smTilesFileName[x][y] = fileName;
 	}
 	/**
@@ -103,7 +100,7 @@ public final class Map {
 	 * @param y 地图纵坐标
 	 * @return 资源文件名，用于AssetManager的load
 	 */
-	public String getSmTileFileName(short x, short y) {
+	public String getSmTileFileName(int x, int y) {
 		return smTilesFileName[x][y];
 	}
 	
@@ -114,7 +111,7 @@ public final class Map {
 	 * @param y 地图纵坐标
 	 * @param fileName 资源文件名，用于AssetManager的load
 	 */
-	public void setObjFileName(short x, short y, String fileName) {
+	public void setObjFileName(int x, int y, String fileName) {
 		objsFileName[x][y] = fileName;
 	}
 	/**
@@ -124,7 +121,7 @@ public final class Map {
 	 * @param y 地图纵坐标
 	 * @return 资源文件名，用于AssetManager的load
 	 */
-	public String getObjFileName(short x, short y) {
+	public String getObjFileName(int x, int y) {
 		return objsFileName[x][y];
 	}
 	
@@ -135,7 +132,7 @@ public final class Map {
 	 * @param y 地图纵坐标
 	 * @param tex 大地砖纹理
 	 */
-	public void setTileTexture(short x, short y, Texture tex) {
+	public void setTileTexture(int x, int y, Texture tex) {
 		tilesTexture[x][y] = tex;
 	}
 	/**
@@ -145,7 +142,7 @@ public final class Map {
 	 * @param y 地图纵坐标
 	 * @return 大地砖纹理
 	 */
-	public Texture getTileTexture(short x, short y) {
+	public Texture getTileTexture(int x, int y) {
 		return tilesTexture[x][y];
 	}
 	
@@ -156,7 +153,7 @@ public final class Map {
 	 * @param y 地图纵坐标
 	 * @param tex 小地砖纹理
 	 */
-	public void setSmTileTexture(short x, short y, Texture tex) {
+	public void setSmTileTexture(int x, int y, Texture tex) {
 		smTilesTexture[x][y] = tex;
 	}
 	/**
@@ -166,61 +163,40 @@ public final class Map {
 	 * @param y 地图纵坐标
 	 * @return 小地砖纹理
 	 */
-	public Texture getSmTileTexture(short x, short y) {
+	public Texture getSmTileTexture(int x, int y) {
 		return smTilesTexture[x][y];
 	}
 	
 	/**
-	 * 设置特定地图块的对象层纹理
+	 * 添加特定地图块的对象层纹理
 	 * 
 	 * @param x 地图横坐标
 	 * @param y 地图纵坐标
 	 * @param tex 对象层纹理
+	 * @param anchorY 纹理起点纵坐标，例如树的根
 	 */
-	public void setObjTexture(short x, short y, Texture tex) {
-		objsTexture[x][y] = tex;
-	}
-	/**
-	 * 获取特定地图块的对象层纹理
-	 * 
-	 * @param x 地图横坐标
-	 * @param y 地图纵坐标
-	 * @return 对象层纹理
-	 */
-	public Texture getObjTexture(short x, short y) {
-		return objsTexture[x][y];
-	}
-	
-	/**
-	 * 添加特定地图块的对象层补充纹理
-	 * 
-	 * @param x 地图横坐标
-	 * @param y 地图纵坐标
-	 * @param tex 对象层补充纹理
-	 * @param anchorY 补充纹理起点纵坐标，例如树的根
-	 */
-	public void addObjTextureRegion(short x, short y, TextureRegion tex, short anchorY) {
-		objTextureRegions2XY.put(tex, new short[] {x, y});
+	public void addObjTextureRegion(int x, int y, TextureRegion tex, int anchorY) {
+		objTextureRegions2XY.put(tex, new int[] {x, y});
 		objTextureRegions[anchorY].add(tex);
 	}
 	
 	/**
-	 * 获取地图所有对象补充纹理
+	 * 获取地图特定行对象纹理
 	 * 
-	 * @param anchorY 补充纹理起点纵坐标
-	 * @return 地图所有对象补充纹理
+	 * @param anchorY 纹理起点纵坐标
+	 * @return 地图所有对象纹理
 	 */
 	public List<TextureRegion> getObjsTextureRegion(int anchorY) {
 		return objTextureRegions[anchorY];
 	}
 	
 	/**
-	 * 获取地图块补充层纹理所在块坐标
+	 * 获取地图块层纹理所在块坐标
 	 * 
-	 * @param tex 补充层纹理
+	 * @param tex 层纹理
 	 * @return x,y分为在第0，1个元素
 	 */
-	public short[] getObjTextureRegion(TextureRegion tex) {
+	public int[] getObjTextureRegion(TextureRegion tex) {
 		return objTextureRegions2XY.get(tex);
 	}
 }
