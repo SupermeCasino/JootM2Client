@@ -43,7 +43,7 @@ public final class Hum {
 	 */
 	public Hum(String name) {
 		this.name = name;
-		this.dressIdx = 1; // 默认是穿着短裤光着膀子
+		this.dressIdx = 1; // 默认是穿着裤衩光着膀子的秃子
 		Assets.prepareDress(0, 1);
 	}
 	
@@ -80,11 +80,13 @@ public final class Hum {
 	 * @return 当前对象
 	 */
 	public Hum setAction(HumActionInfo action) {
-		if (action != this.action) {
+		HumActionInfo originAction = this.action;
+		this.action = action;
+		if (action != originAction) {
 			actionTick = 1;
 			actionFrameStartTime = System.currentTimeMillis();
+			shift();
 		}
-		this.action = action;
 		return this;
 	}
 	
@@ -201,53 +203,55 @@ public final class Hum {
 					y = ny;
 				}
 			}
+			shift();
 		}
-		// 计算人物偏移
-		if (action.act == Action.Stand) {
-			shiftX = 0;
-			shiftY = 0;
-		} else {
-			if (action.act == Action.Walk || action.act == Action.Run) {			
-				int step = action.act == Action.Run ? 2 : 1;
-
-				switch (action.dir) {
-				case North:
-					shiftY = -32 * actionTick / action.frameCount * step; // 向上偏移
-					break;
-				case NorthEast:
-					shiftY = -32 * actionTick / action.frameCount * step;
-					shiftX = 48 * actionTick / action.frameCount * step; // 向右偏移
-					break;
-				case East:
-					shiftX = 48 * actionTick / action.frameCount * step;
-					break;
-				case SouthEast:
-					shiftY = 32 * actionTick / action.frameCount * step;
-					shiftX = 48 * actionTick / action.frameCount * step;
-					break;
-				case South:
-					shiftY = 32 * actionTick / action.frameCount * step;
-					break;
-				case SouthWest:
-					shiftY = 32 * actionTick / action.frameCount * step;
-					shiftX = -48 * actionTick / action.frameCount * step;
-					break;
-				case West:
-					shiftX = -48 * actionTick / action.frameCount * step;
-					break;
-				case NorthWest:
-					shiftY = -32 * actionTick / action.frameCount * step;
-					shiftX = -48 * actionTick / action.frameCount * step;
-					break;
-				
-				default:
-					break;
-				}
-			}
-		}
+		
 		return this;
 	}
 	
+	private void shift() {
+		// 计算人物偏移
+		shiftX = 0;
+		shiftY = 0;
+		if (action.act == Action.Walk || action.act == Action.Run) {			
+			int step = action.act == Action.Run ? 2 : 1;
+
+			switch (action.dir) {
+			case North:
+				shiftY = -32 * actionTick / action.frameCount * step; // 向上偏移
+				break;
+			case NorthEast:
+				shiftY = -32 * actionTick / action.frameCount * step;
+				shiftX = 48 * actionTick / action.frameCount * step; // 向右偏移
+				break;
+			case East:
+				shiftX = 48 * actionTick / action.frameCount * step;
+				break;
+			case SouthEast:
+				shiftY = 32 * actionTick / action.frameCount * step;
+				shiftX = 48 * actionTick / action.frameCount * step;
+				break;
+			case South:
+				shiftY = 32 * actionTick / action.frameCount * step;
+				break;
+			case SouthWest:
+				shiftY = 32 * actionTick / action.frameCount * step;
+				shiftX = -48 * actionTick / action.frameCount * step;
+				break;
+			case West:
+				shiftX = -48 * actionTick / action.frameCount * step;
+				break;
+			case NorthWest:
+				shiftY = -32 * actionTick / action.frameCount * step;
+				shiftX = -48 * actionTick / action.frameCount * step;
+				break;
+			
+			default:
+				break;
+			}
+		}
+	}
+
 	/**
 	 * 获取人物绘制偏移
 	 * <br>
