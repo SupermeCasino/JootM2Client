@@ -158,12 +158,13 @@ public class JootM2C extends ApplicationAdapter {
         } else if (mouseButton == Buttons.RIGHT) {
         	moveStep = 2;
         }
+        
         Direction dir = null;
         boolean canWalk = false;
         if ((angle >= 337.5 && angle <= 360) || angle < 22.5) {
         	dir = Direction.East;
-            canWalk = map.isCanWalk(me.getX() + 1, me.getY());
-            if(moveStep == 2 && !map.isCanWalk(me.getX() + 2, me.getY()))
+            canWalk = map.isCanWalk(me.getX() + 1, me.getY()); // 目标位置（一个身位）是否可达
+            if(moveStep == 2 && !map.isCanWalk(me.getX() + 2, me.getY())) // 若想要跑动，且目标不可达，则尝试改为走到最近的一个身位
                 --moveStep;
         } else if (angle >= 22.5 && angle < 67.5) {
         	dir = Direction.SouthEast;
