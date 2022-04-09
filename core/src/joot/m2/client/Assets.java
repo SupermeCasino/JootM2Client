@@ -78,8 +78,8 @@ public final class Assets {
 				W_L.put(fnNoExt + "/", amW_L);
 			}
 		}
-		load("smtiles/58");
-		load("smtiles/59");
+		//load("smtiles/58");
+		//load("smtiles/59");
 	}
 	
 	/**
