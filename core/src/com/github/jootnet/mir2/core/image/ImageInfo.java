@@ -30,7 +30,7 @@ public final class ImageInfo {
 	private int width;
 	private int height;
 	private short offsetX;
-	private short offsetY;	
+	private short offsetY;
 	private byte colorBit = 8;
 	boolean wzlCompressed = true;
 	

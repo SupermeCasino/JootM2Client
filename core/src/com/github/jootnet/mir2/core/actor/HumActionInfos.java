@@ -163,14 +163,14 @@ public final class HumActionInfos {
     	StandEast.dir = Direction.East;
     	
     	StandSouthEast = new HumActionInfo();
-    	StandSouthEast.frameIdx = 32;
+    	StandSouthEast.frameIdx = 24;
     	StandSouthEast.frameCount = 4;
     	StandSouthEast.duration = 200;
     	StandSouthEast.act = Action.Stand;
     	StandSouthEast.dir = Direction.SouthEast;
     	
     	StandSouth = new HumActionInfo();
-    	StandSouth.frameIdx = 8;
+    	StandSouth.frameIdx = 32;
     	StandSouth.frameCount = 4;
     	StandSouth.duration = 200;
     	StandSouth.act = Action.Stand;

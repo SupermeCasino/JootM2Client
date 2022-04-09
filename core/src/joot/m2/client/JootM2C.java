@@ -13,6 +13,7 @@ import com.github.jootnet.mir2.core.actor.Direction;
 import com.github.jootnet.mir2.core.actor.HumActionInfo;
 import com.github.jootnet.mir2.core.actor.HumActionInfos;
 
+import joot.m2.client.actor.Hum;
 import joot.m2.client.map.MapActor;
 
 public class JootM2C extends ApplicationAdapter {
@@ -20,21 +21,14 @@ public class JootM2C extends ApplicationAdapter {
 	
 	/** 地图绘制 */
 	private MapActor map = new MapActor();
-	private short mapX;
-	private short mapY;
 	/** 地图事件 */
 	private InputListener inputListenerInMap = new InputListenerInMap();
 	private boolean mouseDown = false;
 	private int mouseX;
 	private int mouseY;
 	private int mouseButton;
-	
-	/** 当前人物动作 */
-	private HumActionInfo currentHumAction;
-	/** 当前人物动作是第几帧 */
-	private short currentHumActionTick;
-	/** 当前人物动作开始时间 */
-	private long currentHumActionFrameStartTime;
+	/** 人物 */
+	private Hum me;
 	
 	public JootM2C() {
 		//Assets.init("D:\\Program Files (x86)\\盛大网络\\热血传奇");
@@ -46,12 +40,10 @@ public class JootM2C extends ApplicationAdapter {
 		stage = new Stage(new ScreenViewport());
 		map.addListener(inputListenerInMap);
 		
-		currentHumAction = HumActionInfos.StandSouth;
-		currentHumActionFrameStartTime = System.currentTimeMillis();
-		currentHumActionTick = 1;
-		mapX = 300;
-		mapY = 300;
-		map.enter("0").move(mapX, mapY);
+		me = new Hum("林星");
+		Gdx.graphics.setTitle("将唐传奇" + "-" + me.getName());
+		me.move(300, 300).setAction(HumActionInfos.StandSouth);
+		map.enter("0").move(me.getX(), me.getY()).add(me);
 		
 		stage.addActor(map);
 		Gdx.input.setInputProcessor(stage);
@@ -70,7 +62,7 @@ public class JootM2C extends ApplicationAdapter {
 		}
 		if (!canResize)
 			Gdx.graphics.setWindowedMode(width, height);
-		// See below for what true means.
+
 		stage.getViewport().update(width, height, true);
 		map.setBounds(0, 0, width, height);
 	}
@@ -80,8 +72,12 @@ public class JootM2C extends ApplicationAdapter {
 		float delta = Gdx.graphics.getDeltaTime();
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		calcAction();
-		map.setHumAction(currentHumAction, currentHumActionTick);
+		me.act();
+		map.move(me.getX(), me.getY());
+		
+		calcMeAction();
+		map.setMeAction(me.getAction(), me.getActionTick());
+		
 		stage.act(delta);
 		stage.draw();
 	}
@@ -117,68 +113,21 @@ public class JootM2C extends ApplicationAdapter {
 	}
 
 	// 计算玩家动作
-	private void calcAction() {
-		// 当前动作
-		if (System.currentTimeMillis() - currentHumActionFrameStartTime > currentHumAction.duration) {
-			currentHumActionFrameStartTime = System.currentTimeMillis();
-			if (++currentHumActionTick > currentHumAction.frameCount) {
-				currentHumActionTick = 1;
-
-				if (currentHumAction.act == Action.Walk || currentHumAction.act == Action.Run) {
-					// 走完或跑完了一步，地图中心坐标更新
-					int step = 1;
-					if (currentHumAction.act == Action.Run) step++;
-
-					switch (currentHumAction.dir) {
-						case North:
-							mapY -= step;
-							break;
-						case NorthEast:
-							mapY -= step;
-							mapX += step;
-							break;
-						case East:
-							mapX += step;
-							break;
-						case SouthEast:
-							mapY += step;
-							mapX += step;
-							break;
-						case South:
-							mapY += step;
-							break;
-						case SouthWest:
-							mapY += step;
-							mapX -= step;
-							break;
-						case West:
-							mapX -= step;
-							break;
-						case NorthWest:
-							mapY -= step;
-							mapX -= step;
-							break;
-
-						default:
-							break;
-					}
-
-					map.move(mapX, mapY);
-				}
-			}
-		}
+	private void calcMeAction() {
+		HumActionInfo currentHumAction = me.getAction();
+		int currentHumActionTick = me.getActionTick();
+		
 		// 下一步的动作
-		HumActionInfo nextAction = calcNextAction();
+		HumActionInfo nextAction = calcMeNextAction(currentHumAction);		
+		
 		if (currentHumAction == nextAction) return;
 		if (currentHumAction.act != Action.Stand && currentHumActionTick != 1) return; // 这一步还没走完，等一下下
 
-		currentHumAction = nextAction;
-		currentHumActionFrameStartTime = System.currentTimeMillis();
-		currentHumActionTick = 1;
+		me.setAction(nextAction);
 	}
 
 	// 根据鼠标（手指）动作计算当前人物应该进行的动作
-	private HumActionInfo calcNextAction() {
+	private HumActionInfo calcMeNextAction(HumActionInfo currentHumAction) {
 		if (!mouseDown) return HumActionInfos.stand(currentHumAction.dir);
 		// 鼠标与屏幕中心x、y轴的距离
         int xx = mouseX - Gdx.graphics.getWidth() / 2;
@@ -218,7 +167,7 @@ public class JootM2C extends ApplicationAdapter {
         } else if (mouseButton == Buttons.RIGHT) {
         	return HumActionInfos.run(dir);
         }
-		return HumActionInfos.stand(currentHumAction.dir);
+		return HumActionInfos.stand(dir);
 	}
 	
 	private class InputListenerInMap extends InputListener {
