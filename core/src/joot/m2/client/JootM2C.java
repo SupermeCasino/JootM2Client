@@ -28,7 +28,7 @@ public class JootM2C extends ApplicationAdapter {
 	private int mouseY;
 	private int mouseButton;
 	/** 人物 */
-	private Hum me;
+	public static Hum me;
 	
 	public JootM2C() {
 		//Assets.init("D:\\Program Files (x86)\\盛大网络\\热血传奇");

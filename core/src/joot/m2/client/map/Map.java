@@ -30,7 +30,7 @@ public final class Map {
 	private Texture[][] objsTexture;
 	
 	/** 带顺序的纹理补充 */
-	private List<TextureRegion> objTextureRegions = new ArrayList<>();
+	private List<TextureRegion>[] objTextureRegions;
 	/** 纹理补充的xy坐标 */
 	private java.util.Map<TextureRegion, short[]> objTextureRegions2XY = new HashMap<>();
 	
@@ -40,6 +40,7 @@ public final class Map {
 	 * @param width 地图宽（横向块数量）
 	 * @param height 地图高（纵向块数量）
 	 */
+	@SuppressWarnings("unchecked")
 	public Map(short width, short height) {
 		this.width = width;
 		this.height = height;
@@ -49,6 +50,10 @@ public final class Map {
 		tilesTexture = new Texture[width][height];
 		smTilesTexture = new Texture[width][height];
 		objsTexture = new Texture[width][height];
+		objTextureRegions = new List[height];
+		for (int h = 0; h < height; ++h) {
+			objTextureRegions[h] = new ArrayList<>();
+		}
 	}
 	
 	/** 获取地图宽度 */
@@ -192,22 +197,21 @@ public final class Map {
 	 * @param x 地图横坐标
 	 * @param y 地图纵坐标
 	 * @param tex 对象层补充纹理
+	 * @param anchorY 补充纹理起点纵坐标，例如树的根
 	 */
-	public void addObjTextureRegion(short x, short y, TextureRegion tex) {
+	public void addObjTextureRegion(short x, short y, TextureRegion tex, short anchorY) {
 		objTextureRegions2XY.put(tex, new short[] {x, y});
-		objTextureRegions.add(tex);
-		objTextureRegions.sort((tr1, tr2) -> {
-			return objTextureRegions2XY.get(tr1)[1] - objTextureRegions2XY.get(tr2)[1];
-		});
+		objTextureRegions[anchorY].add(tex);
 	}
 	
 	/**
 	 * 获取地图所有对象补充纹理
 	 * 
+	 * @param anchorY 补充纹理起点纵坐标
 	 * @return 地图所有对象补充纹理
 	 */
-	public List<TextureRegion> getObjsTextureRegion() {
-		return objTextureRegions;
+	public List<TextureRegion> getObjsTextureRegion(int anchorY) {
+		return objTextureRegions[anchorY];
 	}
 	
 	/**
