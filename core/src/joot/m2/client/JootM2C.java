@@ -46,6 +46,7 @@ public class JootM2C extends ApplicationAdapter {
 		map.enter("0").move(me.getX(), me.getY()).add(me);
 		
 		stage.addActor(map);
+		stage.setKeyboardFocus(map);
 		Gdx.input.setInputProcessor(stage);
 	}
 
@@ -72,10 +73,12 @@ public class JootM2C extends ApplicationAdapter {
 		float delta = Gdx.graphics.getDeltaTime();
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+		// 当前角色特殊处理
 		me.act();
-		map.move(me.getX(), me.getY());
-		
 		calcMeAction();
+		
+		// 地图的视角和绘制偏移以当前角色为准
+		map.move(me.getX(), me.getY());
 		map.setMeAction(me.getAction(), me.getActionTick());
 		
 		stage.act(delta);
@@ -107,9 +110,15 @@ public class JootM2C extends ApplicationAdapter {
 	}
 
 	/** 鼠标或手指(移动端)在地图上按下并移动时 */
-	public void mapTouchDragged(InputEvent event, float x, float y, int pointer) {
+	private void mapTouchDragged(InputEvent event, float x, float y, int pointer) {
 		mouseX = (int) x;
 		mouseY = (int) y;
+	}
+	
+	/** 键盘按下事件 */
+	private boolean mapKeyUp(InputEvent event, int keycode) {
+
+		return true;
 	}
 
 	// 计算玩家动作
@@ -143,29 +152,62 @@ public class JootM2C extends ApplicationAdapter {
         // 弧度转角度
         double angle = 180 / Math.PI * rad;
 
+        int moveStep = 0;
+        if (mouseButton == Buttons.LEFT) {
+        	moveStep = 1;
+        } else if (mouseButton == Buttons.RIGHT) {
+        	moveStep = 2;
+        }
         Direction dir = null;
+        boolean canWalk = false;
         if ((angle >= 337.5 && angle <= 360) || angle < 22.5) {
         	dir = Direction.East;
+            canWalk = map.isCanWalk(me.getX() + 1, me.getY());
+            if(moveStep == 2 && !map.isCanWalk(me.getX() + 2, me.getY()))
+                --moveStep;
         } else if (angle >= 22.5 && angle < 67.5) {
         	dir = Direction.SouthEast;
+            canWalk = map.isCanWalk(me.getX() + 1, me.getY() + 1);
+            if(moveStep == 2 && !map.isCanWalk(me.getX() + 2, me.getY() + 2))
+                --moveStep;
         } else if (angle >= 67.5 && angle < 112.5) {
         	dir = Direction.South;
+            canWalk = map.isCanWalk(me.getX(), me.getY() + 1);
+            if(moveStep == 2 && !map.isCanWalk(me.getX(), me.getY() + 2))
+                --moveStep;
         } else if (angle >= 112.5 && angle < 157.5) {
         	dir = Direction.SouthWest;
+            canWalk = map.isCanWalk(me.getX() - 1, me.getY() + 1);
+            if(moveStep == 2 && !map.isCanWalk(me.getX() - 2, me.getY() + 2))
+                --moveStep;
         } else if (angle >= 157.5 && angle < 202.5) {
         	dir = Direction.West;
+            canWalk = map.isCanWalk(me.getX() - 1, me.getY());
+            if(moveStep == 2 && !map.isCanWalk(me.getX() - 2, me.getY()))
+                --moveStep;
         } else if (angle >= 202.5 && angle < 247.5) {
         	dir = Direction.NorthWest;
+            canWalk = map.isCanWalk(me.getX() - 1, me.getY() - 1);
+            if(moveStep == 2 && !map.isCanWalk(me.getX() - 2, me.getY() - 2))
+                --moveStep;
         } else if (angle >= 247.5 && angle < 292.5) {
         	dir = Direction.North;
+        	canWalk = map.isCanWalk(me.getX(), me.getY() - 1);
+            if(moveStep == 2 && !map.isCanWalk(me.getX(), me.getY() - 2))
+                --moveStep;
         } else if (angle >= 292.5 && angle < 337.5) {
         	dir = Direction.NorthEast;
+        	 canWalk = map.isCanWalk(me.getX() + 1, me.getY() - 1);
+             if(moveStep == 2 && !map.isCanWalk(me.getX() + 2, me.getY() - 2))
+                 --moveStep;
         }
         
-        if (mouseButton == Buttons.LEFT) {
-        	return HumActionInfos.walk(dir);
-        } else if (mouseButton == Buttons.RIGHT) {
-        	return HumActionInfos.run(dir);
+        if (canWalk) {
+	        if (moveStep == 1) {
+	        	return HumActionInfos.walk(dir);
+	        } else if (moveStep == 2) {
+	        	return HumActionInfos.run(dir);
+	        }
         }
 		return HumActionInfos.stand(dir);
 	}
@@ -186,6 +228,10 @@ public class JootM2C extends ApplicationAdapter {
 		@Override
 		public void touchDragged(InputEvent event, float x, float y, int pointer) {
 			JootM2C.this.mapTouchDragged(event, x, y, pointer);
+		}
+		@Override
+		public boolean keyUp(InputEvent event, int keycode) {
+			return JootM2C.this.mapKeyUp(event, keycode);
 		}
 	}
 

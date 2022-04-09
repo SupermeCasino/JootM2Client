@@ -15,6 +15,11 @@ public final class Map {
 	/** 地图高度 */
 	private short height;
 	
+	/** 可移动标记 */
+	private boolean[][] canWalk;
+	/** 可飞跃标记 */
+	private boolean[][] canFly;
+	
 	/** 地图块大地砖所在文件及索引 */
 	private String[][] tilesFileName;
 	/** 地图块小地砖所在文件及索引 */
@@ -42,6 +47,8 @@ public final class Map {
 	public Map(short width, short height) {
 		this.width = width;
 		this.height = height;
+		canWalk = new boolean[width][height];
+		canFly = new boolean[width][height];
 		tilesFileName = new String[width][height];
 		smTilesFileName = new String[width][height];
 		objsFileName = new String[width][height];
@@ -60,6 +67,48 @@ public final class Map {
 	/** 获取地图高度 */
 	public short getHeight() {
 		return height;
+	}
+	
+	/**
+	 * 设置地图块可移动标记
+	 * 
+	 * @param x 横坐标
+	 * @param y 纵坐标
+	 * @param canFly 是否可移动
+	 */
+	public void setCanWalk(int x, int y, boolean canWalk) {
+		this.canWalk[x][y] = canWalk;
+	}
+	/**
+	 * 获取地图块可移动标记
+	 * 
+	 * @param x 横坐标
+	 * @param y 纵坐标
+	 * @return 是否可移动
+	 */
+	public boolean isCanWalk(int x, int y) {
+		return canWalk[x][y];
+	}
+	
+	/**
+	 * 设置地图块可飞跃标记
+	 * 
+	 * @param x 横坐标
+	 * @param y 纵坐标
+	 * @param canFly 是否可飞跃
+	 */
+	public void setCanFly(int x, int y, boolean canFly) {
+		this.canFly[x][y] = canFly;
+	}
+	/**
+	 * 获取地图块可飞跃标记
+	 * 
+	 * @param x 横坐标
+	 * @param y 纵坐标
+	 * @return 是否可飞跃
+	 */
+	public boolean isCanFly(int x, int y) {
+		return canFly[x][y];
 	}
 	
 	/**

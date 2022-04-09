@@ -38,13 +38,15 @@ public final class MapLoader extends AsynchronousAssetLoader<Map, AssetLoaderPar
 		IntStream.range(0, _map.getWidth()).parallel().forEach(w -> {
 			IntStream.range(0, _map.getHeight()).parallel().forEach(h -> {
 				MapTileInfo mti = _map.getTiles()[w][h];
+				ret.setCanFly(w, h, mti.isCanFly());
+				ret.setCanWalk(w, h, mti.isCanWalk());
 				if (mti.isHasBng()) {
 					String tileFileName = "tiles";
 					if (mti.getBngFileIdx() != 0) {
 						tileFileName += mti.getBngFileIdx();
 					}
 					tileFileName += "/" + mti.getBngImgIdx();
-					ret.setTileFileName((short)w, (short)h, tileFileName);
+					ret.setTileFileName(w, h, tileFileName);
 				}
 				if (mti.isHasMid()) {
 					String smTileFileName = "smtiles";
@@ -52,7 +54,7 @@ public final class MapLoader extends AsynchronousAssetLoader<Map, AssetLoaderPar
 						smTileFileName += mti.getMidFileIdx();
 					}
 					smTileFileName += "/" + mti.getMidImgIdx();
-					ret.setSmTileFileName((short)w, (short)h, smTileFileName);
+					ret.setSmTileFileName(w, h, smTileFileName);
 				}
 				if (!mti.isHasAni() && mti.isHasObj()) {
 					String objFileName = "objects";
@@ -60,7 +62,7 @@ public final class MapLoader extends AsynchronousAssetLoader<Map, AssetLoaderPar
 						objFileName += mti.getObjFileIdx();
 					}
 					objFileName += "/" + mti.getObjImgIdx();
-					ret.setObjFileName((short)w, (short)h, objFileName);
+					ret.setObjFileName(w, h, objFileName);
 				}
 			});
 		});
