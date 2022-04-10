@@ -1,16 +1,18 @@
 # JootM2Client
-热血传奇2客户端
+client of lom2(legend of mir2)
 
-使用libgdx进行开发
+developed by libgdx
 
-## 2022-4-4 实现静态地图绘制
+## 2022-4-4 static map render
 
-## 2022-4-5 实现地图卷动
+## 2022-4-5 map shift
 
-## 2022-4-6 实现鼠标控制的地图卷动
+## 2022-4-6 map shift by mouse action
 
-## 2022-4-7 修复地图卷动时启动慢、启停震荡的问题
+## 2022-4-7 fix map shift bugs
 
-## 2022-4-9 加入人物绘制
+## 2022-4-9 hum render
 
-（只绘制了衣服，武器及翅膀未绘制；另外人物被树木房檐挡住时的半透明怎么做到我没有办法。能够找到dx的写法，但似乎无法参考）
+(No idea for transparency when hum behind woods)
+
+## 2022-4-10 weapon render & wing render
