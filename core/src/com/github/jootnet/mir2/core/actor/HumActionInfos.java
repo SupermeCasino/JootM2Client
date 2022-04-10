@@ -142,57 +142,57 @@ public final class HumActionInfos {
     static {
     	StandNorth = new HumActionInfo();
     	StandNorth.frameIdx = 0;
-    	StandNorth.frameCount = 4;
-    	//StandNorth.skipCount = 4;
+    	StandNorth.frameCount = 8;
+    	//StandNorth.skipCount = 0;
     	StandNorth.duration = 200;
     	StandNorth.act = Action.Stand;
     	StandNorth.dir = Direction.North;
     	
     	StandNorthEast = new HumActionInfo();
     	StandNorthEast.frameIdx = 8;
-    	StandNorthEast.frameCount = 4;
+    	StandNorthEast.frameCount = 8;
     	StandNorthEast.duration = 200;
     	StandNorthEast.act = Action.Stand;
     	StandNorthEast.dir = Direction.NorthEast;
     	
     	StandEast = new HumActionInfo();
     	StandEast.frameIdx = 16;
-    	StandEast.frameCount = 4;
+    	StandEast.frameCount = 8;
     	StandEast.duration = 200;
     	StandEast.act = Action.Stand;
     	StandEast.dir = Direction.East;
     	
     	StandSouthEast = new HumActionInfo();
     	StandSouthEast.frameIdx = 24;
-    	StandSouthEast.frameCount = 4;
+    	StandSouthEast.frameCount = 8;
     	StandSouthEast.duration = 200;
     	StandSouthEast.act = Action.Stand;
     	StandSouthEast.dir = Direction.SouthEast;
     	
     	StandSouth = new HumActionInfo();
     	StandSouth.frameIdx = 32;
-    	StandSouth.frameCount = 4;
+    	StandSouth.frameCount = 8;
     	StandSouth.duration = 200;
     	StandSouth.act = Action.Stand;
     	StandSouth.dir = Direction.South;
     	
     	StandSouthWest = new HumActionInfo();
     	StandSouthWest.frameIdx = 40;
-    	StandSouthWest.frameCount = 4;
+    	StandSouthWest.frameCount = 8;
     	StandSouthWest.duration = 200;
     	StandSouthWest.act = Action.Stand;
     	StandSouthWest.dir = Direction.SouthWest;
     	
     	StandWest = new HumActionInfo();
     	StandWest.frameIdx = 48;
-    	StandWest.frameCount = 4;
+    	StandWest.frameCount = 8;
     	StandWest.duration = 200;
     	StandWest.act = Action.Stand;
     	StandWest.dir = Direction.West;
     	
     	StandNorthWest = new HumActionInfo();
     	StandNorthWest.frameIdx = 56;
-    	StandNorthWest.frameCount = 4;
+    	StandNorthWest.frameCount = 8;
     	StandNorthWest.duration = 200;
     	StandNorthWest.act = Action.Stand;
     	StandNorthWest.dir = Direction.NorthWest;

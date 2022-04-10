@@ -20,6 +20,7 @@ public final class W_LLoader extends AsynchronousAssetLoader<M2Texture, AssetLoa
 	public static String Dir = null;
 	private com.github.jootnet.mir2.core.Texture texture_;
 	private ImageInfo ii_;
+	private static M2Texture EMPTY = null;
 	
 	public W_LLoader(FileHandleResolver resolver) {
 		super(resolver);
@@ -36,11 +37,23 @@ public final class W_LLoader extends AsynchronousAssetLoader<M2Texture, AssetLoa
 	@Override
 	public M2Texture loadSync(AssetManager manager, String fileName, FileHandle file,
 			AssetLoaderParameters<M2Texture> parameter) {
-		Pixmap pm = new Pixmap(texture_.getWidth(), texture_.getHeight(), Pixmap.Format.RGBA8888);
-		pm.getPixels().put(texture_.getRGBAs());
-		pm.getPixels().flip();
+		M2Texture ret = null;
+		if (texture_.empty()) {
+			if (EMPTY == null) {
+				Pixmap pm = new Pixmap(texture_.getWidth(), texture_.getHeight(), Pixmap.Format.RGBA8888);
+				pm.getPixels().put(texture_.getRGBAs());
+				pm.getPixels().flip();
+				EMPTY = new M2Texture(pm, ii_.getOffsetX(), ii_.getOffsetY());
+			}
+			ret = EMPTY;
+		} else {
+			Pixmap pm = new Pixmap(texture_.getWidth(), texture_.getHeight(), Pixmap.Format.RGBA8888);
+			pm.getPixels().put(texture_.getRGBAs());
+			pm.getPixels().flip();
+			ret = new M2Texture(pm, ii_.getOffsetX(), ii_.getOffsetY());
+		}
 		texture_ = null;
-		return new M2Texture(pm, ii_.getOffsetX(), ii_.getOffsetY());
+		return ret;
 	}
 
 	@SuppressWarnings("rawtypes")
