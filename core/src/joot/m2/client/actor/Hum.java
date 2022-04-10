@@ -23,10 +23,10 @@ public final class Hum {
 	private int shiftX; // 地图绘制时横向偏移量，人物向右时为正，走动时第一帧为8，第二帧为16（动作花费6帧时）
 	private int shiftY;
 	
-	private int dressFileIdx;
-	private int dressIdx;
-	/*private int dressEffectFileIdx;
-	private int dressEffectIdx;*/
+	private int humFileIdx;
+	private int humIdx;
+	private int humEffectFileIdx;
+	private int humEffectIdx;
 	private int weaponFileIdx;
 	private int weaponIdx;
 	/*private int weaponEffectFileIdx;
@@ -43,7 +43,7 @@ public final class Hum {
 	 */
 	public Hum(String name) {
 		this.name = name;
-		this.dressIdx = 1; // 默认是穿着裤衩光着膀子的秃子
+		this.humIdx = 1; // 默认是穿着裤衩光着膀子的秃子
 		Assets.prepareDress(0, 1);
 	}
 	
@@ -134,8 +134,8 @@ public final class Hum {
 	 * @return 当前对象
 	 */
 	public Hum dress(int fileIdx, int dressIdx) {
-		this.dressFileIdx = fileIdx;
-		this.dressIdx = dressIdx;
+		this.humFileIdx = fileIdx;
+		this.humIdx = dressIdx;
 		Assets.prepareDress(fileIdx, dressIdx);
 		return this;
 	}
@@ -146,14 +146,37 @@ public final class Hum {
 	 * @return 纹理对象
 	 */
 	public M2Texture dress() {
-		return Assets.getDress(dressFileIdx, dressIdx, action, actionTick);
+		return Assets.getDress(humFileIdx, humIdx, action, actionTick);
+	}
+	
+	/**
+	 * 长翅膀
+	 * 
+	 * @param fileIdx 资源文件编号，从0开始
+	 * @param dressIdx 资源文件中的衣服特效编号（600一组），从1开始
+	 * @return 当前对象
+	 */
+	public Hum wing(int fileIdx, int dressIdx) {
+		this.humEffectFileIdx = fileIdx;
+		this.humEffectIdx = dressIdx;
+		Assets.prepareHumEffect(fileIdx, dressIdx);
+		return this;
+	}
+	
+	/**
+	 * 获取人物当前应该绘制的翅膀贴图
+	 * 
+	 * @return 纹理对象
+	 */
+	public M2Texture wing() {
+		return Assets.getHumEffect(humEffectFileIdx, humEffectIdx, action, actionTick);
 	}
 	
 	/**
 	 * 拿武器
 	 * 
 	 * @param fileIdx 资源文件编号，从0开始
-	 * @param dressIdx 资源文件中的武器编号（600一组），从1开始
+	 * @param humIdx 资源文件中的武器编号（600一组），从1开始
 	 * @return 当前对象
 	 */
 	public Hum equip(int fileIdx, int equipIdx) {

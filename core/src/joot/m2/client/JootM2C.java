@@ -31,8 +31,8 @@ public class JootM2C extends ApplicationAdapter {
 	public static Hum me;
 	
 	public JootM2C() {
-		//Assets.init("D:\\Program Files (x86)\\盛大网络\\热血传奇");
-		Assets.init("D:\\Program Files\\ShengquGames\\Legend of mir");
+		Assets.init("D:\\Program Files (x86)\\盛大网络\\热血传奇");
+		//Assets.init("D:\\Program Files\\ShengquGames\\Legend of mir");
 	}
 
 	@Override
@@ -44,7 +44,8 @@ public class JootM2C extends ApplicationAdapter {
 		Gdx.graphics.setTitle("将唐传奇" + "-" + me.getName());
 		me.move(300, 300).setAction(HumActionInfos.StandSouth)
 			.dress(0, 19) // 穿着雷霆
-			.equip(0, 69); // 拿着开天
+			.equip(0, 69) // 拿着开天
+			.wing(0, 1); // 扑扇着白色翅膀
 		map.enter("0").move(me.getX(), me.getY()).add(me);
 		
 		stage.addActor(map);
