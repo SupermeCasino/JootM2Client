@@ -26,10 +26,10 @@ public final class Hum {
 	private int dressFileIdx;
 	private int dressIdx;
 	/*private int dressEffectFileIdx;
-	private int dressEffectIdx;
+	private int dressEffectIdx;*/
 	private int weaponFileIdx;
 	private int weaponIdx;
-	private int weaponEffectFileIdx;
+	/*private int weaponEffectFileIdx;
 	private int weaponEffectIdx;*/
 	
 	private HumActionInfo action;
@@ -138,6 +138,39 @@ public final class Hum {
 		this.dressIdx = dressIdx;
 		Assets.prepareDress(fileIdx, dressIdx);
 		return this;
+	}
+	
+	/**
+	 * 获取人物当前应该绘制的衣服贴图
+	 * 
+	 * @return 纹理对象
+	 */
+	public M2Texture dress() {
+		return Assets.getDress(dressFileIdx, dressIdx, action, actionTick);
+	}
+	
+	/**
+	 * 拿武器
+	 * 
+	 * @param fileIdx 资源文件编号，从0开始
+	 * @param dressIdx 资源文件中的武器编号（600一组），从1开始
+	 * @return 当前对象
+	 */
+	public Hum equip(int fileIdx, int equipIdx) {
+		weaponFileIdx = fileIdx;
+		weaponIdx = equipIdx;
+		Assets.prepareWeapon(weaponFileIdx, weaponIdx);
+		return this;
+	}
+
+	/**
+	 * 获取人物当前应该绘制的武器贴图
+	 * 
+	 * @return 纹理对象
+	 */
+	public M2Texture equip() {
+		if (weaponIdx < 1) return null;
+		return Assets.getWeapon(weaponFileIdx, weaponIdx, action, actionTick);
 	}
 	
 	/**
@@ -272,15 +305,6 @@ public final class Hum {
 	 */
 	public int getShiftY() {
 		return shiftY;
-	}
-	
-	/**
-	 * 获取人物当前应该绘制的贴图
-	 * 
-	 * @return 纹理对象
-	 */
-	public M2Texture dress() {
-		return Assets.getDress(dressFileIdx, dressIdx, action, actionTick);
 	}
 
 	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);

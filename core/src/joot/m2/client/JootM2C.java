@@ -42,7 +42,9 @@ public class JootM2C extends ApplicationAdapter {
 		
 		me = new Hum("林星");
 		Gdx.graphics.setTitle("将唐传奇" + "-" + me.getName());
-		me.move(300, 300).setAction(HumActionInfos.StandSouth);
+		me.move(300, 300).setAction(HumActionInfos.StandSouth)
+			.dress(0, 19) // 穿着雷霆
+			.equip(0, 69); // 拿着开天
 		map.enter("0").move(me.getX(), me.getY()).add(me);
 		
 		stage.addActor(map);
