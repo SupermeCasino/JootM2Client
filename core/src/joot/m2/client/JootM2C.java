@@ -142,8 +142,9 @@ public class JootM2C extends ApplicationAdapter {
 	private HumActionInfo calcMeNextAction(HumActionInfo currentHumAction) {
 		if (!mouseDown) return HumActionInfos.stand(currentHumAction.dir);
 		// 鼠标与屏幕中心x、y轴的距离
-        int xx = mouseX - Gdx.graphics.getWidth() / 2;
-        int yy = mouseY - Gdx.graphics.getHeight() / 2;
+		int[] mapCenter = map.humXY2MapXY(me.getX(), me.getY());
+        int xx = mouseX - (mapCenter[0] + 24); // 人物中心坐标在地图块的一半偏移（横向）
+        int yy = mouseY - (mapCenter[1] - 16); // 这里我们用的是人物的整体高度，人物贴图大概71像素高，占接近三格地图（纵向），因此这个点大概是腰部
         
         if (Math.abs(xx) < 48 && Math.abs(yy) < 32) return HumActionInfos.stand(currentHumAction.dir);
         
@@ -162,6 +163,8 @@ public class JootM2C extends ApplicationAdapter {
         	moveStep = 2;
         }
         
+        // FIXME 这个区域需要要死区（例如<22.5与>=22.5分属两个不同的方位，但贴得太近，则可能出现人物走动起来时方向抖动（在两个方向中来回切换））
+        // FIXME 如果鼠标抬起太快（按下后快速抬起），会出现抖动（官方和私服客户端是不是等服务器响应允许移动后再开始，就简介避免了问题？）
         Direction dir = null;
         boolean canWalk = false;
         if ((angle >= 337.5 && angle <= 360) || angle < 22.5) {
