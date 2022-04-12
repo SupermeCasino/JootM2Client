@@ -3,6 +3,8 @@ client of lom2(legend of mir2)
 
 developed by libgdx
 
+QICQ(group):976761308
+
 ## 2022-4-4 static map render
 
 ## 2022-4-5 map shift
