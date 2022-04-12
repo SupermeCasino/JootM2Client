@@ -77,7 +77,6 @@ public class JootM2C extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		// 当前角色特殊处理
-		me.act();
 		calcMeAction();
 		
 		// 地图的视角和绘制偏移以当前角色为准
@@ -126,27 +125,28 @@ public class JootM2C extends ApplicationAdapter {
 
 	// 计算玩家动作
 	private void calcMeAction() {
-		HumActionInfo currentHumAction = me.getAction();
-		int currentHumActionTick = me.getActionTick();
+		HumActionInfo humAction = me.getAction();
+		int lastActionTick = me.getActionTick();
+		me.act();
+		int nextActionTick = me.getActionTick();
 		
-		// 下一步的动作
-		HumActionInfo nextAction = calcMeNextAction(currentHumAction);		
+		HumActionInfo nextAction = calcMeNextAction(humAction);
 		
-		if (currentHumAction == nextAction) return;
-		if (currentHumAction.act != Action.Stand && currentHumActionTick != 1) return; // 这一步还没走完，等一下下
+		if (humAction == nextAction) return;
+		if (humAction.act != Action.Stand && (nextActionTick != 1 || lastActionTick != humAction.frameCount)) return; // 这一步还没走完，等一下下
 
 		me.setAction(nextAction);
 	}
 
 	// 根据鼠标（手指）动作计算当前人物应该进行的动作
-	private HumActionInfo calcMeNextAction(HumActionInfo currentHumAction) {
-		if (!mouseDown) return HumActionInfos.stand(currentHumAction.dir);
+	private HumActionInfo calcMeNextAction(HumActionInfo humAction) {
+		if (!mouseDown) return HumActionInfos.stand(humAction.dir);
 		// 鼠标与屏幕中心x、y轴的距离
 		int[] mapCenter = map.humXY2MapXY(me.getX(), me.getY());
         int xx = mouseX - (mapCenter[0] + 24); // 人物中心坐标在地图块的一半偏移（横向）
         int yy = mouseY - (mapCenter[1] - 16); // 这里我们用的是人物的整体高度，人物贴图大概71像素高，占接近三格地图（纵向），因此这个点大概是腰部
         
-        if (Math.abs(xx) < 48 && Math.abs(yy) < 32) return HumActionInfos.stand(currentHumAction.dir);
+        if (Math.abs(xx) < 48 && Math.abs(yy) < 32) return HumActionInfos.stand(humAction.dir);
         
         // 来自网络的虚拟摇杆算法，计算方向
         // 勾股定理求斜边
@@ -163,11 +163,9 @@ public class JootM2C extends ApplicationAdapter {
         	moveStep = 2;
         }
         
-        // FIXME 这个区域需要要死区（例如<22.5与>=22.5分属两个不同的方位，但贴得太近，则可能出现人物走动起来时方向抖动（在两个方向中来回切换））
-        // FIXME 如果鼠标抬起太快（按下后快速抬起），会出现抖动（官方和私服客户端是不是等服务器响应允许移动后再开始，就简介避免了问题？）
         Direction dir = null;
         boolean canWalk = false;
-        if ((angle >= 337.5 && angle <= 360) || angle < 22.5) {
+        if (angle >= 337.5 || angle < 22.5) {
         	dir = Direction.East;
             canWalk = map.isCanWalk(me.getX() + 1, me.getY()); // 目标位置（一个身位）是否可达
             if(moveStep == 2 && !map.isCanWalk(me.getX() + 2, me.getY())) // 若想要跑动，且目标不可达，则尝试改为走到最近的一个身位
