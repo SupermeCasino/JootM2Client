@@ -35,9 +35,11 @@ public final class MapLoader extends AsynchronousAssetLoader<Map, AssetLoaderPar
 		String mapNo = fileName.split("/")[1];
 		com.github.jootnet.mir2.core.map.Map _map = Maps.get(mapNo, null);
 		Map ret = new Map(_map.getWidth(), _map.getHeight());
-		IntStream.range(0, _map.getWidth()).parallel().forEach(w -> {
-			IntStream.range(0, _map.getHeight()).parallel().forEach(h -> {
-				MapTileInfo mti = _map.getTiles()[w][h];
+		IntStream.range(0, _map.getWidth()).parallel().forEach(_w -> {
+			IntStream.range(0, _map.getHeight()).parallel().forEach(_h -> {
+				MapTileInfo mti = _map.getTiles()[_w][_h];
+				int w = _w + 1; // 转换为游戏坐标
+				int h = _h + 1;
 				ret.setCanFly(w, h, mti.isCanFly());
 				ret.setCanWalk(w, h, mti.isCanWalk());
 				if (mti.isHasBng()) {

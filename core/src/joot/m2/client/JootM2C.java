@@ -83,6 +83,7 @@ public class JootM2C extends ApplicationAdapter {
 		map.move(me.getX(), me.getY());
 		map.setMeAction(me.getAction(), me.getActionTick());
 		
+		Assets.update(40);
 		stage.act(delta);
 		stage.draw();
 	}
@@ -143,16 +144,16 @@ public class JootM2C extends ApplicationAdapter {
 		if (!mouseDown) return HumActionInfos.stand(humAction.dir);
 		// 鼠标与屏幕中心x、y轴的距离
 		int[] mapCenter = map.humXY2MapXY(me.getX(), me.getY());
-        int xx = mouseX - (mapCenter[0] + 24); // 人物中心坐标在地图块的一半偏移（横向）
-        int yy = mouseY - (mapCenter[1] - 16); // 这里我们用的是人物的整体高度，人物贴图大概71像素高，占接近三格地图（纵向），因此这个点大概是腰部
+        int disX = mouseX - (mapCenter[0] + 24); // 脚踩地图块中心
+        int disY = mouseY - (mapCenter[1] + 16);
         
-        if (Math.abs(xx) < 48 && Math.abs(yy) < 32) return HumActionInfos.stand(humAction.dir);
+        if (Math.abs(disX) < 24 && Math.abs(disY) < 16) return HumActionInfos.stand(humAction.dir);
         
         // 来自网络的虚拟摇杆算法，计算方向
         // 勾股定理求斜边
-        double obl = Math.sqrt(Math.pow(xx, 2) + Math.pow(yy, 2));
+        double obl = Math.sqrt(Math.pow(disX, 2) + Math.pow(disY, 2));
         // 求弧度
-        double rad = yy < 0 ? Math.acos(xx / obl) : (Math.PI * 2- Math.acos(xx / obl));
+        double rad = disY < 0 ? Math.acos(disX / obl) : (Math.PI * 2- Math.acos(disX / obl));
         // 弧度转角度
         double angle = 180 / Math.PI * rad;
 

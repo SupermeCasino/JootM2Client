@@ -5,6 +5,7 @@ import java.beans.PropertyChangeSupport;
 
 import com.github.jootnet.mir2.core.actor.Action;
 import com.github.jootnet.mir2.core.actor.HumActionInfo;
+import com.github.jootnet.mir2.core.actor.HumActionInfos;
 
 import joot.m2.client.Assets;
 import joot.m2.client.image.M2Texture;
@@ -251,6 +252,7 @@ public final class Hum {
 						default:
 							break;
 					}
+					// TODO 通过判断服务端给定数据判断是否允许更新坐标
 					if (x != nx)
 						propertyChangeSupport.firePropertyChange("x", x, nx);
 					if (y != ny)
@@ -258,6 +260,9 @@ public final class Hum {
 					x = nx;
 					y = ny;
 				}
+				
+				action = HumActionInfos.stand(action.dir); // 当前动作完成之后默认转为站立
+				// TODO 从服务端给的玩家动作中找到下一个进行设定
 			}
 			shift();
 		}

@@ -3,8 +3,6 @@ client of lom2(legend of mir2)
 
 developed by libgdx
 
-QICQ(group):976761308
-
 ## 2022-4-4 static map render
 
 ## 2022-4-5 map shift
@@ -18,3 +16,5 @@ QICQ(group):976761308
 (No idea for transparency when hum behind woods)
 
 ## 2022-4-10 weapon render & wing render
+
+## 2022-4-13 map render get ended

@@ -47,15 +47,15 @@ public final class Map {
 	public Map(short width, short height) {
 		this.width = width;
 		this.height = height;
-		canWalk = new boolean[width][height];
-		canFly = new boolean[width][height];
-		tilesFileName = new String[width][height];
-		smTilesFileName = new String[width][height];
-		objsFileName = new String[width][height];
-		tilesTexture = new Texture[width][height];
-		smTilesTexture = new Texture[width][height];
-		objTextureRegions = new List[height];
-		for (int h = 0; h < height; ++h) {
+		canWalk = new boolean[width + 1][height + 1]; // 避免坐标转换
+		canFly = new boolean[width + 1][height + 1];
+		tilesFileName = new String[width + 1][height + 1];
+		smTilesFileName = new String[width + 1][height + 1];
+		objsFileName = new String[width + 1][height + 1];
+		tilesTexture = new Texture[width + 1][height + 1];
+		smTilesTexture = new Texture[width + 1][height + 1];
+		objTextureRegions = new List[height + 1];
+		for (int h = 0; h < objTextureRegions.length; ++h) {
 			objTextureRegions[h] = new ArrayList<>();
 		}
 	}
