@@ -3,10 +3,14 @@ package joot.m2.client;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.github.jootnet.mir2.core.actor.Action;
 import com.github.jootnet.mir2.core.actor.Direction;
@@ -17,16 +21,19 @@ import joot.m2.client.actor.Hum;
 import joot.m2.client.map.MapActor;
 
 public class JootM2C extends ApplicationAdapter {
+	// 窗口过小提示信息
+	private Stage sizeLowerTipsStage;
+	
 	private Stage stage;
 	
 	/** 地图绘制 */
-	private MapActor map = new MapActor();
+	private MapActor mapActor = new MapActor();
 	/** 地图事件 */
-	private InputListener inputListenerInMap = new InputListenerInMap();
-	private boolean mouseDown = false;
+	private InputListener mapInputListener = new InputListenerInMap();
+	private boolean mouseDownFlag = false;
 	private int mouseX;
 	private int mouseY;
-	private int mouseButton;
+	private int mouseDownButton;
 	/** 人物 */
 	public static Hum me;
 	
@@ -37,8 +44,14 @@ public class JootM2C extends ApplicationAdapter {
 
 	@Override
 	public void create () {
+		sizeLowerTipsStage = new Stage(new ScreenViewport());
+		Label sizeLowerTipLabel = new Label("Windows Size Must Upper 800x600", new Label.LabelStyle(new BitmapFont(), Color.RED));
+		sizeLowerTipLabel.setFillParent(true);
+		sizeLowerTipLabel.setAlignment(Align.center);
+		sizeLowerTipsStage.addActor(sizeLowerTipLabel);
+		
 		stage = new Stage(new ScreenViewport());
-		map.addListener(inputListenerInMap);
+		mapActor.addListener(mapInputListener);
 		
 		me = new Hum("林星");
 		Gdx.graphics.setTitle("将唐传奇" + "-" + me.getName());
@@ -46,29 +59,29 @@ public class JootM2C extends ApplicationAdapter {
 			.dress(0, 19) // 穿着雷霆
 			.equip(0, 69) // 拿着开天
 			.wing(0, 1); // 扑扇着白色翅膀
-		map.enter("0").move(me.getX(), me.getY()).add(me);
+		mapActor.enter("0").move(me.getX(), me.getY()).add(me);
 		
-		stage.addActor(map);
-		stage.setKeyboardFocus(map);
+		stage.addActor(mapActor);
+		stage.setKeyboardFocus(mapActor);
 		Gdx.input.setInputProcessor(stage);
 	}
 
 	@Override
 	public void resize (int width, int height) {
-		boolean canResize = true;
+		boolean sizeTooLower = true;
 		if (width < 800) {
-			width = 800;
-			canResize = false;
+			sizeTooLower = false;
 		}
 		if (height < 600) {
-			height = 600;
-			canResize = false;
+			sizeTooLower = false;
 		}
-		if (!canResize)
-			Gdx.graphics.setWindowedMode(width, height);
+		if (!sizeTooLower) {
+			sizeLowerTipsStage.getViewport().update(width, height, true);
+			return;
+		}
 
 		stage.getViewport().update(width, height, true);
-		map.setBounds(0, 0, width, height);
+		mapActor.setBounds(0, 0, width, height);
 	}
 
 	@Override
@@ -80,10 +93,15 @@ public class JootM2C extends ApplicationAdapter {
 		calcMeAction();
 		
 		// 地图的视角和绘制偏移以当前角色为准
-		map.move(me.getX(), me.getY());
-		map.setMeAction(me.getAction(), me.getActionTick());
+		mapActor.move(me.getX(), me.getY());
+		mapActor.setMeAction(me.getAction(), me.getActionTick());
 		
 		Assets.update(40);
+		if (Gdx.graphics.getWidth() < 800 || Gdx.graphics.getHeight() < 600) {
+			sizeLowerTipsStage.act(delta);
+			sizeLowerTipsStage.draw();
+			return;
+		}
 		stage.act(delta);
 		stage.draw();
 	}
@@ -91,20 +109,21 @@ public class JootM2C extends ApplicationAdapter {
 	@Override
 	public void dispose () {
 		stage.dispose();
+		sizeLowerTipsStage.dispose();
 	}
 	
 	/** 鼠标或手指(移动端)在地图上按下时 */
 	private boolean mapTouchDown (InputEvent event, float x, float y, int pointer, int button) {
-		mouseDown = true;
+		mouseDownFlag = true;
 		mouseX = (int) x;
 		mouseY = (int) y;
-		mouseButton = button;
+		mouseDownButton = button;
 		return true;
 	}
 
 	/** 鼠标或手指(移动端)在地图上抬起时 */
 	private void mapTouchUp (InputEvent event, float x, float y, int pointer, int button) {
-		mouseDown = false;
+		mouseDownFlag = false;
 	}
 	
 	/** 鼠标在地图上移动时 */
@@ -141,9 +160,9 @@ public class JootM2C extends ApplicationAdapter {
 
 	// 根据鼠标（手指）动作计算当前人物应该进行的动作
 	private HumActionInfo calcMeNextAction(HumActionInfo humAction) {
-		if (!mouseDown) return HumActionInfos.stand(humAction.dir);
+		if (!mouseDownFlag) return HumActionInfos.stand(humAction.dir);
 		// 鼠标与屏幕中心x、y轴的距离
-		int[] mapCenter = map.humXY2MapXY(me.getX(), me.getY());
+		int[] mapCenter = mapActor.humXY2MapXY(me.getX(), me.getY());
         int disX = mouseX - (mapCenter[0] + 24); // 脚踩地图块中心
         int disY = mouseY - (mapCenter[1] + 16);
         
@@ -158,9 +177,9 @@ public class JootM2C extends ApplicationAdapter {
         double angle = 180 / Math.PI * rad;
 
         int moveStep = 0;
-        if (mouseButton == Buttons.LEFT) {
+        if (mouseDownButton == Buttons.LEFT) {
         	moveStep = 1;
-        } else if (mouseButton == Buttons.RIGHT) {
+        } else if (mouseDownButton == Buttons.RIGHT) {
         	moveStep = 2;
         }
         
@@ -168,43 +187,43 @@ public class JootM2C extends ApplicationAdapter {
         boolean canWalk = false;
         if (angle >= 337.5 || angle < 22.5) {
         	dir = Direction.East;
-            canWalk = map.isCanWalk(me.getX() + 1, me.getY()); // 目标位置（一个身位）是否可达
-            if(moveStep == 2 && !map.isCanWalk(me.getX() + 2, me.getY())) // 若想要跑动，且目标不可达，则尝试改为走到最近的一个身位
+            canWalk = mapActor.isCanWalk(me.getX() + 1, me.getY()); // 目标位置（一个身位）是否可达
+            if(moveStep == 2 && !mapActor.isCanWalk(me.getX() + 2, me.getY())) // 若想要跑动，且目标不可达，则尝试改为走到最近的一个身位
                 --moveStep;
         } else if (angle >= 22.5 && angle < 67.5) {
         	dir = Direction.SouthEast;
-            canWalk = map.isCanWalk(me.getX() + 1, me.getY() + 1);
-            if(moveStep == 2 && !map.isCanWalk(me.getX() + 2, me.getY() + 2))
+            canWalk = mapActor.isCanWalk(me.getX() + 1, me.getY() + 1);
+            if(moveStep == 2 && !mapActor.isCanWalk(me.getX() + 2, me.getY() + 2))
                 --moveStep;
         } else if (angle >= 67.5 && angle < 112.5) {
         	dir = Direction.South;
-            canWalk = map.isCanWalk(me.getX(), me.getY() + 1);
-            if(moveStep == 2 && !map.isCanWalk(me.getX(), me.getY() + 2))
+            canWalk = mapActor.isCanWalk(me.getX(), me.getY() + 1);
+            if(moveStep == 2 && !mapActor.isCanWalk(me.getX(), me.getY() + 2))
                 --moveStep;
         } else if (angle >= 112.5 && angle < 157.5) {
         	dir = Direction.SouthWest;
-            canWalk = map.isCanWalk(me.getX() - 1, me.getY() + 1);
-            if(moveStep == 2 && !map.isCanWalk(me.getX() - 2, me.getY() + 2))
+            canWalk = mapActor.isCanWalk(me.getX() - 1, me.getY() + 1);
+            if(moveStep == 2 && !mapActor.isCanWalk(me.getX() - 2, me.getY() + 2))
                 --moveStep;
         } else if (angle >= 157.5 && angle < 202.5) {
         	dir = Direction.West;
-            canWalk = map.isCanWalk(me.getX() - 1, me.getY());
-            if(moveStep == 2 && !map.isCanWalk(me.getX() - 2, me.getY()))
+            canWalk = mapActor.isCanWalk(me.getX() - 1, me.getY());
+            if(moveStep == 2 && !mapActor.isCanWalk(me.getX() - 2, me.getY()))
                 --moveStep;
         } else if (angle >= 202.5 && angle < 247.5) {
         	dir = Direction.NorthWest;
-            canWalk = map.isCanWalk(me.getX() - 1, me.getY() - 1);
-            if(moveStep == 2 && !map.isCanWalk(me.getX() - 2, me.getY() - 2))
+            canWalk = mapActor.isCanWalk(me.getX() - 1, me.getY() - 1);
+            if(moveStep == 2 && !mapActor.isCanWalk(me.getX() - 2, me.getY() - 2))
                 --moveStep;
         } else if (angle >= 247.5 && angle < 292.5) {
         	dir = Direction.North;
-        	canWalk = map.isCanWalk(me.getX(), me.getY() - 1);
-            if(moveStep == 2 && !map.isCanWalk(me.getX(), me.getY() - 2))
+        	canWalk = mapActor.isCanWalk(me.getX(), me.getY() - 1);
+            if(moveStep == 2 && !mapActor.isCanWalk(me.getX(), me.getY() - 2))
                 --moveStep;
         } else if (angle >= 292.5 && angle < 337.5) {
         	dir = Direction.NorthEast;
-        	 canWalk = map.isCanWalk(me.getX() + 1, me.getY() - 1);
-             if(moveStep == 2 && !map.isCanWalk(me.getX() + 2, me.getY() - 2))
+        	 canWalk = mapActor.isCanWalk(me.getX() + 1, me.getY() - 1);
+             if(moveStep == 2 && !mapActor.isCanWalk(me.getX() + 2, me.getY() - 2))
                  --moveStep;
         }
         
