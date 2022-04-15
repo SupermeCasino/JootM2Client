@@ -21,6 +21,8 @@ public final class Hum {
 	private String name;
 	private int x;
 	private int y;
+	private int nextX;
+	private int nextY;
 	private int shiftX; // 地图绘制时横向偏移量，人物向右时为正，走动时第一帧为8，第二帧为16（动作花费6帧时）
 	private int shiftY;
 	
@@ -53,7 +55,7 @@ public final class Hum {
 	 * 
 	 * @return 玩家名称
 	 */
-	public String getName() {
+	public String name() {
 		return name;
 	}
 	
@@ -71,6 +73,8 @@ public final class Hum {
 			propertyChangeSupport.firePropertyChange("y", this.y, y);
 		this.x = x;
 		this.y = y;
+		this.nextX = x;
+		this.nextY = y;
 		return this;
 	}
 	
@@ -125,6 +129,60 @@ public final class Hum {
 	 */
 	public int getY() {
 		return y;
+	}
+
+	/**
+	 * 设置人物身处横坐标
+	 * 
+	 * @param x 地图横坐标
+	 */
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	/**
+	 * 设置人物身处纵坐标
+	 * 
+	 * @param x 地图纵坐标
+	 */
+	public void setY(int y) {
+		this.y = y;
+	}
+
+	/**
+	 * 获取角色当前动作完成之后应该到达的位置
+	 * 
+	 * @return 目标位置横坐标
+	 */
+	public int getNextX() {
+		return nextX;
+	}
+
+	/**
+	 * 获取角色当前动作完成之后应该到达的位置
+	 * 
+	 * @return 目标位置纵坐标
+	 */
+	public int getNextY() {
+		return nextY;
+	}
+
+	/**
+	 * 设置角色当前动作完成之后应该到达的位置
+	 * 
+	 * @param nextX 目标位置横坐标
+	 */
+	public void setNextX(int nextX) {
+		this.nextX = nextX;
+	}
+
+	/**
+	 * 设置角色当前动作完成之后应该到达的位置
+	 * 
+	 * @param nextY 目标位置纵坐标
+	 */
+	public void setNextY(int nextY) {
+		this.nextY = nextY;
 	}
 	
 	/**
@@ -252,17 +310,12 @@ public final class Hum {
 						default:
 							break;
 					}
-					// TODO 通过判断服务端给定数据判断是否允许更新坐标
-					if (x != nx)
-						propertyChangeSupport.firePropertyChange("x", x, nx);
-					if (y != ny)
-						propertyChangeSupport.firePropertyChange("y", y, ny);
-					x = nx;
-					y = ny;
+					if (nextX == nx && nextY == ny) { // 允许移动
+						move(nx, ny);
+					}
 				}
 				
 				action = HumActionInfos.stand(action.dir); // 当前动作完成之后默认转为站立
-				// TODO 从服务端给的玩家动作中找到下一个进行设定
 			}
 			shift();
 		}

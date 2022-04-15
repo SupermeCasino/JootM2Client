@@ -7,7 +7,7 @@ import joot.m2.client.JootM2C;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
-		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+		var config = new LwjglApplicationConfiguration();
 		config.resizable = true;
 		config.width = 800;
 		config.height = 600;

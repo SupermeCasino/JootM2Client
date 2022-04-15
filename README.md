@@ -18,3 +18,7 @@ developed by libgdx
 ## 2022-4-10 weapon render & wing render
 
 ## 2022-4-13 map render get ended
+
+## 2022-4-15 add a dummy client
+
+(No mock server, just single endpoint)
