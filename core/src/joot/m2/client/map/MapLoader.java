@@ -10,7 +10,6 @@ import com.badlogic.gdx.assets.loaders.AsynchronousAssetLoader;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
-import com.github.jootnet.mir2.core.map.MapTileInfo;
 import com.github.jootnet.mir2.core.map.Maps;
 
 /** 地图异步加载对象 */
@@ -26,24 +25,24 @@ public final class MapLoader extends AsynchronousAssetLoader<Map, AssetLoaderPar
 	@Override
 	public void loadAsync(AssetManager manager, String fileName, FileHandle file,
 			AssetLoaderParameters<Map> parameter) {
-		String mapNo = fileName.split("/")[1];
+		var mapNo = fileName.split("/")[1];
 		Maps.get(mapNo, Paths.get(Dir, mapNo + ".map").toString());
 	}
 
 	@Override
 	public Map loadSync(AssetManager manager, String fileName, FileHandle file, AssetLoaderParameters<Map> parameter) {
-		String mapNo = fileName.split("/")[1];
-		com.github.jootnet.mir2.core.map.Map _map = Maps.get(mapNo, null);
-		Map ret = new Map(_map.getWidth(), _map.getHeight());
+		var mapNo = fileName.split("/")[1];
+		var _map = Maps.get(mapNo, null);
+		var ret = new Map(_map.getWidth(), _map.getHeight());
 		IntStream.range(0, _map.getWidth()).parallel().forEach(_w -> {
 			IntStream.range(0, _map.getHeight()).parallel().forEach(_h -> {
-				MapTileInfo mti = _map.getTiles()[_w][_h];
-				int w = _w + 1; // 转换为游戏坐标
-				int h = _h + 1;
+				var mti = _map.getTiles()[_w][_h];
+				var w = _w + 1; // 转换为游戏坐标
+				var h = _h + 1;
 				ret.setCanFly(w, h, mti.isCanFly());
 				ret.setCanWalk(w, h, mti.isCanWalk());
 				if (mti.isHasBng()) {
-					String tileFileName = "tiles";
+					var tileFileName = "tiles";
 					if (mti.getBngFileIdx() != 0) {
 						tileFileName += mti.getBngFileIdx();
 					}
@@ -51,7 +50,7 @@ public final class MapLoader extends AsynchronousAssetLoader<Map, AssetLoaderPar
 					ret.setTileFileName(w, h, tileFileName);
 				}
 				if (mti.isHasMid()) {
-					String smTileFileName = "smtiles";
+					var smTileFileName = "smtiles";
 					if (mti.getMidFileIdx() != 0) {
 						smTileFileName += mti.getMidFileIdx();
 					}
@@ -59,7 +58,7 @@ public final class MapLoader extends AsynchronousAssetLoader<Map, AssetLoaderPar
 					ret.setSmTileFileName(w, h, smTileFileName);
 				}
 				if (!mti.isHasAni() && mti.isHasObj()) {
-					String objFileName = "objects";
+					var objFileName = "objects";
 					if (mti.getObjFileIdx() != 0) {
 						objFileName += mti.getObjFileIdx();
 					}

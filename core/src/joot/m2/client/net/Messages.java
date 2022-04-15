@@ -17,10 +17,10 @@ public final class Messages {
      * @return 人物动作更新消息
      */
     public static Message humActionChange(Hum hum) {
-        int step = 1;
+        var step = 1;
 		if (hum.getAction().act == Action.Run) step++;
-        int nx = hum.getX();
-        int ny = hum.getY();
+        var nx = hum.getX();
+        var ny = hum.getY();
         switch (hum.getAction().dir) {
             case North:
                 ny -= step;
@@ -54,6 +54,6 @@ public final class Messages {
             default:
                 break;
         }
-        return new HumActionChange(hum.name(), hum.getX(), hum.getY(), nx, ny, hum.getAction());
+        return new HumActionChange(hum.getName(), hum.getX(), hum.getY(), nx, ny, hum.getAction());
     }
 }

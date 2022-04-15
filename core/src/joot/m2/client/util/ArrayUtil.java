@@ -37,8 +37,8 @@ public final class ArrayUtil {
 	@SuppressWarnings("unchecked")
 	public static <T> T[] resize(T[] origin, int minSize) {
 		if (origin.length >= minSize) return origin;
-		T[] items = origin;
-		T[] newItems = (T[])Array.newInstance(items.getClass().getComponentType(), minSize);
+		var items = origin;
+		var newItems = (T[])Array.newInstance(items.getClass().getComponentType(), minSize);
 		System.arraycopy(items, 0, newItems, 0, Math.min(origin.length, newItems.length));
 		return newItems;
 	}
@@ -56,7 +56,7 @@ public final class ArrayUtil {
 	 * @see #resize(Object[], int)
 	 */
 	public static <T> T[] setEle(T[] arr, int index, T ele) {
-		T[] items = resize(arr, index + 1);
+		var items = resize(arr, index + 1);
 		items[index] = ele;
 		return items;
 	}

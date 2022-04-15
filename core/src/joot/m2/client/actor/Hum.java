@@ -55,7 +55,7 @@ public final class Hum {
 	 * 
 	 * @return 玩家名称
 	 */
-	public String name() {
+	public String getName() {
 		return name;
 	}
 	
@@ -66,7 +66,7 @@ public final class Hum {
 	 * @param y 身处地图纵坐标
 	 * @return 当前对象
 	 */
-	public Hum move(int x, int y) {
+	public Hum setPosition(int x, int y) {
 		if (x != this.x)
 			propertyChangeSupport.firePropertyChange("x", this.x, x);
 		if (y != this.y)
@@ -85,7 +85,7 @@ public final class Hum {
 	 * @return 当前对象
 	 */
 	public Hum setAction(HumActionInfo action) {
-		HumActionInfo originAction = this.action;
+		var originAction = this.action;
 		this.action = action;
 		if (action != originAction) {
 			actionTick = 1;
@@ -192,7 +192,7 @@ public final class Hum {
 	 * @param dressIdx 资源文件中的衣服编号（600一组），从1开始
 	 * @return 当前对象
 	 */
-	public Hum dress(int fileIdx, int dressIdx) {
+	public Hum setDress(int fileIdx, int dressIdx) {
 		this.humFileIdx = fileIdx;
 		this.humIdx = dressIdx;
 		Assets.prepareDress(fileIdx, dressIdx);
@@ -204,7 +204,7 @@ public final class Hum {
 	 * 
 	 * @return 纹理对象
 	 */
-	public M2Texture dress() {
+	public M2Texture getCurrentDressTexture() {
 		return Assets.getDress(humFileIdx, humIdx, action, actionTick);
 	}
 	
@@ -215,7 +215,7 @@ public final class Hum {
 	 * @param dressIdx 资源文件中的衣服特效编号（600一组），从1开始
 	 * @return 当前对象
 	 */
-	public Hum wing(int fileIdx, int dressIdx) {
+	public Hum setWing(int fileIdx, int dressIdx) {
 		this.humEffectFileIdx = fileIdx;
 		this.humEffectIdx = dressIdx;
 		Assets.prepareHumEffect(fileIdx, dressIdx);
@@ -227,7 +227,7 @@ public final class Hum {
 	 * 
 	 * @return 纹理对象
 	 */
-	public M2Texture wing() {
+	public M2Texture getCurrentWingTexture() {
 		return Assets.getHumEffect(humEffectFileIdx, humEffectIdx, action, actionTick);
 	}
 	
@@ -238,7 +238,7 @@ public final class Hum {
 	 * @param humIdx 资源文件中的武器编号（600一组），从1开始
 	 * @return 当前对象
 	 */
-	public Hum equip(int fileIdx, int equipIdx) {
+	public Hum setWeapon(int fileIdx, int equipIdx) {
 		weaponFileIdx = fileIdx;
 		weaponIdx = equipIdx;
 		Assets.prepareWeapon(weaponFileIdx, weaponIdx);
@@ -250,7 +250,7 @@ public final class Hum {
 	 * 
 	 * @return 纹理对象
 	 */
-	public M2Texture equip() {
+	public M2Texture getCurrentWeaponTexture() {
 		if (weaponIdx < 1) return null;
 		return Assets.getWeapon(weaponFileIdx, weaponIdx, action, actionTick);
 	}
@@ -272,11 +272,11 @@ public final class Hum {
 
 				if (action.act == Action.Walk || action.act == Action.Run) {
 					// 走完或跑完了一步，地图中心坐标更新
-					int step = 1;
+					var step = 1;
 					if (action.act == Action.Run) step++;
 
-					int nx = x;
-					int ny = y;
+					var nx = x;
+					var ny = y;
 					switch (action.dir) {
 						case North:
 							ny -= step;
@@ -311,7 +311,7 @@ public final class Hum {
 							break;
 					}
 					if (nextX == nx && nextY == ny) { // 允许移动
-						move(nx, ny);
+						setPosition(nx, ny);
 					}
 				}
 				
@@ -328,7 +328,7 @@ public final class Hum {
 		shiftX = 0;
 		shiftY = 0;
 		if (action.act == Action.Walk || action.act == Action.Run) {			
-			int step = action.act == Action.Run ? 2 : 1;
+			var step = action.act == Action.Run ? 2 : 1;
 
 			switch (action.dir) {
 			case North:

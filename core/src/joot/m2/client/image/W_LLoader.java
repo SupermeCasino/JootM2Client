@@ -29,7 +29,7 @@ public final class W_LLoader extends AsynchronousAssetLoader<M2Texture, AssetLoa
 	@Override
 	public void loadAsync(AssetManager manager, String fileName, FileHandle file,
 			AssetLoaderParameters<M2Texture> parameter) {
-		String[] lib_idx = fileName.split("/");
+		var lib_idx = fileName.split("/");
 		texture_ = ImageLibraries.get(lib_idx[0], Paths.get(Dir, lib_idx[0]).toString()).tex(Integer.parseInt(lib_idx[1]));
 		ii_ = ImageLibraries.get(lib_idx[0], Paths.get(Dir, lib_idx[0]).toString()).info(Integer.parseInt(lib_idx[1]));
 	}
@@ -40,14 +40,14 @@ public final class W_LLoader extends AsynchronousAssetLoader<M2Texture, AssetLoa
 		M2Texture ret = null;
 		if (texture_.empty()) {
 			if (EMPTY == null) {
-				Pixmap pm = new Pixmap(texture_.getWidth(), texture_.getHeight(), Pixmap.Format.RGBA8888);
+				var pm = new Pixmap(texture_.getWidth(), texture_.getHeight(), Pixmap.Format.RGBA8888);
 				pm.getPixels().put(texture_.getRGBAs());
 				pm.getPixels().flip();
 				EMPTY = new M2Texture(pm, ii_.getOffsetX(), ii_.getOffsetY());
 			}
 			ret = EMPTY;
 		} else {
-			Pixmap pm = new Pixmap(texture_.getWidth(), texture_.getHeight(), Pixmap.Format.RGBA8888);
+			var pm = new Pixmap(texture_.getWidth(), texture_.getHeight(), Pixmap.Format.RGBA8888);
 			pm.getPixels().put(texture_.getRGBAs());
 			pm.getPixels().flip();
 			ret = new M2Texture(pm, ii_.getOffsetX(), ii_.getOffsetY());
