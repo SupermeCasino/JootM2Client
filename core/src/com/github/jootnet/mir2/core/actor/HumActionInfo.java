@@ -16,4 +16,15 @@ public final class HumActionInfo {
     public short frameCount;
     /** 每张图持续时间（毫秒） */
     public short duration;
+    
+    @Override
+    public boolean equals(Object obj) {
+    	var that = (HumActionInfo) obj;
+    	if (this.act != that.act) return false;
+    	if (this.dir != that.dir) return false;
+    	if (this.frameIdx != that.frameIdx) return false;
+    	if (this.frameCount != that.frameCount) return false;
+    	if (this.duration != that.duration) return false;
+    	return true;
+    }
 }
