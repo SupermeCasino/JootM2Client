@@ -1,11 +1,11 @@
 package joot.m2.client.net;
 
-import java.io.IOException;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.handshake.ServerHandshake;
 
 import joot.m2.client.actor.Hum;
@@ -16,20 +16,24 @@ import joot.m2.client.actor.Hum;
 public final class WebSocketClient extends org.java_websocket.client.WebSocketClient {
 	
     public WebSocketClient(URI serverUri) {
-		super(serverUri);
+		super(serverUri, new Draft_6455(), null, 300);
 		connect();
+		var reConnectThread = new ReconnectThread();
+		reConnectThread.setName("M2ReconnectThread-" + reConnectThread.getId());
+		reConnectThread.start();
 	}
 
+    /** 接受到的数据 */
 	private List<Message> recvMsgList = new ArrayList<>();
 
-    /**
-     * 断开与服务器的连接
-     */
-    public void close() {
+	
+	@Override
+	protected void finalize() throws Throwable {
         recvMsgList.clear();
+        needReconnect = false;
     	super.close();
-    }
-
+	}
+	
     /**
      * 获取服务端发送过来的所有消息
      * <br>
@@ -54,16 +58,30 @@ public final class WebSocketClient extends org.java_websocket.client.WebSocketCl
     public void sendHumActionChange(Hum hum) {
     	try {
 			send(Messages.pack(Messages.humActionChange(hum)));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) { }
+    }
+    
+    
+    
+    private volatile boolean needReconnect = true;
+    
+    private class ReconnectThread extends Thread {
+    	@Override
+    	public void run() {
+    		while (needReconnect) {
+    			try {
+	    			if (!WebSocketClient.this.isOpen()) {
+	    				WebSocketClient.this.reconnectBlocking();
+	    			}
+					Thread.sleep(1000);
+    			} catch(Exception ex) { }
+    		}
+    			System.out.println();
+    	}
     }
 
 	@Override
-	public void onOpen(ServerHandshake handshakedata) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void onOpen(ServerHandshake handshakedata) { }
 	
 	@Override
 	public void onMessage(ByteBuffer bytes) {
@@ -71,24 +89,15 @@ public final class WebSocketClient extends org.java_websocket.client.WebSocketCl
 			synchronized (recvMsgList) {
 				recvMsgList.add(Messages.unpack(bytes));	
 			}
-		}catch(Exception ex) {
-			ex.printStackTrace();
-		}
+		}catch(Exception ex) { }
 	}
 
 	@Override
-	public void onMessage(String message) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void onMessage(String message) { }
 
 	@Override
-	public void onClose(int code, String reason, boolean remote) {
-
-	}
+	public void onClose(int code, String reason, boolean remote) { }
 
 	@Override
-	public void onError(Exception ex) {
-		ex.printStackTrace();
-	}
+	public void onError(Exception ex) { }
 }
