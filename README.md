@@ -19,3 +19,5 @@ developed by libgdx
 
 ## 2022-4-17 add a sample server interact logic
 (WebSocketClient planed use io.netty)
+
+## 2022-4-19 split screen
