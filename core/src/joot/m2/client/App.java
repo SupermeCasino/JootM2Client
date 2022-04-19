@@ -19,6 +19,10 @@ public class App extends Game {
 	 * 游戏场景管理器
 	 */
 	public static App SceneManager = null;
+	/**
+	 * 君の名は。
+	 */
+	public static String MyName = null;
 	
 	// 登陆场景
 	private LoginScene loginScene;

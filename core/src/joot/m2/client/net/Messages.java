@@ -119,7 +119,19 @@ public final class Messages {
 				buffer.get(tipBytes);
 				serverTip = new String(tipBytes, StandardCharsets.UTF_8);
 			}
-			return new LoginResp(code, serverTip);
+			int roleCount = buffer.get();
+			var roles = new LoginResp.Role[roleCount];
+			for (var i = 0; i < roleCount; ++i) {
+				roles[i] = new LoginResp.Role();
+				roles[i].type = buffer.getInt();
+				roles[i].level = buffer.getInt();
+				roles[i].status = buffer.getInt();
+				var nameBytesLen = buffer.get();
+				byte[] nameBytes = new byte[nameBytesLen];
+				buffer.get(nameBytes);
+				roles[i].name = new String(nameBytes, StandardCharsets.UTF_8);
+			}
+			return new LoginResp(code, serverTip, roles);
 		}
 		
 		default:

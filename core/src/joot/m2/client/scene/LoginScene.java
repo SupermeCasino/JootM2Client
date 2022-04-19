@@ -91,6 +91,7 @@ public final class LoginScene extends BaseScene {
 				var code = loginResp.code();
 				if (code == 0) {
 					//App.SceneManager.toChrSel();
+					App.MyName = loginResp.roles()[0].name;
 					App.SceneManager.toGame();
 					return;
 				}

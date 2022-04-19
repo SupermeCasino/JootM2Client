@@ -15,6 +15,7 @@ import com.github.jootnet.mir2.core.actor.Direction;
 import com.github.jootnet.mir2.core.actor.HumActionInfo;
 import com.github.jootnet.mir2.core.actor.HumActionInfos;
 
+import joot.m2.client.App;
 import joot.m2.client.actor.Hum;
 import joot.m2.client.map.MapActor;
 import joot.m2.client.net.Message;
@@ -49,8 +50,8 @@ public final class GameScene extends BaseScene {
 		stage = new Stage(new ScreenViewport());
 		mapActor.addListener(mapInputListener);
 		
-		me = new Hum("林星");
-		Gdx.graphics.setTitle("将唐传奇" + "-" + me.getName());
+		me = new Hum(App.MyName);
+		Gdx.graphics.setTitle("将唐传奇" + "-" + App.MyName);
 		me.setPosition(300, 300).setAction(HumActionInfos.StandSouth)
 			.setDress(0, 19) // 穿着雷霆
 			.setWeapon(0, 69) // 拿着开天
