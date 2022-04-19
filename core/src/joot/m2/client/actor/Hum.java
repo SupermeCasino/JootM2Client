@@ -7,8 +7,8 @@ import com.github.jootnet.mir2.core.actor.Action;
 import com.github.jootnet.mir2.core.actor.HumActionInfo;
 import com.github.jootnet.mir2.core.actor.HumActionInfos;
 
-import joot.m2.client.Assets;
 import joot.m2.client.image.M2Texture;
+import joot.m2.client.util.AssetUtil;
 
 /**
  * 玩家对象
@@ -47,7 +47,7 @@ public final class Hum {
 	public Hum(String name) {
 		this.name = name;
 		this.humIdx = 1; // 默认是穿着裤衩光着膀子的秃子
-		Assets.prepareDress(0, 1);
+		AssetUtil.prepareDress(0, 1);
 	}
 	
 	/**
@@ -195,7 +195,7 @@ public final class Hum {
 	public Hum setDress(int fileIdx, int dressIdx) {
 		this.humFileIdx = fileIdx;
 		this.humIdx = dressIdx;
-		Assets.prepareDress(fileIdx, dressIdx);
+		AssetUtil.prepareDress(fileIdx, dressIdx);
 		return this;
 	}
 	
@@ -205,7 +205,7 @@ public final class Hum {
 	 * @return 纹理对象
 	 */
 	public M2Texture getCurrentDressTexture() {
-		return Assets.getDress(humFileIdx, humIdx, action, actionTick);
+		return AssetUtil.getDress(humFileIdx, humIdx, action, actionTick);
 	}
 	
 	/**
@@ -218,7 +218,7 @@ public final class Hum {
 	public Hum setWing(int fileIdx, int dressIdx) {
 		this.humEffectFileIdx = fileIdx;
 		this.humEffectIdx = dressIdx;
-		Assets.prepareHumEffect(fileIdx, dressIdx);
+		AssetUtil.prepareHumEffect(fileIdx, dressIdx);
 		return this;
 	}
 	
@@ -228,7 +228,7 @@ public final class Hum {
 	 * @return 纹理对象
 	 */
 	public M2Texture getCurrentWingTexture() {
-		return Assets.getHumEffect(humEffectFileIdx, humEffectIdx, action, actionTick);
+		return AssetUtil.getHumEffect(humEffectFileIdx, humEffectIdx, action, actionTick);
 	}
 	
 	/**
@@ -241,7 +241,7 @@ public final class Hum {
 	public Hum setWeapon(int fileIdx, int equipIdx) {
 		weaponFileIdx = fileIdx;
 		weaponIdx = equipIdx;
-		Assets.prepareWeapon(weaponFileIdx, weaponIdx);
+		AssetUtil.prepareWeapon(weaponFileIdx, weaponIdx);
 		return this;
 	}
 
@@ -252,7 +252,7 @@ public final class Hum {
 	 */
 	public M2Texture getCurrentWeaponTexture() {
 		if (weaponIdx < 1) return null;
-		return Assets.getWeapon(weaponFileIdx, weaponIdx, action, actionTick);
+		return AssetUtil.getWeapon(weaponFileIdx, weaponIdx, action, actionTick);
 	}
 	
 	/**

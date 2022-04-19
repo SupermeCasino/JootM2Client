@@ -14,6 +14,8 @@ import com.github.jootnet.mir2.core.actor.HumActionInfo;
 
 import joot.m2.client.actor.Hum;
 import joot.m2.client.net.messages.HumActionChange;
+import joot.m2.client.net.messages.LoginReq;
+import joot.m2.client.net.messages.LoginResp;
 
 /**
  * 消息工具类
@@ -30,13 +32,13 @@ public final class Messages {
 	public static byte[] pack(Message message) throws IOException {
 		var stream = new ByteArrayOutputStream();
 		var buffer = new DataOutputStream(stream);
+		// 0.类型
+		buffer.writeInt(message.type().id());
 		
 		switch (message.type()) {
 		
 		case HUM_ACTION_CHANGE: {
 			var humActionChange = (HumActionChange) message;
-			// 0.类型
-			buffer.writeInt(message.type().id());
 			// 1.人物姓名
 			byte[] nameBytes = humActionChange.name().getBytes(StandardCharsets.UTF_8);
 			buffer.writeByte((byte) nameBytes.length);
@@ -48,15 +50,29 @@ public final class Messages {
 			buffer.writeShort((short) humActionChange.nextY());
 			// 3.动作
 			pack(humActionChange.action(), buffer);
-			buffer.flush();
-			return stream.toByteArray();
+			break;
+		}
+		
+		case LOGIN_REQ: {
+			var loginReq = (LoginReq) message;
+			// 1.用户名
+			byte[] unaBytes = loginReq.una().getBytes(StandardCharsets.UTF_8);
+			buffer.writeByte((byte) unaBytes.length);
+			buffer.write(unaBytes);
+			// 2.密码
+			byte[] pswBytes = loginReq.psw().getBytes(StandardCharsets.UTF_8);
+			buffer.writeByte((byte) pswBytes.length);
+			buffer.write(pswBytes);
+			break;
 		}
 		
 		
-		default:break;
+		default:
+			return null;
 		}
-		
-		return null;
+
+		buffer.flush();
+		return stream.toByteArray();
 	}
 	
 	/**
@@ -69,7 +85,7 @@ public final class Messages {
 	public static Message unpack(ByteBuffer buffer) throws BufferUnderflowException {
 		MessageType type = null;
 		
-		int typeId = buffer.getInt();
+		var typeId = buffer.getInt();
 		for (var msgType : MessageType.values()) {
 			if (msgType.id() == typeId) {
 				type = msgType;
@@ -82,8 +98,8 @@ public final class Messages {
 		switch (type) {
 		
 		case HUM_ACTION_CHANGE: {
-			byte nameBytesLen = buffer.get();
-			byte[] nameBytes = new byte[nameBytesLen];
+			var nameBytesLen = buffer.get();
+			var nameBytes = new byte[nameBytesLen];
 			buffer.get(nameBytes);
 			short x = buffer.getShort();
 			short y = buffer.getShort();
@@ -94,8 +110,20 @@ public final class Messages {
 			return new HumActionChange(new String(nameBytes, StandardCharsets.UTF_8), x, y, nx, ny, humActionInfo);
 		}
 		
+		case LOGIN_RESP: {
+			var code = buffer.getInt();
+			var tipBytesLen = buffer.get();
+			String serverTip = null;
+			if (tipBytesLen > 0) {
+				byte[] tipBytes = new byte[tipBytesLen];
+				buffer.get(tipBytes);
+				serverTip = new String(tipBytes, StandardCharsets.UTF_8);
+			}
+			return new LoginResp(code, serverTip);
+		}
 		
-		default:break;
+		default:
+			break;
 		}
 		
 		return null;
@@ -146,6 +174,10 @@ public final class Messages {
                 break;
         }
         return new HumActionChange(hum.getName(), hum.getX(), hum.getY(), nx, ny, hum.getAction());
+    }
+    
+    public static Message loginReq(String una, String psw) {
+    	return new LoginReq(una, psw);
     }
     
     private static void pack(HumActionInfo info, DataOutput buffer) throws IOException {

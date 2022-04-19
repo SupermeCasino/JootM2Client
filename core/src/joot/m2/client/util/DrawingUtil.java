@@ -1,4 +1,4 @@
-package joot.m2.client;
+package joot.m2.client.util;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
  * @author 林星
  *
  */
-public class Drawing {
+public class DrawingUtil {
 	
 	/** 矩形框对象 */
 	public static class RectI {
