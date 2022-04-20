@@ -19,10 +19,6 @@ public class App extends Game {
 	 * 游戏场景管理器
 	 */
 	public static App SceneManager = null;
-	/**
-	 * 君の名は。
-	 */
-	public static String MyName = null;
 	
 	// 登陆场景
 	private LoginScene loginScene;
@@ -33,9 +29,9 @@ public class App extends Game {
 
 	@Override
 	public void create() {
-		//Assets.init("D:\\Program Files (x86)\\盛大网络\\热血传奇");
-		//Assets.init("D:\\Program Files\\ShengquGames\\Legend of mir");
-		//Assets.init("/Users/linxing/m2/盛大网络/热血传奇");
+		//AssetUtil.init("D:\\Program Files (x86)\\盛大网络\\热血传奇");
+		//AssetUtil.init("D:\\Program Files\\ShengquGames\\Legend of mir");
+		//AssetUtil.init("/Users/linxing/m2/盛大网络/热血传奇");
 		AssetUtil.init("/Users/linxing/m2/ShengquGames/Legend of mir");
 		NetworkUtil.init("ws://127.0.0.1:55842/m2");
 		

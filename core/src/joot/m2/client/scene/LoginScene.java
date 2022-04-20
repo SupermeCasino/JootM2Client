@@ -39,6 +39,7 @@ public final class LoginScene extends BaseScene {
 	    stage.addActor(table);
 	    
 	    var generator = new FreeTypeFontGenerator(Gdx.files.absolute("/System/Library/Fonts/STHeiti Light.ttc"));
+		//var generator = new FreeTypeFontGenerator(Gdx.files.absolute("C:\\Windows\\Fonts\\simhei.ttf"));
 	    var parameter = new FreeTypeFontParameter();
 	    parameter.size = 18;
 	    parameter.characters = FreeTypeFontGenerator.DEFAULT_CHARS + "用户名密码登陆：林星二条用户名不存在或密码错误";
@@ -52,6 +53,7 @@ public final class LoginScene extends BaseScene {
 	    txtUna.setMessageText("legendarycici/ll01131458");
 	    var lblPassword = new Label("密码：", new Label.LabelStyle(font18, Color.GREEN));
 	    txtPassword = new TextField("123456", new TextField.TextFieldStyle(font18, Color.RED, null, null, null));
+		txtPassword.setPasswordCharacter('*');
 	    txtPassword.setPasswordMode(true);
 	    
 	    lblLoginButton = new Label("登陆", new Label.LabelStyle(font18, Color.GREEN));
@@ -91,7 +93,7 @@ public final class LoginScene extends BaseScene {
 				var code = loginResp.code();
 				if (code == 0) {
 					//App.SceneManager.toChrSel();
-					App.MyName = loginResp.roles()[0].name;
+					GameScene.MyName = loginResp.roles()[0].name;
 					App.SceneManager.toGame();
 					return;
 				}
