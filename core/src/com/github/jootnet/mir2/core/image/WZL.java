@@ -207,7 +207,11 @@ final class WZL implements ImageLibrary {
     					sRGBA[_idx] = r;
     					sRGBA[_idx + 1] = g;
     					sRGBA[_idx + 2] = b;
-						sRGBA[_idx + 3] = -1;
+    					if (r == 0 && g == 0 && b == 0) {
+    						sRGBA[_idx + 3] = 0;
+    					} else {
+    						sRGBA[_idx + 3] = -1;
+    					}
                     }
             }
 	    	return new Texture(sRGBA, ii.getWidth(), ii.getHeight());
