@@ -32,8 +32,8 @@ public class App extends Game {
 		//AssetUtil.init("D:\\Program Files (x86)\\盛大网络\\热血传奇");
 		//AssetUtil.init("D:\\Program Files\\ShengquGames\\Legend of mir");
 		//AssetUtil.init("/Users/linxing/m2/盛大网络/热血传奇");
-		AssetUtil.init("/Users/linxing/m2/ShengquGames/Legend of mir");
-		NetworkUtil.init("ws://127.0.0.1:55842/m2");
+		// AssetUtil.init("/Users/linxing/m2/ShengquGames/Legend of mir");
+		// NetworkUtil.init("ws://127.0.0.1:55842/m2");
 		
 		SceneManager = this;
 		loginScene = new LoginScene();
