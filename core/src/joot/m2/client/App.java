@@ -5,8 +5,6 @@ import com.badlogic.gdx.Game;
 import joot.m2.client.scene.ChrSelScene;
 import joot.m2.client.scene.GameScene;
 import joot.m2.client.scene.LoginScene;
-import joot.m2.client.util.AssetUtil;
-import joot.m2.client.util.NetworkUtil;
 
 /**
  * 游戏入口
@@ -29,12 +27,6 @@ public class App extends Game {
 
 	@Override
 	public void create() {
-		//AssetUtil.init("D:\\Program Files (x86)\\盛大网络\\热血传奇");
-		//AssetUtil.init("D:\\Program Files\\ShengquGames\\Legend of mir");
-		//AssetUtil.init("/Users/linxing/m2/盛大网络/热血传奇");
-		// AssetUtil.init("/Users/linxing/m2/ShengquGames/Legend of mir");
-		// NetworkUtil.init("ws://127.0.0.1:55842/m2");
-		
 		SceneManager = this;
 		loginScene = new LoginScene();
 		chrSelScene = new ChrSelScene();

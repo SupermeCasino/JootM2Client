@@ -1,13 +1,12 @@
 package joot.m2.client.util;
 
-import java.net.URI;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.drafts.Draft_6455;
-import org.java_websocket.handshake.ServerHandshake;
+import com.github.czyzby.websocket.WebSocket;
+import com.github.czyzby.websocket.WebSocketListener;
+import com.github.czyzby.websocket.WebSockets;
 
 import joot.m2.client.actor.Hum;
 import joot.m2.client.net.Message;
@@ -40,21 +39,35 @@ public final class NetworkUtil {
         return recvMsgList_;
     }
 
-	private static WebSocketClient wsc = null;
+	private static WebSocket ws = null;
 	/**
 	 * 使用服务器URL创建网络交互工具类
 	 * 
 	 * @param url 服务器路径
 	 */
 	public static void init(String url) {
-		wsc = new WebSocketClientImpl(URI.create(url));
+		ws = WebSockets.newSocket(url);
+		ws.setSendGracefully(true);
+		ws.addListener(new WebSocketListenerImpl());
+		ws.connect();
+		var reConnectThread = new ReconnectThread();
+		reConnectThread.setName("M2ReconnectThread-" + reConnectThread.getId());
+		reConnectThread.start();
 	}
 	
 	/**
 	 * 停止网络交互
 	 */
 	public static void shutdown() {
-		wsc.close();
+		ws.close();
+		needReconnect = false;
+		try {
+			Thread.sleep(2000);
+			ws.close();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
     
     /**
@@ -64,74 +77,70 @@ public final class NetworkUtil {
      */
     public static void sendHumActionChange(Hum hum) {
     	try {
-			wsc.send(Messages.pack(Messages.humActionChange(hum)));
+			ws.send(Messages.pack(Messages.humActionChange(hum)));
 		} catch (Exception e) { }
     }
     
+    /**
+     * 发送登陆
+     * 
+     * @param una 账号
+     * @param psw 密码
+     */
     public static void sendLoginReq(String una, String psw) {
     	try {
-			wsc.send(Messages.pack(Messages.loginReq(una, psw)));
+			ws.send(Messages.pack(Messages.loginReq(una, psw)));
 		} catch (Exception e) { }
     }
     
     
-    
-    
-    
-    private static class WebSocketClientImpl extends WebSocketClient {
+    private static class WebSocketListenerImpl implements WebSocketListener {
 
-		public WebSocketClientImpl(URI serverUri) {
-			super(serverUri, new Draft_6455(), null, 300);
-			connect();
-			var reConnectThread = new ReconnectThread();
-			reConnectThread.setName("M2ReconnectThread-" + reConnectThread.getId());
-			reConnectThread.start();
-		}
-		
 		@Override
-		public void close() {
-			needReconnect = false;
-			super.close();
+		public boolean onOpen(WebSocket webSocket) {
+			return true;
 		}
 
 		@Override
-		public void onOpen(ServerHandshake handshakedata) { }
-		
+		public boolean onClose(WebSocket webSocket, int closeCode, String reason) {
+			return true;
+		}
+
 		@Override
-		public void onMessage(ByteBuffer bytes) {
+		public boolean onMessage(WebSocket webSocket, String packet) {
+			return true;
+		}
+
+		@Override
+		public boolean onMessage(WebSocket webSocket, byte[] packet) {
 			try {
 				synchronized (recvMsgList) {
-					recvMsgList.add(Messages.unpack(bytes));	
+					recvMsgList.add(Messages.unpack(ByteBuffer.wrap(packet)));	
 				}
 			}catch(Exception ex) { }
+			return true;
 		}
 
 		@Override
-		public void onMessage(String message) { }
-
-		@Override
-		public void onClose(int code, String reason, boolean remote) { }
-
-		@Override
-		public void onError(Exception ex) { }
-		
-		
-	    
-	    private volatile boolean needReconnect = true;
-	    
-	    private class ReconnectThread extends Thread {
-	    	@Override
-	    	public void run() {
-	    		while (needReconnect) {
-	    			try {
-		    			if (!WebSocketClientImpl.this.isOpen()) {
-		    				WebSocketClientImpl.this.reconnectBlocking();
-		    			}
-						Thread.sleep(1000);
-	    			} catch(Exception ex) { }
-	    		}
-	    	}
-	    }
+		public boolean onError(WebSocket webSocket, Throwable error) {
+			return true;
+		}
     	
+    }
+	
+	private static volatile boolean needReconnect = true;
+    
+    private static class ReconnectThread extends Thread {
+    	@Override
+    	public void run() {
+    		while (needReconnect) {
+    			try {
+	    			if (!ws.isOpen()) {
+	    				ws.connect();
+	    			}
+					Thread.sleep(1000);
+    			} catch(Exception ex) { }
+    		}
+    	}
     }
 }

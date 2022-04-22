@@ -3,6 +3,7 @@ package joot.m2.client.desktop;
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.github.czyzby.websocket.CommonWebSockets;
 
 import joot.m2.client.App;
 import joot.m2.client.util.NetworkUtil;
@@ -44,10 +45,12 @@ public class DesktopLauncher {
         }
         AssetUtil.init(path);
 
-        String server = "ws://127.0.0.1:55842/m2";
+        String server = "ws://***REMOVED***:55842/m2";
         if (cmd.hasOption("server")) {
             server = cmd.getOptionValue("server");
         }
+
+		CommonWebSockets.initiate();
         NetworkUtil.init(server);
 
 		var config = new Lwjgl3ApplicationConfiguration();
