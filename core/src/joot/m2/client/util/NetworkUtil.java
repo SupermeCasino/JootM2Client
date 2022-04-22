@@ -49,6 +49,13 @@ public final class NetworkUtil {
 	public static void init(String url) {
 		wsc = new WebSocketClientImpl(URI.create(url));
 	}
+	
+	/**
+	 * 停止网络交互
+	 */
+	public static void shutdown() {
+		wsc.close();
+	}
     
     /**
      * 发送人物动作更改到服务器
@@ -79,6 +86,12 @@ public final class NetworkUtil {
 			var reConnectThread = new ReconnectThread();
 			reConnectThread.setName("M2ReconnectThread-" + reConnectThread.getId());
 			reConnectThread.start();
+		}
+		
+		@Override
+		public void close() {
+			needReconnect = false;
+			super.close();
 		}
 
 		@Override

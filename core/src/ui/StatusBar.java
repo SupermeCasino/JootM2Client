@@ -20,23 +20,21 @@ public final class StatusBar extends WidgetGroup {
 	private Image quikAreaBg;
 	/** 能量条背景图 */
 	private Image powerBg;
+	/** 聊天框 */
+	private ChatBox chatBox;
 
 	public StatusBar() {
 		while(!AssetUtil.isLoaded("newopui/0")) AssetUtil.update();
 		while(!AssetUtil.isLoaded("newopui/1")) AssetUtil.update();
 		while(!AssetUtil.isLoaded("newopui/2")) AssetUtil.update();
 		while(!AssetUtil.isLoaded("newopui/3")) AssetUtil.update();
-		addActor(new Image(AssetUtil.<M2Texture>get("newopui/0"))); // 左侧生命值法力值的背景图s
+		addActor(new Image(AssetUtil.<M2Texture>get("newopui/0"))); // 左侧生命值法力值的背景图
 		addActor((funAreaBg = new Image(AssetUtil.<M2Texture>get("newopui/1"))));
 		addActor((quikAreaBg = new Image(AssetUtil.<M2Texture>get("newopui/2"))));
-		quikAreaBg.setPosition(180, 157);
+		quikAreaBg.setY(157);
 		addActor((powerBg = new Image(AssetUtil.<M2Texture>get("newopui/3"))));
+		addActor((chatBox = new ChatBox()));
 	}
-	
-	/*@Override
-	public void draw(Batch batch, float parentAlpha) {
-		super.draw(batch, parentAlpha);
-	}*/
 	
 	/*@Override
 	public Actor hit(float x, float y, boolean touchable) {
@@ -49,5 +47,6 @@ public final class StatusBar extends WidgetGroup {
 		funAreaBg.setX(getWidth() - funAreaBg.getWidth());
 		quikAreaBg.setX((getWidth() - quikAreaBg.getWidth()) / 2);
 		powerBg.setX(getWidth() - funAreaBg.getWidth() + 6);
+		chatBox.setBounds(194, 0, getWidth() - 388, 157);
 	}
 }
