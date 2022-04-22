@@ -63,6 +63,8 @@ public class DesktopLauncher {
 	    config.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate);
 		new Lwjgl3Application(new App(), config);
 		
-		NetworkUtil.shutdown();
+		//NetworkUtil.shutdown();
+		// 这个websocket客户端的后台线程退不出，似乎是connectTimeout无法设置，默认为0表示永不超时？
+		System.exit(0);
     }
 }
