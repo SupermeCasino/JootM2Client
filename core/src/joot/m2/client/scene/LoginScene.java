@@ -1,10 +1,6 @@
 package joot.m2.client.scene;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -16,6 +12,7 @@ import com.badlogic.gdx.utils.Align;
 import joot.m2.client.App;
 import joot.m2.client.net.MessageType;
 import joot.m2.client.net.messages.LoginResp;
+import joot.m2.client.util.FontUtil;
 import joot.m2.client.util.NetworkUtil;
 
 /**
@@ -38,25 +35,16 @@ public final class LoginScene extends BaseScene {
 	    table.setFillParent(true);
 	    stage.addActor(table);
 	    
-	    var generator = new FreeTypeFontGenerator(Gdx.files.absolute("/System/Library/Fonts/STHeiti Light.ttc"));
-		//var generator = new FreeTypeFontGenerator(Gdx.files.absolute("C:\\Windows\\Fonts\\simhei.ttf"));
-	    var parameter = new FreeTypeFontParameter();
-	    parameter.size = 18;
-	    parameter.characters = FreeTypeFontGenerator.DEFAULT_CHARS + "用户名密码登陆：林星二条用户名不存在或密码错误";
-	    BitmapFont font18 = generator.generateFont(parameter); // font size 12 pixels
-	    generator.dispose(); // don't forget to dispose to avoid memory leaks!
+	    var lblUna = new Label("用户名：", new Label.LabelStyle(FontUtil.HeiTi_12_all, Color.GREEN));
 	    
-	    var lblUna = new Label("用户名：", new Label.LabelStyle(font18, Color.GREEN));
-
-	    
-	    txtUna = new TextField("", new TextField.TextFieldStyle(font18, Color.RED, null, null, null));
+	    txtUna = new TextField("", new TextField.TextFieldStyle(FontUtil.HeiTi_12_all, Color.RED, null, null, null));
 	    txtUna.setMessageText("legendarycici/ll01131458");
-	    var lblPassword = new Label("密码：", new Label.LabelStyle(font18, Color.GREEN));
-	    txtPassword = new TextField("123456", new TextField.TextFieldStyle(font18, Color.RED, null, null, null));
+	    var lblPassword = new Label("密码：", new Label.LabelStyle(FontUtil.HeiTi_12_all, Color.GREEN));
+	    txtPassword = new TextField("123456", new TextField.TextFieldStyle(FontUtil.HeiTi_12_all, Color.RED, null, null, null));
 		txtPassword.setPasswordCharacter('*');
 	    txtPassword.setPasswordMode(true);
 	    
-	    lblLoginButton = new Label("登陆", new Label.LabelStyle(font18, Color.GREEN));
+	    lblLoginButton = new Label("登陆", new Label.LabelStyle(FontUtil.HeiTi_12_all, Color.GREEN));
 	    lblLoginButton.addListener(new InputListener() {
 	    	@Override
 	    	public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
@@ -79,7 +67,7 @@ public final class LoginScene extends BaseScene {
 	    table.add(lblLoginButton).colspan(2).align(Align.center);
 	    table.row();
 	    
-	    lblTip = new Label("", new Label.LabelStyle(font18, Color.RED));
+	    lblTip = new Label("", new Label.LabelStyle(FontUtil.HeiTi_12_all, Color.RED));
 	    table.add(lblTip).colspan(2).align(Align.center);
 	    
 		super.show();

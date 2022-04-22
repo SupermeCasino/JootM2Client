@@ -49,6 +49,7 @@ public final class NetworkUtil {
 		ws = WebSockets.newSocket(url);
 		ws.setSendGracefully(true);
 		ws.addListener(new WebSocketListenerImpl());
+		ws.setUseTcpNoDelay(true);
 		ws.connect();
 		var reConnectThread = new ReconnectThread();
 		reConnectThread.setName("M2ReconnectThread-" + reConnectThread.getId());

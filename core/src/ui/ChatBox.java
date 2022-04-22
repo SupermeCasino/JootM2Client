@@ -3,7 +3,6 @@ package ui;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.ui.Widget;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 
 import joot.m2.client.image.M2Texture;
@@ -29,7 +28,7 @@ public final class ChatBox extends WidgetGroup {
 	private TextField txtChat;
 
 	public ChatBox() {
-		addActor((txtChat = new TextField("", new TextField.TextFieldStyle(FontUtil.font12, Color.BLACK, null, null, null))));
+		addActor((txtChat = new TextField("", new TextField.TextFieldStyle(FontUtil.HeiTi_12_all, Color.BLACK, null, null, null))));
 		txtChat.setPosition(16, 7);
 		txtChat.setWidth(380);
 	}
