@@ -29,8 +29,16 @@ public final class ChatBox extends WidgetGroup {
 	private TextField txtChat;
 
 	public ChatBox() {
-		addActor((txtChat = new TextField("", new TextField.TextFieldStyle(FontUtil.HeiTi_12_all, Color.BLACK, DrawableUtil.Cursor_DarkGray, DrawableUtil.Selection_LightGray, null))));
-		txtChat.setPosition(16, 6);
+		// 经测试，最大能使用12px，此时光标和选中背景色与文本框本身没有间隙不好看
+		// 10像素比较合适，但文字很小看起来眼睛疼。
+		// 后面看看是不是在文字本身上做点功夫。比如加粗加阴影，颜色固定为黑色，可以保留轮廓信息，且固定颜色可以用8位图节省大小
+		//  当然，也可能不行
+		addActor((txtChat = new TextField("", new TextField.TextFieldStyle(FontUtil.HeiTi_10_all,
+				Color.BLACK,
+				DrawableUtil.Cursor_DarkGray,
+				DrawableUtil.Selection_LightGray,
+				null))));
+		txtChat.setPosition(16, 7);
 		txtChat.setWidth(380);
 	}
 	

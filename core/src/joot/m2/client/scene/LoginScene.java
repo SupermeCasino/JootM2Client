@@ -1,6 +1,7 @@
 package joot.m2.client.scene;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -12,7 +13,6 @@ import com.badlogic.gdx.utils.Align;
 import joot.m2.client.App;
 import joot.m2.client.net.MessageType;
 import joot.m2.client.net.messages.LoginResp;
-import joot.m2.client.util.FontUtil;
 import joot.m2.client.util.NetworkUtil;
 
 /**
@@ -35,16 +35,17 @@ public final class LoginScene extends BaseScene {
 	    table.setFillParent(true);
 	    stage.addActor(table);
 	    
-	    var lblUna = new Label("用户名：", new Label.LabelStyle(FontUtil.HeiTi_12_all, Color.GREEN));
+	    var bmpFont = new BitmapFont();
+	    var lblUna = new Label("username:", new Label.LabelStyle(bmpFont, Color.GREEN));
 	    
-	    txtUna = new TextField("", new TextField.TextFieldStyle(FontUtil.HeiTi_12_all, Color.RED, null, null, null));
+	    txtUna = new TextField("", new TextField.TextFieldStyle(bmpFont, Color.RED, null, null, null));
 	    txtUna.setMessageText("legendarycici/ll01131458");
-	    var lblPassword = new Label("密码：", new Label.LabelStyle(FontUtil.HeiTi_12_all, Color.GREEN));
-	    txtPassword = new TextField("123456", new TextField.TextFieldStyle(FontUtil.HeiTi_12_all, Color.RED, null, null, null));
+	    var lblPassword = new Label("password:", new Label.LabelStyle(bmpFont, Color.GREEN));
+	    txtPassword = new TextField("123456", new TextField.TextFieldStyle(bmpFont, Color.RED, null, null, null));
 		txtPassword.setPasswordCharacter('*');
 	    txtPassword.setPasswordMode(true);
 	    
-	    lblLoginButton = new Label("登陆", new Label.LabelStyle(FontUtil.HeiTi_12_all, Color.GREEN));
+	    lblLoginButton = new Label("loginin", new Label.LabelStyle(bmpFont, Color.GREEN));
 	    lblLoginButton.addListener(new InputListener() {
 	    	@Override
 	    	public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
@@ -67,7 +68,7 @@ public final class LoginScene extends BaseScene {
 	    table.add(lblLoginButton).colspan(2).align(Align.center);
 	    table.row();
 	    
-	    lblTip = new Label("", new Label.LabelStyle(FontUtil.HeiTi_12_all, Color.RED));
+	    lblTip = new Label("", new Label.LabelStyle(bmpFont, Color.RED));
 	    table.add(lblTip).colspan(2).align(Align.center);
 	    
 		super.show();

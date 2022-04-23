@@ -11,9 +11,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
  */
 public final class FontUtil {
 	/** bmp文字12像素黑体<br>所有文字28522 */
-	public static BitmapFont HeiTi_12_all = null;
+	public static BitmapFont HeiTi_10_all = null;
 	
 	static {
-		HeiTi_12_all = new BitmapFont(Gdx.files.internal("fonts/heiti12/heiti12.fnt"));
+		HeiTi_10_all = new BitmapFont(Gdx.files.internal("fonts/heiti10/heiti10.fnt"));
 	}
 }
