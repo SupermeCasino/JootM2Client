@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
  *
  */
 public final class FontUtil {
-	/** bmp文字12像素黑体<br>所有文字28522 */
+	/** bmp文字10像素黑体<br>所有文字28522 */
 	public static BitmapFont HeiTi_10_all = null;
 	
 	static {
