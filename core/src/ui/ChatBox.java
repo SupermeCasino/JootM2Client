@@ -5,9 +5,14 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider.SliderStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import joot.m2.client.image.M2Texture;
 import joot.m2.client.util.AssetUtil;
@@ -34,6 +39,12 @@ public final class ChatBox extends WidgetGroup {
 	private TextField txtChat;
 	/** 历史消息展示 */
 	private TextArea txtMsg;
+	/** 历史消息滚动栏 */
+	private Slider slrMsg;
+	private Button btnMsgUp; // 向上单次滚动按钮
+	private Button btnMsgDown; // 向上单次滚动按钮
+	/** 扩展消息框高度，暂未实现 */
+	private Button btnExpandMsg;
 
 	public ChatBox() {
 		// 经测试，最大能使用12px，此时光标和选中背景色与文本框本身没有间隙不好看
@@ -47,7 +58,7 @@ public final class ChatBox extends WidgetGroup {
 				null))));
 		txtChat.setPosition(16, 7);
 		txtChat.setWidth(380);
-		txtChat.setMaxLength(30);
+		txtChat.setMaxLength(100);
 		txtChat.addListener(new InputListener() {
 			@Override
 			public boolean keyUp(InputEvent event, int keycode) {
@@ -69,6 +80,35 @@ public final class ChatBox extends WidgetGroup {
 		txtMsg.setPosition(16, 22);
 		txtMsg.setSize(380, 110);
 		txtMsg.setDisabled(true);
+
+		while(!AssetUtil.isLoaded("newopui/20")) AssetUtil.update();
+		while(!AssetUtil.isLoaded("newopui/21")) AssetUtil.update();
+		while(!AssetUtil.isLoaded("newopui/22")) AssetUtil.update();
+		while(!AssetUtil.isLoaded("newopui/24")) AssetUtil.update();
+		while(!AssetUtil.isLoaded("newopui/25")) AssetUtil.update();
+		while(!AssetUtil.isLoaded("newopui/27")) AssetUtil.update();
+		while(!AssetUtil.isLoaded("newopui/28")) AssetUtil.update();
+		while(!AssetUtil.isLoaded("newopui/29")) AssetUtil.update();
+		while(!AssetUtil.isLoaded("newopui/30")) AssetUtil.update();
+		while(!AssetUtil.isLoaded("newopui/31")) AssetUtil.update();
+		var slrMsgStyle = new SliderStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/20")),
+				new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/27")));
+		slrMsgStyle.knobOver = new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/28"));
+		addActor((slrMsg = new Slider(0, 100, 1, true, slrMsgStyle)));
+		slrMsg.setSize(16, 100);
+		slrMsg.setPosition(366, 28);
+		addActor((btnMsgUp = new Button(new ButtonStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/21")),
+				new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/22")), null))));
+		btnMsgUp.setSize(16, 10);
+		btnMsgUp.setPosition(366, 128);
+		addActor((btnMsgDown = new Button(new ButtonStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/24")),
+				new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/25")), null))));
+		btnMsgDown.setSize(16, 10);
+		btnMsgDown.setPosition(366, 20);
+		addActor((btnExpandMsg = new Button(new ButtonStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/30")),
+				new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/31")), null))));
+		btnExpandMsg.setSize(16, 16);
+		btnExpandMsg.setPosition(366, 4);
 	}
 	
 	@Override
@@ -152,5 +192,9 @@ public final class ChatBox extends WidgetGroup {
 	public void layout() {
 		txtChat.setWidth(getWidth() - 30);
 		txtMsg.setWidth(getWidth() - 30);
+		slrMsg.setX(getWidth() - 14);
+		btnMsgUp.setX(getWidth() - 14);
+		btnMsgDown.setX(getWidth() - 14);
+		btnExpandMsg.setX(getWidth() - 14);
 	}
 }
