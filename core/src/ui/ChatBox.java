@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 
 import joot.m2.client.image.M2Texture;
 import joot.m2.client.util.AssetUtil;
+import joot.m2.client.util.DrawableUtil;
 import joot.m2.client.util.FontUtil;
 
 /**
@@ -28,8 +29,8 @@ public final class ChatBox extends WidgetGroup {
 	private TextField txtChat;
 
 	public ChatBox() {
-		addActor((txtChat = new TextField("", new TextField.TextFieldStyle(FontUtil.HeiTi_12_all, Color.BLACK, null, null, null))));
-		txtChat.setPosition(16, 7);
+		addActor((txtChat = new TextField("", new TextField.TextFieldStyle(FontUtil.HeiTi_12_all, Color.BLACK, DrawableUtil.Cursor_DarkGray, DrawableUtil.Selection_LightGray, null))));
+		txtChat.setPosition(16, 6);
 		txtChat.setWidth(380);
 	}
 	
