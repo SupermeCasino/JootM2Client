@@ -15,18 +15,20 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
  *
  */
 public final class DrawableUtil {
-	/** 文本选中背景色<br>浅灰 */
+	/** 文本选中背景<br>浅灰 */
 	public static Drawable Selection_LightGray = null;
-	/** 光标颜色<br>黑色 */
+	/** 光标<br>深灰 */
 	public static Drawable Cursor_DarkGray = null;
+	/** 背景<br>纯白 */
+	public static Drawable Bg_White = null;
 	
 	static {
 		var colorBits_LightGray = new byte[] {(byte) (Color.LIGHT_GRAY.r * 255), (byte) (Color.LIGHT_GRAY.g * 255), (byte) (Color.LIGHT_GRAY.b * 255), -1};
 		var colorBits_Black = new byte[] {(byte) (Color.DARK_GRAY.r * 255), (byte) (Color.DARK_GRAY.g * 255), (byte) (Color.DARK_GRAY.b * 255), -1};
 		var colorBits_Trans = new byte[4];
+		var colorBits_White = new byte[] {(byte) (Color.WHITE.r * 255), (byte) (Color.WHITE.g * 255), (byte) (Color.WHITE.b * 255), -1};
 		
 		var pm = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-		//pm.getPixels().put(new byte[] {(byte) 0x66,(byte) 0x66,(byte) 0x66});
 		pm.getPixels().put(colorBits_LightGray);
 		pm.getPixels().flip();
 		Selection_LightGray = new TextureRegionDrawable(new Texture(pm));
@@ -43,5 +45,10 @@ public final class DrawableUtil {
 		pm.getPixels().put(colorBits_Black);
 		pm.getPixels().flip();
 		Cursor_DarkGray = new NinePatchDrawable(new NinePatch(new Texture(pm), 1, 1, 1, 1));
+		
+		pm = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+		pm.getPixels().put(colorBits_White);
+		pm.getPixels().flip();
+		Bg_White = new TextureRegionDrawable(new Texture(pm));
 	}
 }

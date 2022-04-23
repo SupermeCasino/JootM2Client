@@ -1,7 +1,11 @@
 package ui;
 
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 
@@ -26,7 +30,10 @@ public final class ChatBox extends WidgetGroup {
 	private M2Texture newopui16; // 聊天框上边框
 	private M2Texture newopui17; // 聊天框右下角
 	
+	/** 文本输入 */
 	private TextField txtChat;
+	/** 历史消息展示 */
+	private TextArea txtMsg;
 
 	public ChatBox() {
 		// 经测试，最大能使用12px，此时光标和选中背景色与文本框本身没有间隙不好看
@@ -40,6 +47,28 @@ public final class ChatBox extends WidgetGroup {
 				null))));
 		txtChat.setPosition(16, 7);
 		txtChat.setWidth(380);
+		txtChat.setMaxLength(30);
+		txtChat.addListener(new InputListener() {
+			@Override
+			public boolean keyUp(InputEvent event, int keycode) {
+				if (keycode == Keys.ENTER) {
+					txtMsg.appendText(txtChat.getText());
+					txtMsg.appendText(System.lineSeparator());
+					txtChat.setText("");
+					return true;
+				}
+				return super.keyUp(event, keycode);
+			}
+		});
+		
+		addActor((txtMsg = new TextArea("", new TextField.TextFieldStyle(FontUtil.HeiTi_10_all,
+				Color.BLACK,
+				DrawableUtil.Cursor_DarkGray,
+				DrawableUtil.Selection_LightGray,
+				DrawableUtil.Bg_White))));
+		txtMsg.setPosition(16, 22);
+		txtMsg.setSize(380, 110);
+		txtMsg.setDisabled(true);
 	}
 	
 	@Override
@@ -122,5 +151,6 @@ public final class ChatBox extends WidgetGroup {
 	@Override
 	public void layout() {
 		txtChat.setWidth(getWidth() - 30);
+		txtMsg.setWidth(getWidth() - 30);
 	}
 }

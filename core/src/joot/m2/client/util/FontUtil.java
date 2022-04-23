@@ -15,5 +15,6 @@ public final class FontUtil {
 	
 	static {
 		HeiTi_10_all = new BitmapFont(Gdx.files.internal("fonts/heiti10/heiti10.fnt"));
+		HeiTi_10_all.getData().markupEnabled = true;
 	}
 }
