@@ -72,7 +72,7 @@ public final class ChatBox extends WidgetGroup {
 			}
 		});
 		
-		addActor((txtMsg = new TextArea("", new TextField.TextFieldStyle(FontUtil.HeiTi_10_all,
+		addActor((txtMsg = new TextArea("", new TextField.TextFieldStyle(FontUtil.HeiTi_10_all_colored,
 				Color.BLACK,
 				DrawableUtil.Cursor_DarkGray,
 				DrawableUtil.Selection_LightGray,

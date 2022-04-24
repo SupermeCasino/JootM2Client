@@ -8,6 +8,8 @@ import com.github.czyzby.websocket.CommonWebSockets;
 import joot.m2.client.App;
 import joot.m2.client.util.NetworkUtil;
 import joot.m2.client.util.AssetUtil;
+import joot.m2.client.util.FontUtil;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -63,8 +65,10 @@ public class DesktopLauncher {
 	    config.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate);
 		new Lwjgl3Application(new App(), config);
 		
+		AssetUtil.shutdown();
+		FontUtil.shutdown();
 		//NetworkUtil.shutdown();
-		// 这个websocket客户端的后台线程退不出，似乎是connectTimeout无法设置，默认为0表示永不超时？
+		// 这个websocket客户端的后台线程退不出
 		System.exit(0);
     }
 }
