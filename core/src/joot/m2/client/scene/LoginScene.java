@@ -1,6 +1,8 @@
 package joot.m2.client.scene;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -26,9 +28,12 @@ public final class LoginScene extends BaseScene {
 	private TextField txtPassword;
 	private Label lblLoginButton;
 	private Label lblTip;
+	private boolean toGame = false;
 	
 	@Override
 	public void show() {
+		Gdx.graphics.setWindowedMode(800, 600);
+		
 		stage = new Stage();
 		
 	    var table = new Table();
@@ -76,6 +81,12 @@ public final class LoginScene extends BaseScene {
 	
 	@Override
 	public void render(float delta) {
+		if (toGame) {
+			// 当前帧去到游戏主界面
+			toGame = false;
+			App.SceneManager.toGame();
+			return;
+		}
 		for (var msg : NetworkUtil.getRecvMsgList()) {
 			if (msg.type() == MessageType.LOGIN_RESP) {
 				var loginResp = (LoginResp) msg;
@@ -83,7 +94,10 @@ public final class LoginScene extends BaseScene {
 				if (code == 0) {
 					//App.SceneManager.toChrSel();
 					GameScene.MyName = loginResp.roles()[0].name;
-					App.SceneManager.toGame();
+					// 下一帧去到游戏主届满
+					toGame = true;
+					// 先清屏，避免重设窗体大小时模糊
+					Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 					return;
 				}
 				var tip = loginResp.serverTip();
