@@ -12,6 +12,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 public final class FontUtil {
 	private static AssetManager bmFontLoader = new AssetManager();
 	
+	/** 默认字体 */
+	public static BitmapFont Default = new BitmapFont();
+	
 	/** bmp文字10像素黑体<br>所有文字28522 */
 	public static BitmapFont HeiTi_10_all = null;
 	/** bmp文字10像素黑体<br>所有文字28522<br>可以染色 */
