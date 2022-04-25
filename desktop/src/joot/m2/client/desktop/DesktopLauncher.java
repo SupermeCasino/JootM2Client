@@ -47,7 +47,7 @@ public class DesktopLauncher {
         }
         AssetUtil.init(path);
 
-        String server = "ws://***REMOVED***:55842/m2";
+        String server = "ws://127.0.0.1:55842/m2";
         if (cmd.hasOption("server")) {
             server = cmd.getOptionValue("server");
         }
