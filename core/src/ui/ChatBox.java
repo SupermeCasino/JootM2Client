@@ -36,7 +36,7 @@ public final class ChatBox extends WidgetGroup {
 	private M2Texture newopui17; // 聊天框右下角
 	
 	/** 文本输入 */
-	private TextField txtChat;
+	TextField txtChat;
 	/** 历史消息展示 */
 	private TextArea txtMsg;
 	/** 历史消息滚动栏 */
@@ -51,11 +51,11 @@ public final class ChatBox extends WidgetGroup {
 		// 10像素比较合适，但文字很小看起来眼睛疼。
 		// 后面看看是不是在文字本身上做点功夫。比如加粗加阴影，颜色固定为黑色，可以保留轮廓信息，且固定颜色可以用8位图节省大小
 		//  当然，也可能不行
-		addActor((txtChat = new TextField("", new TextField.TextFieldStyle(FontUtil.HeiTi_10_all,
+		addActor(txtChat = new TextField("", new TextField.TextFieldStyle(FontUtil.HeiTi_10_all,
 				Color.BLACK,
 				DrawableUtil.Cursor_DarkGray,
 				DrawableUtil.Selection_LightGray,
-				null))));
+				null)));
 		txtChat.setPosition(16, 7);
 		txtChat.setWidth(380);
 		txtChat.setMaxLength(100);
@@ -72,11 +72,11 @@ public final class ChatBox extends WidgetGroup {
 			}
 		});
 		
-		addActor((txtMsg = new TextArea("", new TextField.TextFieldStyle(FontUtil.HeiTi_10_all_colored,
+		addActor(txtMsg = new TextArea("", new TextField.TextFieldStyle(FontUtil.HeiTi_10_all_colored,
 				Color.BLACK,
 				DrawableUtil.Cursor_DarkGray,
 				DrawableUtil.Selection_LightGray,
-				DrawableUtil.Bg_White))));
+				DrawableUtil.Bg_White)));
 		txtMsg.setPosition(16, 22);
 		txtMsg.setSize(380, 110);
 		txtMsg.setDisabled(true);
@@ -94,19 +94,19 @@ public final class ChatBox extends WidgetGroup {
 		var slrMsgStyle = new SliderStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/20")),
 				new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/27")));
 		slrMsgStyle.knobOver = new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/28"));
-		addActor((slrMsg = new Slider(0, 100, 1, true, slrMsgStyle)));
+		addActor(slrMsg = new Slider(0, 100, 1, true, slrMsgStyle));
 		slrMsg.setSize(16, 100);
 		slrMsg.setPosition(366, 28);
-		addActor((btnMsgUp = new Button(new ButtonStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/21")),
-				new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/22")), null))));
+		addActor(btnMsgUp = new Button(new ButtonStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/21")),
+				new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/22")), null)));
 		btnMsgUp.setSize(16, 10);
 		btnMsgUp.setPosition(366, 128);
-		addActor((btnMsgDown = new Button(new ButtonStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/24")),
-				new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/25")), null))));
+		addActor(btnMsgDown = new Button(new ButtonStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/24")),
+				new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/25")), null)));
 		btnMsgDown.setSize(16, 10);
 		btnMsgDown.setPosition(366, 20);
-		addActor((btnExpandMsg = new Button(new ButtonStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/30")),
-				new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/31")), null))));
+		addActor(btnExpandMsg = new Button(new ButtonStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/30")),
+				new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/31")), null)));
 		btnExpandMsg.setSize(16, 16);
 		btnExpandMsg.setPosition(366, 4);
 	}

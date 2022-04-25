@@ -29,11 +29,11 @@ public final class StatusBar extends WidgetGroup {
 		while(!AssetUtil.isLoaded("newopui/2")) AssetUtil.update();
 		while(!AssetUtil.isLoaded("newopui/3")) AssetUtil.update();
 		addActor(new Image(AssetUtil.<M2Texture>get("newopui/0"))); // 左侧生命值法力值的背景图
-		addActor((funAreaBg = new Image(AssetUtil.<M2Texture>get("newopui/1"))));
-		addActor((quikAreaBg = new Image(AssetUtil.<M2Texture>get("newopui/2"))));
+		addActor(funAreaBg = new Image(AssetUtil.<M2Texture>get("newopui/1")));
+		addActor(quikAreaBg = new Image(AssetUtil.<M2Texture>get("newopui/2")));
 		quikAreaBg.setY(157);
-		addActor((powerBg = new Image(AssetUtil.<M2Texture>get("newopui/3"))));
-		addActor((chatBox = new ChatBox()));
+		addActor(powerBg = new Image(AssetUtil.<M2Texture>get("newopui/3")));
+		addActor(chatBox = new ChatBox());
 	}
 	
 	/*@Override
@@ -41,6 +41,13 @@ public final class StatusBar extends WidgetGroup {
 		// TODO 把镂空的地方返回false，鼠标点选之后可以走跑
 		return super.hit(x, y, touchable);
 	}*/
+	
+	/**
+	 * 将焦点给到输入框
+	 */
+	public void focusInput() {
+		getStage().setKeyboardFocus(chatBox.txtChat);
+	}
 
 	@Override
 	public void layout() {
