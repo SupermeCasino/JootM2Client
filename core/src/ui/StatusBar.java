@@ -138,48 +138,26 @@ public final class StatusBar extends WidgetGroup {
 		addActor(btnExit = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/138")),
 				new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/139")), null, null, null, null)));
 		btnExit.setPosition(784, 134);
-		{
-			var imgBtnStyle = new ImageButtonStyle();
-			imgBtnStyle.over = new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/8"));
-			addActor(btnHum = new ImageButton(imgBtnStyle));
-			btnHum.setSize(24, 24);
-			btnHum.setPosition(642, 166);
-		}
-		{
-			var imgBtnStyle = new ImageButtonStyle();
-			imgBtnStyle.over = new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/9"));
-			addActor(btnBag = new ImageButton(imgBtnStyle));
-			btnBag.setSize(24, 22);
-			btnBag.setPosition(682, 188);
-		}
-		{
-			var imgBtnStyle = new ImageButtonStyle();
-			imgBtnStyle.over = new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/10"));
-			addActor(btnSkill = new ImageButton(imgBtnStyle));
-			btnSkill.setSize(24, 23);
-			btnSkill.setPosition(722, 207);
-		}
-		{
-			var imgBtnStyle = new ImageButtonStyle();
-			imgBtnStyle.over = new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/11"));
-			addActor(btnSound = new ImageButton(imgBtnStyle));
-			btnSound.setSize(24, 23);
-			btnSound.setPosition(762, 217);
-		}
-		{
-			var imgBtnStyle = new ImageButtonStyle();
-			imgBtnStyle.over = new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/11"));
-			addActor(btnSound = new ImageButton(imgBtnStyle));
-			btnSound.setSize(24, 23);
-			btnSound.setPosition(762, 217);
-		}
-		{
-			var imgBtnStyle = new ImageButtonStyle();
-			imgBtnStyle.down = new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse3/297"));
-			addActor(btnShop = new ImageButton(imgBtnStyle));
-			btnShop.setSize(28, 28);
-			btnShop.setPosition(750, 19);
-		}
+		addActor(btnHum = new ImageButton(new ImageButtonStyle()));
+		btnHum.getStyle().over = new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/8"));
+		btnHum.setSize(24, 24);
+		btnHum.setPosition(642, 166);
+		addActor(btnBag = new ImageButton(new ImageButtonStyle()));
+		btnBag.getStyle().over = new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/9"));
+		btnBag.setSize(24, 22);
+		btnBag.setPosition(682, 188);
+		addActor(btnSkill = new ImageButton(new ImageButtonStyle()));
+		btnSkill.getStyle().over = new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/10"));
+		btnSkill.setSize(24, 23);
+		btnSkill.setPosition(722, 207);
+		addActor(btnSound = new ImageButton(new ImageButtonStyle()));
+		btnSound.getStyle().over = new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/11"));
+		btnSound.setSize(24, 23);
+		btnSound.setPosition(762, 217);
+		addActor(btnShop = new ImageButton(new ImageButtonStyle()));
+		btnShop.getStyle().down = new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse3/297"));
+		btnShop.setSize(28, 28);
+		btnShop.setPosition(750, 19);
 	}
 	
 	/*@Override
