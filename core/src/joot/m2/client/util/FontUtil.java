@@ -15,20 +15,22 @@ public final class FontUtil {
 	/** 默认字体 */
 	public static BitmapFont Default = new BitmapFont();
 	
-	/** bmp文字10像素黑体<br>所有文字28522 */
-	public static BitmapFont HeiTi_10_all = null;
-	/** bmp文字10像素黑体<br>所有文字28522<br>可以染色 */
-	public static BitmapFont HeiTi_10_all_colored = null;
+	/** bmp文字12像素宋体<br>所有文字28522<br>边缘平滑 */
+	public static BitmapFont Song_12_all_outline = null;
+	/** bmp文字12像素宋体<br>所有文字28522<br>可以染色 */
+	public static BitmapFont Song_12_all_colored = null;
 	
 	static {
-		bmFontLoader.load("fonts/heiti10/heiti10.fnt", BitmapFont.class);
-		while(!bmFontLoader.isLoaded("fonts/heiti10/heiti10.fnt")) bmFontLoader.update();
-		HeiTi_10_all = bmFontLoader.get("fonts/heiti10/heiti10.fnt");
 		
-		bmFontLoader.load("fonts/heiti10/heiti10_colored.fnt", BitmapFont.class);
-		while(!bmFontLoader.isLoaded("fonts/heiti10/heiti10_colored.fnt")) bmFontLoader.update();
-		HeiTi_10_all_colored = bmFontLoader.get("fonts/heiti10/heiti10_colored.fnt");
-		HeiTi_10_all_colored.getData().markupEnabled = true;
+		bmFontLoader.load("fonts/song12/all_outline.fnt", BitmapFont.class);
+		while(!bmFontLoader.isLoaded("fonts/song12/all_outline.fnt")) bmFontLoader.update();
+		Song_12_all_outline = bmFontLoader.get("fonts/song12/all_outline.fnt");
+		
+		bmFontLoader.load("fonts/song12/all.fnt", BitmapFont.class);
+		while(!bmFontLoader.isLoaded("fonts/song12/all.fnt")) bmFontLoader.update();
+		Song_12_all_colored = bmFontLoader.get("fonts/song12/all.fnt");
+		Song_12_all_colored.getData().markupEnabled = true;
+		Song_12_all_colored.getData().lineHeight = 14;
 	}
 	
 	/** 停止 */

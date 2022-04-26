@@ -51,12 +51,12 @@ public final class ChatBox extends WidgetGroup {
 		// 10像素比较合适，但文字很小看起来眼睛疼。
 		// 后面看看是不是在文字本身上做点功夫。比如加粗加阴影，颜色固定为黑色，可以保留轮廓信息，且固定颜色可以用8位图节省大小
 		//  当然，也可能不行
-		addActor(txtChat = new TextField("", new TextField.TextFieldStyle(FontUtil.HeiTi_10_all,
+		addActor(txtChat = new TextField("", new TextField.TextFieldStyle(FontUtil.Song_12_all_outline,
 				Color.BLACK,
 				DrawableUtil.Cursor_DarkGray,
 				DrawableUtil.Selection_LightGray,
 				null)));
-		txtChat.setPosition(16, 7);
+		txtChat.setPosition(16, 6);
 		txtChat.setWidth(380);
 		txtChat.setMaxLength(100);
 		txtChat.addListener(new InputListener() {
@@ -72,13 +72,13 @@ public final class ChatBox extends WidgetGroup {
 			}
 		});
 		
-		addActor(txtMsg = new TextArea("", new TextField.TextFieldStyle(FontUtil.HeiTi_10_all_colored,
+		addActor(txtMsg = new TextArea("", new TextField.TextFieldStyle(FontUtil.Song_12_all_colored,
 				Color.BLACK,
 				DrawableUtil.Cursor_DarkGray,
 				DrawableUtil.Selection_LightGray,
 				DrawableUtil.Bg_White)));
 		txtMsg.setPosition(16, 22);
-		txtMsg.setSize(380, 110);
+		txtMsg.setSize(380, 106);
 		txtMsg.setDisabled(true);
 
 		while(!AssetUtil.isLoaded("newopui/20")) AssetUtil.update();
