@@ -58,6 +58,16 @@ public final class StatusBar extends WidgetGroup {
 	private ImageButton btnLogout;
 	/** 大退 */
 	private ImageButton btnExit;
+	/** 打开人物属性界面 */
+	private ImageButton btnHum;
+	/** 打开背包 */
+	private ImageButton btnBag;
+	/** 打开技能界面 */
+	private ImageButton btnSkill;
+	/** 开关声音 */
+	private ImageButton btnSound;
+	/** 打开商店 */
+	private ImageButton btnShop;
 
 	public StatusBar() {
 		while(!AssetUtil.isLoaded("newopui/0")) AssetUtil.update();
@@ -85,48 +95,91 @@ public final class StatusBar extends WidgetGroup {
 		IntStream.range(460, 462).forEach(i -> {
 			while(!AssetUtil.isLoaded("prguse3/" + i)) AssetUtil.update();
 		});
-		addActor(chkMsg1 = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse3/280"))),
+		while(!AssetUtil.isLoaded("prguse3/297")) AssetUtil.update();
+		addActor(chkMsg1 = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse3/280")),
 				new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse3/281")), FontUtil.Default, null)));
 		chkMsg1.setPosition(176, 116);
-		addActor(chkMsg2 = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse3/282"))),
+		addActor(chkMsg2 = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse3/282")),
 				new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse3/283")), FontUtil.Default, null)));
 		chkMsg2.setPosition(176, 96);
-		addActor(chkMsg3 = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse3/284"))),
+		addActor(chkMsg3 = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse3/284")),
 				new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse3/285")), FontUtil.Default, null)));
 		chkMsg3.setPosition(176, 76);
-		addActor(chkMsg4 = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse3/286"))),
+		addActor(chkMsg4 = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse3/286")),
 				new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse3/287")), FontUtil.Default, null)));
 		chkMsg4.setPosition(176, 56);
-		addActor(chkMsg5 = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse3/288"))),
+		addActor(chkMsg5 = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse3/288")),
 				new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse3/289")), FontUtil.Default, null)));
 		chkMsg5.setPosition(176, 36);
-		addActor(btnMMap = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/130"))),
+		addActor(btnMMap = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/130")),
 				new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/131")), null, null, null, null)));
 		btnMMap.setPosition(210, 134);
-		addActor(btnTrade = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/132"))),
+		addActor(btnTrade = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/132")),
 				new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/133")), null, null, null, null)));
 		btnTrade.setPosition(240, 134);
-		addActor(btnGuild = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/134"))),
+		addActor(btnGuild = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/134")),
 				new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/135")), null, null, null, null)));
 		btnGuild.setPosition(270, 134);
-		addActor(btnTeam = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/128"))),
+		addActor(btnTeam = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/128")),
 				new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/129")), null, null, null, null)));
 		btnTeam.setPosition(300, 134);
-		addActor(btnFriend = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse3/34"))),
+		addActor(btnFriend = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse3/34")),
 				new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse3/35")), null, null, null, null)));
 		btnFriend.setPosition(330, 134);
-		addActor(btnTalkHistory = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse3/36"))),
+		addActor(btnTalkHistory = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse3/36")),
 				new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse3/37")), null, null, null, null)));
 		btnTalkHistory.setPosition(360, 135);
-		addActor(btnRankList = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse3/460"))),
+		addActor(btnRankList = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse3/460")),
 				new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse3/461")), null, null, null, null)));
 		btnRankList.setPosition(390, 134);
-		addActor(btnLogout = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/136"))),
+		addActor(btnLogout = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/136")),
 				new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/137")), null, null, null, null)));
 		btnLogout.setPosition(754, 134);
-		addActor(btnExit = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/138"))),
+		addActor(btnExit = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/138")),
 				new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/139")), null, null, null, null)));
 		btnExit.setPosition(784, 134);
+		{
+			var imgBtnStyle = new ImageButtonStyle();
+			imgBtnStyle.over = new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/8"));
+			addActor(btnHum = new ImageButton(imgBtnStyle));
+			btnHum.setSize(24, 24);
+			btnHum.setPosition(642, 166);
+		}
+		{
+			var imgBtnStyle = new ImageButtonStyle();
+			imgBtnStyle.over = new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/9"));
+			addActor(btnBag = new ImageButton(imgBtnStyle));
+			btnBag.setSize(24, 22);
+			btnBag.setPosition(682, 188);
+		}
+		{
+			var imgBtnStyle = new ImageButtonStyle();
+			imgBtnStyle.over = new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/10"));
+			addActor(btnSkill = new ImageButton(imgBtnStyle));
+			btnSkill.setSize(24, 23);
+			btnSkill.setPosition(722, 207);
+		}
+		{
+			var imgBtnStyle = new ImageButtonStyle();
+			imgBtnStyle.over = new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/11"));
+			addActor(btnSound = new ImageButton(imgBtnStyle));
+			btnSound.setSize(24, 23);
+			btnSound.setPosition(762, 217);
+		}
+		{
+			var imgBtnStyle = new ImageButtonStyle();
+			imgBtnStyle.over = new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse/11"));
+			addActor(btnSound = new ImageButton(imgBtnStyle));
+			btnSound.setSize(24, 23);
+			btnSound.setPosition(762, 217);
+		}
+		{
+			var imgBtnStyle = new ImageButtonStyle();
+			imgBtnStyle.down = new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse3/297"));
+			addActor(btnShop = new ImageButton(imgBtnStyle));
+			btnShop.setSize(28, 28);
+			btnShop.setPosition(750, 19);
+		}
 	}
 	
 	/*@Override
@@ -148,5 +201,10 @@ public final class StatusBar extends WidgetGroup {
 		quikAreaBg.setX((getWidth() - quikAreaBg.getWidth()) / 2);
 		powerBg.setX(getWidth() - funAreaBg.getWidth() + 6);
 		chatBox.setBounds(194, 0, getWidth() - 388, 157);
+		btnHum.setX(getWidth() - 157);
+		btnBag.setX(getWidth() - 118);
+		btnSkill.setX(getWidth() - 78);
+		btnSound.setX(getWidth() - 36);
+		btnShop.setX(getWidth() - 47);
 	}
 }

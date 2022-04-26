@@ -21,3 +21,5 @@ developed by libgdx
 (WebSocketClient planed use io.netty)
 
 ## 2022-4-19 split screen
+
+## 2022-4-26 gamescene ui complete
