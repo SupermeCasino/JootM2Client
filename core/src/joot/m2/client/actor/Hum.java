@@ -47,7 +47,6 @@ public final class Hum {
 	public Hum(String name) {
 		this.name = name;
 		this.humIdx = 1; // 默认是穿着裤衩光着膀子的秃子
-		AssetUtil.prepareDress(0, 1);
 	}
 	
 	/**
@@ -195,7 +194,6 @@ public final class Hum {
 	public Hum setDress(int fileIdx, int dressIdx) {
 		this.humFileIdx = fileIdx;
 		this.humIdx = dressIdx;
-		AssetUtil.prepareDress(fileIdx, dressIdx);
 		return this;
 	}
 	
@@ -218,7 +216,6 @@ public final class Hum {
 	public Hum setWing(int fileIdx, int dressIdx) {
 		this.humEffectFileIdx = fileIdx;
 		this.humEffectIdx = dressIdx;
-		AssetUtil.prepareHumEffect(fileIdx, dressIdx);
 		return this;
 	}
 	
@@ -241,7 +238,6 @@ public final class Hum {
 	public Hum setWeapon(int fileIdx, int equipIdx) {
 		weaponFileIdx = fileIdx;
 		weaponIdx = equipIdx;
-		AssetUtil.prepareWeapon(weaponFileIdx, weaponIdx);
 		return this;
 	}
 

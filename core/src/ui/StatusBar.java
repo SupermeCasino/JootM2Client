@@ -70,10 +70,10 @@ public final class StatusBar extends WidgetGroup {
 	private ImageButton btnShop;
 
 	public StatusBar() {
-		while(!AssetUtil.isLoaded("newopui/0")) AssetUtil.update();
-		while(!AssetUtil.isLoaded("newopui/1")) AssetUtil.update();
-		while(!AssetUtil.isLoaded("newopui/2")) AssetUtil.update();
-		while(!AssetUtil.isLoaded("newopui/3")) AssetUtil.update();
+		while(AssetUtil.get("newopui/0") == null) AssetUtil.update();
+		while(AssetUtil.get("newopui/1") == null) AssetUtil.update();
+		while(AssetUtil.get("newopui/2") == null) AssetUtil.update();
+		while(AssetUtil.get("newopui/3") == null) AssetUtil.update();
 		addActor(new Image(AssetUtil.<M2Texture>get("newopui/0"))); // 左侧生命值法力值的背景图
 		addActor(funAreaBg = new Image(AssetUtil.<M2Texture>get("newopui/1")));
 		addActor(quikAreaBg = new Image(AssetUtil.<M2Texture>get("newopui/2")));
@@ -81,21 +81,21 @@ public final class StatusBar extends WidgetGroup {
 		addActor(powerBg = new Image(AssetUtil.<M2Texture>get("newopui/3")));
 		addActor(chatBox = new ChatBox());
 		IntStream.range(4, 20).forEach(i -> {
-			while(!AssetUtil.isLoaded("prguse/" + i)) AssetUtil.update();
+			while(AssetUtil.get("prguse/" + i) == null) AssetUtil.update();
 		});
 		IntStream.range(128, 140).forEach(i -> {
-			while(!AssetUtil.isLoaded("prguse/" + i)) AssetUtil.update();
+			while(AssetUtil.get("prguse/" + i) == null) AssetUtil.update();
 		});
 		IntStream.range(34, 38).forEach(i -> {
-			while(!AssetUtil.isLoaded("prguse3/" + i)) AssetUtil.update();
+			while(AssetUtil.get("prguse3/" + i) == null) AssetUtil.update();
 		});
 		IntStream.range(280, 290).forEach(i -> {
-			while(!AssetUtil.isLoaded("prguse3/" + i)) AssetUtil.update();
+			while(AssetUtil.get("prguse3/" + i) == null) AssetUtil.update();
 		});
 		IntStream.range(460, 462).forEach(i -> {
-			while(!AssetUtil.isLoaded("prguse3/" + i)) AssetUtil.update();
+			while(AssetUtil.get("prguse3/" + i) == null) AssetUtil.update();
 		});
-		while(!AssetUtil.isLoaded("prguse3/297")) AssetUtil.update();
+		while(AssetUtil.get("prguse3/297") == null) AssetUtil.update();
 		addActor(chkMsg1 = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse3/280")),
 				new TextureRegionDrawable(AssetUtil.<M2Texture>get("prguse3/281")), FontUtil.Default, null)));
 		chkMsg1.setPosition(176, 116);

@@ -81,16 +81,16 @@ public final class ChatBox extends WidgetGroup {
 		txtMsg.setSize(380, 106);
 		txtMsg.setDisabled(true);
 
-		while(!AssetUtil.isLoaded("newopui/20")) AssetUtil.update();
-		while(!AssetUtil.isLoaded("newopui/21")) AssetUtil.update();
-		while(!AssetUtil.isLoaded("newopui/22")) AssetUtil.update();
-		while(!AssetUtil.isLoaded("newopui/24")) AssetUtil.update();
-		while(!AssetUtil.isLoaded("newopui/25")) AssetUtil.update();
-		while(!AssetUtil.isLoaded("newopui/27")) AssetUtil.update();
-		while(!AssetUtil.isLoaded("newopui/28")) AssetUtil.update();
-		while(!AssetUtil.isLoaded("newopui/29")) AssetUtil.update();
-		while(!AssetUtil.isLoaded("newopui/30")) AssetUtil.update();
-		while(!AssetUtil.isLoaded("newopui/31")) AssetUtil.update();
+		while(AssetUtil.get("newopui/20") == null) AssetUtil.update();
+		while(AssetUtil.get("newopui/21") == null) AssetUtil.update();
+		while(AssetUtil.get("newopui/22") == null) AssetUtil.update();
+		while(AssetUtil.get("newopui/24") == null) AssetUtil.update();
+		while(AssetUtil.get("newopui/25") == null) AssetUtil.update();
+		while(AssetUtil.get("newopui/27") == null) AssetUtil.update();
+		while(AssetUtil.get("newopui/28") == null) AssetUtil.update();
+		while(AssetUtil.get("newopui/29") == null) AssetUtil.update();
+		while(AssetUtil.get("newopui/30") == null) AssetUtil.update();
+		while(AssetUtil.get("newopui/31") == null) AssetUtil.update();
 		var slrMsgStyle = new SliderStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/20")),
 				new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/27")));
 		slrMsgStyle.knobOver = new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/28"));
@@ -114,44 +114,28 @@ public final class ChatBox extends WidgetGroup {
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
 		if (newopui10 == null) {
-			if (AssetUtil.isLoaded("newopui/10")) {
-				newopui10 = AssetUtil.get("newopui/10");
-			}
+			newopui10 = AssetUtil.get("newopui/10");
 		}
 		if (newopui11 == null) {
-			if (AssetUtil.isLoaded("newopui/11")) {
-				newopui11 = AssetUtil.get("newopui/11");
-			}
+			newopui11 = AssetUtil.get("newopui/11");
 		}
 		if (newopui12 == null) {
-			if (AssetUtil.isLoaded("newopui/12")) {
-				newopui12 = AssetUtil.get("newopui/12");
-			}
+			newopui12 = AssetUtil.get("newopui/12");
 		}
 		if (newopui13 == null) {
-			if (AssetUtil.isLoaded("newopui/13")) {
-				newopui13 = AssetUtil.get("newopui/13");
-			}
+			newopui13 = AssetUtil.get("newopui/13");
 		}
 		if (newopui14 == null) {
-			if (AssetUtil.isLoaded("newopui/14")) {
-				newopui14 = AssetUtil.get("newopui/14");
-			}
+			newopui14 = AssetUtil.get("newopui/14");
 		}
 		if (newopui15 == null) {
-			if (AssetUtil.isLoaded("newopui/15")) {
-				newopui15 = AssetUtil.get("newopui/15");
-			}
+			newopui15 = AssetUtil.get("newopui/15");
 		}
 		if (newopui16 == null) {
-			if (AssetUtil.isLoaded("newopui/16")) {
-				newopui16 = AssetUtil.get("newopui/16");
-			}
+			newopui16 = AssetUtil.get("newopui/16");
 		}
 		if (newopui17 == null) {
-			if (AssetUtil.isLoaded("newopui/17")) {
-				newopui17 = AssetUtil.get("newopui/17");
-			}
+			newopui17 = AssetUtil.get("newopui/17");
 		}
 		if (newopui11 != null) {
 			// 绘制聊天框上边框
