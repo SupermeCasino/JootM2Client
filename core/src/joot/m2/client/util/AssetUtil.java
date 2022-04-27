@@ -84,20 +84,39 @@ public final class AssetUtil {
 		return am[0].get(fileName);
 	}
 	
-	public static interface AssetConsumer<T> {
+	public static interface AssetConsumerMulti<T> {
 		public void recv(T[] ret);
 	}
 	
+	public static interface AssetConsumerOne<T> {
+		public void recv(T ret);
+	}
+	
 	@SuppressWarnings("unchecked")
-	public static <T> void get(AssetConsumer<T> assetConsumer, String... fileNames) {
+	public static <T> void get(AssetConsumerOne<T> assetConsumer, String fileName) {
+		var am = new AssetManager[1];
+		var type = new Class[1];
+		resolve(fileName, am, type);
+		if (!am[0].contains(fileName)) {
+			am[0].load(fileName, type[0]);
+		}
+		while (!am[0].isLoaded(fileName)) update();
+		assetConsumer.recv(am[0].get(fileName));
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T> void get(AssetConsumerMulti<T> assetConsumer, String... fileNames) {
 		var am = new AssetManager[1];
 		var type = new Class[1];
 		resolve(fileNames[0], am, type);
 		T rets[] = (T[]) Array.newInstance(type[0], fileNames.length);
 		for (int i = 0; i < fileNames.length; ++i) {
 			T ret = null;
-			while((ret = get(fileNames[i])) == null) update();
-			rets[i] = ret;
+			if (!am[0].contains(fileNames[i])) {
+				am[0].load(fileNames[i], type[0]);
+			}
+			while (!am[0].isLoaded(fileNames[i])) update();
+			rets[i] = am[0].get(fileNames[i]);
 		}
 		assetConsumer.recv(rets);
 	}

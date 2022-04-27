@@ -75,7 +75,7 @@ public final class StatusBar extends WidgetGroup {
 		while(AssetUtil.get("newopui/2") == null) AssetUtil.update();
 		while(AssetUtil.get("newopui/3") == null) AssetUtil.update();
 		//addActor(new Image(AssetUtil.<M2Texture>get("newopui/0"))); // 左侧生命值法力值的背景图
-		AssetUtil.<M2Texture>get(tex -> addActor(new Image(tex[0])), "newopui/0");
+		AssetUtil.<M2Texture>get(tex -> addActor(new Image(tex)), "newopui/0");
 		addActor(funAreaBg = new Image(AssetUtil.<M2Texture>get("newopui/1")));
 		addActor(quikAreaBg = new Image(AssetUtil.<M2Texture>get("newopui/2")));
 		quikAreaBg.setY(157);
