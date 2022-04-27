@@ -1,6 +1,7 @@
 package joot.m2.client.util;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -80,8 +81,25 @@ public final class AssetUtil {
 		if (!am[0].isLoaded(fileName)) {
 			return null;
 		}
-		System.out.println(fileName);
 		return am[0].get(fileName);
+	}
+	
+	public static interface AssetConsumer<T> {
+		public void recv(T[] ret);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T> void get(AssetConsumer<T> assetConsumer, String... fileNames) {
+		var am = new AssetManager[1];
+		var type = new Class[1];
+		resolve(fileNames[0], am, type);
+		T rets[] = (T[]) Array.newInstance(type[0], fileNames.length);
+		for (int i = 0; i < fileNames.length; ++i) {
+			T ret = null;
+			while((ret = get(fileNames[i])) == null) update();
+			rets[i] = ret;
+		}
+		assetConsumer.recv(rets);
 	}
 	
 	/** 执行异步加载任务（使用较短时间，只加载任务队列中第一个） */
