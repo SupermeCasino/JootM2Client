@@ -179,10 +179,18 @@ public final class ChatBox extends WidgetGroup {
 			}
 		}
 		// 四个角
-		batch.draw(newopui10, getX(), getHeight() - newopui10.getHeight());
-		batch.draw(newopui12, getX() + getWidth() - newopui12.getWidth(), getHeight() - newopui12.getHeight());
-		batch.draw(newopui15, getX(), 0);
-		batch.draw(newopui17, getX() + getWidth() - newopui12.getWidth(), 0);
+		if (newopui10 != null) {
+			batch.draw(newopui10, getX(), getHeight() - newopui10.getHeight());
+		}
+		if (newopui12 != null) {
+			batch.draw(newopui12, getX() + getWidth() - newopui12.getWidth(), getHeight() - newopui12.getHeight());
+		}
+		if (newopui15 != null) {
+			batch.draw(newopui15, getX(), 0);
+		}
+		if (newopui17 != null) {
+			batch.draw(newopui17, getX() + getWidth() - newopui12.getWidth(), 0);
+		}
 		
 		
 		super.draw(batch, parentAlpha);
