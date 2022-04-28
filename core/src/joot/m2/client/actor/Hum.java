@@ -7,6 +7,7 @@ import com.github.jootnet.mir2.core.actor.Action;
 import com.github.jootnet.mir2.core.actor.HumActionInfo;
 import com.github.jootnet.mir2.core.actor.HumActionInfos;
 
+import joot.m2.client.App;
 import joot.m2.client.image.M2Texture;
 import joot.m2.client.util.AssetUtil;
 
@@ -38,6 +39,7 @@ public final class Hum {
 	private HumActionInfo action;
 	private short actionTick;
 	private long actionFrameStartTime;
+	private long actionStartTime;
 	
 	/**
 	 * 通过玩家名称创建角色对象
@@ -84,13 +86,10 @@ public final class Hum {
 	 * @return 当前对象
 	 */
 	public Hum setAction(HumActionInfo action) {
-		var originAction = this.action;
 		this.action = action;
-		if (action != originAction) {
-			actionTick = 1;
-			actionFrameStartTime = System.currentTimeMillis();
-			shift();
-		}
+		actionTick = 1;
+		actionFrameStartTime = System.currentTimeMillis();
+		actionStartTime = System.currentTimeMillis();
 		return this;
 	}
 	
@@ -259,61 +258,76 @@ public final class Hum {
 	 * @return 当前对象
 	 */
 	public Hum act() {
-		
 		// 计算当前动作
-		if (System.currentTimeMillis() - actionFrameStartTime > action.duration) {
-			actionFrameStartTime = System.currentTimeMillis();
-			if (++actionTick > action.frameCount) {
-				actionTick = 1;
-
-				if (action.act == Action.Walk || action.act == Action.Run) {
-					// 走完或跑完了一步，地图中心坐标更新
-					var step = 1;
-					if (action.act == Action.Run) step++;
-
-					var nx = x;
-					var ny = y;
-					switch (action.dir) {
-						case North:
-							ny -= step;
-							break;
-						case NorthEast:
-							ny -= step;
-							nx += step;
-							break;
-						case East:
-							nx += step;
-							break;
-						case SouthEast:
-							ny += step;
-							nx += step;
-							break;
-						case South:
-							ny += step;
-							break;
-						case SouthWest:
-							ny += step;
-							nx -= step;
-							break;
-						case West:
-							nx -= step;
-							break;
-						case NorthWest:
-							ny -= step;
-							nx -= step;
-							break;
-
-						default:
-							break;
-					}
-					if (nextX == nx && nextY == ny) { // 允许移动
-						setPosition(nx, ny);
-					}
+		boolean actionDone = false;
+		var delta = System.currentTimeMillis() - actionStartTime;
+		if (!App.SmoothMoving) {
+			if (System.currentTimeMillis() - actionFrameStartTime > action.duration) {
+				actionFrameStartTime = System.currentTimeMillis();
+				if (++actionTick > action.frameCount) {
+					actionDone = true;
 				}
-				
-				action = HumActionInfos.stand(action.dir); // 当前动作完成之后默认转为站立
 			}
+		} else {
+			if (delta > action.duration * action.frameCount) {
+				actionDone = true;
+			} else {
+				actionTick = (short) Math.min(delta / action.duration + 1, action.frameCount);
+			}
+		}
+
+		if (actionDone) {
+			if (action.act == Action.Walk || action.act == Action.Run) {
+				// 走完或跑完了一步，地图中心坐标更新
+				var step = 1;
+				if (action.act == Action.Run) step++;
+	
+				var nx = x;
+				var ny = y;
+				switch (action.dir) {
+					case North:
+						ny -= step;
+						break;
+					case NorthEast:
+						ny -= step;
+						nx += step;
+						break;
+					case East:
+						nx += step;
+						break;
+					case SouthEast:
+						ny += step;
+						nx += step;
+						break;
+					case South:
+						ny += step;
+						break;
+					case SouthWest:
+						ny += step;
+						nx -= step;
+						break;
+					case West:
+						nx -= step;
+						break;
+					case NorthWest:
+						ny -= step;
+						nx -= step;
+						break;
+	
+					default:
+						break;
+				}
+				if (nextX == nx && nextY == ny) { // 允许移动
+					setPosition(nx, ny);
+				}
+			}
+			setAction(HumActionInfos.stand(action.dir));
+		}
+
+		if (!App.SmoothMoving) {
 			shift();
+		} else {
+			shiftSmooth((int) delta);
 		}
 		
 		return this;
@@ -323,7 +337,7 @@ public final class Hum {
 		// 计算人物偏移
 		shiftX = 0;
 		shiftY = 0;
-		if (action.act == Action.Walk || action.act == Action.Run) {			
+		if (action.act == Action.Walk || action.act == Action.Run) {
 			var step = action.act == Action.Run ? 2 : 1;
 
 			switch (action.dir) {
@@ -354,6 +368,49 @@ public final class Hum {
 			case NorthWest:
 				shiftY = -32 * actionTick / action.frameCount * step;
 				shiftX = -48 * actionTick / action.frameCount * step;
+				break;
+			
+			default:
+				break;
+			}
+		}
+	}
+	
+	private void shiftSmooth(int delta) {
+		// 计算人物偏移（平滑）
+		shiftX = 0;
+		shiftY = 0;
+		if (action.act == Action.Walk || action.act == Action.Run) {
+			var step = action.act == Action.Run ? 2 : 1;
+
+			switch (action.dir) {
+			case North:
+				shiftY = -32 * delta * step / action.frameCount / action.duration; // 向上偏移
+				break;
+			case NorthEast:
+				shiftY = -32 * delta * step / action.frameCount / action.duration;
+				shiftX = 48 * delta * step / action.frameCount / action.duration; // 向右偏移
+				break;
+			case East:
+				shiftX = 48 * delta * step / action.frameCount / action.duration;
+				break;
+			case SouthEast:
+				shiftY = 32 * delta * step / action.frameCount / action.duration;
+				shiftX = 48 * delta * step / action.frameCount / action.duration;
+				break;
+			case South:
+				shiftY = 32 * delta * step / action.frameCount / action.duration;
+				break;
+			case SouthWest:
+				shiftY = 32 * delta * step / action.frameCount / action.duration;
+				shiftX = -48 * delta * step / action.frameCount / action.duration;
+				break;
+			case West:
+				shiftX = -48 * delta * step / action.frameCount / action.duration;
+				break;
+			case NorthWest:
+				shiftY = -32 * delta * step / action.frameCount / action.duration;
+				shiftX = -48 * delta * step / action.frameCount / action.duration;
 				break;
 			
 			default:

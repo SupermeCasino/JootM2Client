@@ -23,3 +23,5 @@ developed by libgdx
 ## 2022-4-19 split screen
 
 ## 2022-4-26 gamescene ui complete
+
+## 2022-4-28 smooth moving

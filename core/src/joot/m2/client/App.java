@@ -17,6 +17,10 @@ public class App extends Game {
 	 * 游戏场景管理器
 	 */
 	public static App SceneManager = null;
+	/**
+	 * 是否平滑移动
+	 */
+	public static boolean SmoothMoving = false;
 	
 	// 登陆场景
 	private LoginScene loginScene;

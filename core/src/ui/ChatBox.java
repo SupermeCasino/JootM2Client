@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
+import joot.m2.client.App;
 import joot.m2.client.image.M2Texture;
 import joot.m2.client.util.AssetUtil;
 import joot.m2.client.util.DrawableUtil;
@@ -50,7 +51,23 @@ public final class ChatBox extends WidgetGroup {
 			@Override
 			public boolean keyUp(InputEvent event, int keycode) {
 				if (keycode == Keys.ENTER) {
-					txtMsg.appendText(txtChat.getText());
+					String say = txtChat.getText().trim();
+					if (say.isEmpty()) return true;
+					if (say.equals("@smoothon")) {
+						txtMsg.appendText("[GREEN]enable smooth moving");
+						App.SmoothMoving = true;
+						txtMsg.appendText(System.lineSeparator());
+						txtChat.setText("");
+						return true;
+					}
+					if (say.equals("@smoothoff")) {
+						txtMsg.appendText("[RED]disable smooth moving");
+						App.SmoothMoving = false;
+						txtMsg.appendText(System.lineSeparator());
+						txtChat.setText("");
+						return true;
+					}
+					txtMsg.appendText(say);
 					txtMsg.appendText(System.lineSeparator());
 					txtChat.setText("");
 					return true;

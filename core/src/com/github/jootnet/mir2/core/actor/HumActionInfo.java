@@ -20,6 +20,7 @@ public final class HumActionInfo {
     @Override
     public boolean equals(Object obj) {
     	var that = (HumActionInfo) obj;
+    	if (that == null) return false;
     	if (this.act != that.act) return false;
     	if (this.dir != that.dir) return false;
     	if (this.frameIdx != that.frameIdx) return false;
