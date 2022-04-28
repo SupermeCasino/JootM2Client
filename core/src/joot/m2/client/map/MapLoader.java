@@ -39,15 +39,15 @@ public final class MapLoader extends AsynchronousAssetLoader<Map, AssetLoaderPar
 				var mti = _map.getTiles()[_w][_h];
 				var w = _w + 1; // 转换为游戏坐标
 				var h = _h + 1;
-				ret.setCanFly(w, h, mti.isCanFly());
-				ret.setCanWalk(w, h, mti.isCanWalk());
+				ret.canFly[w][h] = mti.isCanFly();
+				ret.canWalk[w][h] = mti.isCanWalk();
 				if (mti.isHasBng()) {
 					var tileFileName = "tiles";
 					if (mti.getBngFileIdx() != 0) {
 						tileFileName += mti.getBngFileIdx();
 					}
 					tileFileName += "/" + mti.getBngImgIdx();
-					ret.setTileFileName(w, h, tileFileName);
+					ret.tilesFileName[w][h] = tileFileName;
 				}
 				if (mti.isHasMid()) {
 					var smTileFileName = "smtiles";
@@ -55,7 +55,7 @@ public final class MapLoader extends AsynchronousAssetLoader<Map, AssetLoaderPar
 						smTileFileName += mti.getMidFileIdx();
 					}
 					smTileFileName += "/" + mti.getMidImgIdx();
-					ret.setSmTileFileName(w, h, smTileFileName);
+					ret.smTilesFileName[w][h] = smTileFileName;
 				}
 				if (!mti.isHasAni() && mti.isHasObj()) {
 					var objFileName = "objects";
@@ -63,7 +63,7 @@ public final class MapLoader extends AsynchronousAssetLoader<Map, AssetLoaderPar
 						objFileName += mti.getObjFileIdx();
 					}
 					objFileName += "/" + mti.getObjImgIdx();
-					ret.setObjFileName(w, h, objFileName);
+					ret.objsFileName[w][h] = objFileName;
 				}
 			});
 		});

@@ -25,16 +25,7 @@ import joot.m2.client.util.FontUtil;
  * @author linxing
  *
  */
-public final class ChatBox extends WidgetGroup {
-	private M2Texture newopui10; // 聊天框左上角
-	private M2Texture newopui11; // 聊天框上边框
-	private M2Texture newopui12; // 聊天框右上角
-	private M2Texture newopui13; // 聊天框左边框
-	private M2Texture newopui14; // 聊天框右边框
-	private M2Texture newopui15; // 聊天框左下角
-	private M2Texture newopui16; // 聊天框上边框
-	private M2Texture newopui17; // 聊天框右下角
-	
+public final class ChatBox extends WidgetGroup {	
 	/** 文本输入 */
 	TextField txtChat;
 	/** 历史消息展示 */
@@ -47,10 +38,6 @@ public final class ChatBox extends WidgetGroup {
 	private Button btnExpandMsg;
 
 	public ChatBox() {
-		// 经测试，最大能使用12px，此时光标和选中背景色与文本框本身没有间隙不好看
-		// 10像素比较合适，但文字很小看起来眼睛疼。
-		// 后面看看是不是在文字本身上做点功夫。比如加粗加阴影，颜色固定为黑色，可以保留轮廓信息，且固定颜色可以用8位图节省大小
-		//  当然，也可能不行
 		addActor(txtChat = new TextField("", new TextField.TextFieldStyle(FontUtil.Song_12_all_outline,
 				Color.BLACK,
 				DrawableUtil.Cursor_DarkGray,
@@ -81,36 +68,50 @@ public final class ChatBox extends WidgetGroup {
 		txtMsg.setSize(380, 106);
 		txtMsg.setDisabled(true);
 
-		while(AssetUtil.get("newopui/20") == null) AssetUtil.update();
-		while(AssetUtil.get("newopui/21") == null) AssetUtil.update();
-		while(AssetUtil.get("newopui/22") == null) AssetUtil.update();
-		while(AssetUtil.get("newopui/24") == null) AssetUtil.update();
-		while(AssetUtil.get("newopui/25") == null) AssetUtil.update();
-		while(AssetUtil.get("newopui/27") == null) AssetUtil.update();
-		while(AssetUtil.get("newopui/28") == null) AssetUtil.update();
-		while(AssetUtil.get("newopui/29") == null) AssetUtil.update();
-		while(AssetUtil.get("newopui/30") == null) AssetUtil.update();
-		while(AssetUtil.get("newopui/31") == null) AssetUtil.update();
-		var slrMsgStyle = new SliderStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/20")),
-				new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/27")));
-		slrMsgStyle.knobOver = new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/28"));
-		addActor(slrMsg = new Slider(0, 100, 1, true, slrMsgStyle));
+		AssetUtil.<M2Texture>get(texs -> {
+			int texIdx = 0;
+			var slrMsgStyle = new SliderStyle(new TextureRegionDrawable(texs[texIdx++]),
+					new TextureRegionDrawable(texs[texIdx++]));
+			slrMsgStyle.knobOver = new TextureRegionDrawable(texs[texIdx++]);
+			addActor(slrMsg = new Slider(0, 100, 1, true, slrMsgStyle));
+
+			addActor(btnMsgUp = new Button(new ButtonStyle(new TextureRegionDrawable(texs[texIdx++]),
+					new TextureRegionDrawable(texs[texIdx++]), null)));
+
+			addActor(btnMsgDown = new Button(new ButtonStyle(new TextureRegionDrawable(texs[texIdx++]),
+					new TextureRegionDrawable(texs[texIdx++]), null)));
+
+			addActor(btnExpandMsg = new Button(new ButtonStyle(new TextureRegionDrawable(texs[texIdx++]),
+					new TextureRegionDrawable(texs[texIdx++]), null)));
+		}
+				, "newopui/20"
+				, "newopui/27"
+				, "newopui/28"
+				, "newopui/21"
+				, "newopui/22"
+				, "newopui/24"
+				, "newopui/25"
+				, "newopui/30"
+				, "newopui/31");
+		
 		slrMsg.setSize(16, 100);
 		slrMsg.setPosition(366, 28);
-		addActor(btnMsgUp = new Button(new ButtonStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/21")),
-				new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/22")), null)));
 		btnMsgUp.setSize(16, 10);
 		btnMsgUp.setPosition(366, 128);
-		addActor(btnMsgDown = new Button(new ButtonStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/24")),
-				new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/25")), null)));
 		btnMsgDown.setSize(16, 10);
 		btnMsgDown.setPosition(366, 20);
-		addActor(btnExpandMsg = new Button(new ButtonStyle(new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/30")),
-				new TextureRegionDrawable(AssetUtil.<M2Texture>get("newopui/31")), null)));
 		btnExpandMsg.setSize(16, 16);
 		btnExpandMsg.setPosition(366, 4);
 	}
-	
+
+	private M2Texture newopui10; // 聊天框左上角
+	private M2Texture newopui11; // 聊天框上边框
+	private M2Texture newopui12; // 聊天框右上角
+	private M2Texture newopui13; // 聊天框左边框
+	private M2Texture newopui14; // 聊天框右边框
+	private M2Texture newopui15; // 聊天框左下角
+	private M2Texture newopui16; // 聊天框上边框
+	private M2Texture newopui17; // 聊天框右下角
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
 		if (newopui10 == null) {
@@ -175,7 +176,6 @@ public final class ChatBox extends WidgetGroup {
 		if (newopui17 != null) {
 			batch.draw(newopui17, getX() + getWidth() - newopui12.getWidth(), 0);
 		}
-		
 		
 		super.draw(batch, parentAlpha);
 	}
