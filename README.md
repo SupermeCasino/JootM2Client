@@ -27,3 +27,4 @@ developed by libgdx
 ## 2022-4-28 smooth moving
 
 ## 2022-4-30 split common functions
+history message (chatboard) done

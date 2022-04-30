@@ -41,8 +41,7 @@ public final class ChatBox extends WidgetGroup {
 	private String[] strsMsg; // 历史消息内容
 	private Drawable[] bgsMsg; // 历史消息背景色
 	private Color[] colorsMsg; // 历史消息文字颜色
-	private int readIdxMsg; // 历史消息显示索引
-	private int writeIdxMsg; // 历史消息存储索引
+	private long msgsCount; // 历史消息总数
 	/** 历史消息滚动栏 */
 	private Slider slrMsg;
 	private Button btnMsgUp; // 向上单次滚动按钮
@@ -92,7 +91,7 @@ public final class ChatBox extends WidgetGroup {
 			linesMsg[i].setPosition(16, 117 - i * 13); // 每行13像素，其中12像素文字加1像素padding
 			addActor(linesMsg[i]);
 		}
-		strsMsg = new String[100];
+		strsMsg = new String[100]; // 最多记录历史数据条目数，可以改动此值来增加历史消息数目
 		bgsMsg = new Drawable[strsMsg.length];
 		colorsMsg = new Color[strsMsg.length];
 
@@ -101,7 +100,7 @@ public final class ChatBox extends WidgetGroup {
 			var slrMsgStyle = new SliderStyle(new TextureRegionDrawable(texs[texIdx++]),
 					new TextureRegionDrawable(texs[texIdx++]));
 			slrMsgStyle.knobOver = new TextureRegionDrawable(texs[texIdx++]);
-			addActor(slrMsg = new Slider(0, strsMsg.length - linesMsg.length, 1, true, slrMsgStyle));
+			addActor(slrMsg = new Slider(0, strsMsg.length - 1, 1, true, slrMsgStyle));
 
 			addActor(btnMsgUp = new Button(new ButtonStyle(new TextureRegionDrawable(texs[texIdx++]),
 					new TextureRegionDrawable(texs[texIdx++]), null)));
@@ -122,38 +121,17 @@ public final class ChatBox extends WidgetGroup {
 				, "newopui/30"
 				, "newopui/31");
 		
+		// libgdx的slider虽然可以竖直显示，但只能以上为增大，下为减小。因此后文为兼容数据与界面，用“max-”来设置和获取实际数值
+		slrMsg.setValue(slrMsg.getMaxValue());
 		slrMsg.setSize(16, 100);
 		slrMsg.setPosition(366, 28);
 		slrMsg.addListener(new ChangeListener() {
 			
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				var _writeIdx = writeIdxMsg;
-				if (_writeIdx == 0 && strsMsg[0] != null) {
-					_writeIdx = strsMsg.length;
-				}
-				readIdxMsg = Math.max(0, writeIdxMsg - linesMsg.length);
-				for (var i = 0; i < linesMsg.length; ++i) {
-					linesMsg[i].reset();
-				}
-				for (int i = 0, j = readIdxMsg; i < linesMsg.length; ++i, ++j) {
-					if (j >= strsMsg.length) j = 0;
-					if (strsMsg[j] == null) break;
-					var lblMsg = new Label(strsMsg[j], new LabelStyle(FontUtil.Song_12_all_colored, colorsMsg[j]));
-					linesMsg[i].background(bgsMsg[j])
-						.add(lblMsg)
-						.left()
-						.growX()
-						.padTop(1);
-					lblMsg.addListener(new ClickListener() {
-						
-						public void clicked(InputEvent event, float x, float y) {
-							txtChat.setText(lblMsg.getText().toString());
-						}
-						
-					});
-				}
+				refreshMsgShow();
 			}
+			
 		});
 		btnMsgUp.setSize(16, 10);
 		btnMsgUp.setPosition(366, 128);
@@ -189,13 +167,43 @@ public final class ChatBox extends WidgetGroup {
 		if (bg == null) {
 			bg = DrawableUtil.Bg_White;
 		}
-		strsMsg[writeIdxMsg] = msg;
-		colorsMsg[writeIdxMsg] = fontColor;
-		bgsMsg[writeIdxMsg++] = bg;
-		readIdxMsg = Math.max(0, writeIdxMsg - linesMsg.length);
-		slrMsg.setValue(readIdxMsg);
-		if (writeIdxMsg >= strsMsg.length) {
-			writeIdxMsg = 0;
+		int _writeIdx = (int) (msgsCount++ % 100);
+		strsMsg[_writeIdx] = msg;
+		colorsMsg[_writeIdx] = fontColor;
+		bgsMsg[_writeIdx] = bg;
+		slrMsg.setProgrammaticChangeEvents(false);
+		if (msgsCount > strsMsg.length) {
+			// 超过最大缓存条目后永远显示最后几条
+			slrMsg.setValue(0);
+		} else {
+			// 显示最后几条
+			slrMsg.setValue(slrMsg.getMaxValue() - Math.max(0, msgsCount - linesMsg.length));
+		}
+		slrMsg.setProgrammaticChangeEvents(true);
+		refreshMsgShow();
+	}
+	
+	private void refreshMsgShow() {
+		int readIdxMsg = (int) (slrMsg.getMaxValue() - slrMsg.getValue());
+		for (var i = 0; i < linesMsg.length; ++i) {
+			linesMsg[i].reset();
+		}
+		for (int i = 0, j = readIdxMsg; i < linesMsg.length; ++i, ++j) {
+			if (j >= strsMsg.length) j = 0;
+			if (strsMsg[j] == null) break;
+			var lblMsg = new Label(strsMsg[j], new LabelStyle(FontUtil.Song_12_all_colored, colorsMsg[j]));
+			linesMsg[i].background(bgsMsg[j])
+				.add(lblMsg)
+				.left()
+				.growX()
+				.padTop(1);
+			lblMsg.addListener(new ClickListener() {
+				
+				public void clicked(InputEvent event, float x, float y) {
+					txtChat.setText(lblMsg.getText().toString());
+				}
+				
+			});
 		}
 	}
 
