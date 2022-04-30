@@ -9,8 +9,9 @@ import java.util.HashMap;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
-import com.github.jootnet.mir2.core.actor.Action;
-import com.github.jootnet.mir2.core.actor.HumActionInfo;
+import com.github.jootnet.m2.core.actor.Action;
+import com.github.jootnet.m2.core.actor.HumActionInfo;
+import com.github.jootnet.m2.core.actor.RoleBasicInfo;
 
 import joot.m2.client.image.M2Texture;
 import joot.m2.client.image.W_LLoader;
@@ -186,13 +187,14 @@ public final class AssetUtil {
 	/**
 	 * 获取人物衣服贴图
 	 * 
-	 * @param fileIdx 衣服资源文件索引
-	 * @param dressIdx 衣服编号
-	 * @param action 人物动作
-	 * @param tick 动作是第几帧
+	 * @param hum 人物
 	 * @return 已加载的纹理贴图或null
 	 */
-	public static M2Texture getDress(int fileIdx, int dressIdx, HumActionInfo action, int tick) {
+	public static M2Texture getDress(RoleBasicInfo hum) {
+		int fileIdx = hum.humFileIdx;
+		int dressIdx = hum.humIdx;
+		HumActionInfo action = hum.action;
+		int tick = hum.actionTick;
 		if (action.act == Action.Stand && tick > 4) tick -= 4;
 		int texIdx = action.frameIdx + tick - 1;
 		if (dressTextures == null) {
@@ -229,13 +231,14 @@ public final class AssetUtil {
 	/**
 	 * 获取人物武器贴图
 	 * 
-	 * @param fileIdx 武器资源文件索引
-	 * @param weaponIdx 武器编号
-	 * @param action 人物动作
-	 * @param tick 动作是第几帧
+	 * @param hum 人物
 	 * @return 已加载的纹理贴图或null
 	 */
-	public static M2Texture getWeapon(int fileIdx, int weaponIdx, HumActionInfo action, int tick) {
+	public static M2Texture getWeapon(RoleBasicInfo hum) {
+		int fileIdx = hum.weaponFileIdx;
+		int weaponIdx = hum.weaponIdx;
+		HumActionInfo action = hum.action;
+		int tick = hum.actionTick;
 		if (action.act == Action.Stand && tick > 4) tick -= 4;
 		int texIdx = action.frameIdx + tick - 1;
 		if (weaponTextures == null) {
@@ -272,13 +275,14 @@ public final class AssetUtil {
 	/**
 	 * 获取人物衣服特效贴图
 	 * 
-	 * @param fileIdx 衣服特效资源文件索引
-	 * @param humeffectIdx 衣服特效编号
-	 * @param action 人物动作
-	 * @param tick 动作是第几帧
+	 * @param hum 人物
 	 * @return 已加载的纹理贴图或null
 	 */
-	public static M2Texture getHumEffect(int fileIdx, int humeffectIdx, HumActionInfo action, int tick) {
+	public static M2Texture getHumEffect(RoleBasicInfo hum) {
+		int fileIdx = hum.humEffectFileIdx;
+		int humeffectIdx = hum.humEffectIdx;
+		HumActionInfo action = hum.action;
+		int tick = hum.actionTick;
 		int texIdx = action.frameIdx + tick - 1;
 		if (humEffectTextures == null) {
 			humEffectTextures = new M2Texture[fileIdx + 1][][];

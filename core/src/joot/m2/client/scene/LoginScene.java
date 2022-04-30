@@ -11,10 +11,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.Align;
+import com.github.jootnet.m2.core.net.MessageType;
+import com.github.jootnet.m2.core.net.messages.LoginResp;
 
 import joot.m2.client.App;
-import joot.m2.client.net.MessageType;
-import joot.m2.client.net.messages.LoginResp;
 import joot.m2.client.util.NetworkUtil;
 
 /**

@@ -62,5 +62,6 @@ project(":core") {
     dependencies {
         implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
         implementation "com.github.MrStahlfelge.gdx-websockets:core:$wsVersion"
+        implementation 'com.github.jootnet:JootM2Core:v3.1'
     }
 }

@@ -10,15 +10,15 @@ import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.utils.Array;
-import com.github.jootnet.mir2.core.image.ImageInfo;
-import com.github.jootnet.mir2.core.image.ImageLibraries;
+import com.github.jootnet.m2.core.image.ImageInfo;
+import com.github.jootnet.m2.core.image.ImageLibraries;
 
 /** 纹理异步加载对象 */
 public final class W_LLoader extends AsynchronousAssetLoader<M2Texture, AssetLoaderParameters<M2Texture>> {
 
 	/** *.wil/*.wzl/*.wis文件所在文件夹 */
 	public static String Dir = null;
-	private com.github.jootnet.mir2.core.Texture texture_;
+	private com.github.jootnet.m2.core.Texture texture_;
 	private ImageInfo ii_;
 	private static M2Texture EMPTY = null;
 	

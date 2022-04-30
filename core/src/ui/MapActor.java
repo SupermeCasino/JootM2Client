@@ -15,9 +15,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
-import com.github.jootnet.mir2.core.actor.Direction;
+import com.github.jootnet.m2.core.actor.Direction;
+import com.github.jootnet.m2.core.actor.RoleBasicInfo;
 
-import joot.m2.client.actor.Hum;
 import joot.m2.client.image.M2Texture;
 import joot.m2.client.map.Map;
 import joot.m2.client.util.AssetUtil;
@@ -42,8 +42,8 @@ public final class MapActor extends WidgetGroup implements PropertyChangeListene
 	private int shiftY;
 	
 	/** 当前地图的所有人(按地图行存储，达到存取时间复杂度最低，绘制最优) */
-	private List<Hum>[] hums;
-	private List<Hum> tempHums = new ArrayList<>();
+	private List<RoleBasicInfo>[] hums;
+	private List<RoleBasicInfo> tempHums = new ArrayList<>();
 	
 	/**
 	 * 进入地图
@@ -66,9 +66,9 @@ public final class MapActor extends WidgetGroup implements PropertyChangeListene
 	 * @param hum 玩家
 	 * @return 当前对象
 	 */
-	public MapActor add(Hum hum) {
+	public MapActor add(RoleBasicInfo hum) {
 		if (hums != null) {
-			hums[hum.getY()].add(hum);
+			hums[hum.y].add(hum);
 		} else {
 			tempHums.add(hum);
 		}
@@ -124,8 +124,8 @@ public final class MapActor extends WidgetGroup implements PropertyChangeListene
 					for (int h = 0; h < hums.length; ++h) {
 						hums[h] = new ArrayList<>();
 					}
-					for (Hum hum : tempHums) {
-						hums[hum.getY()].add(hum);
+					for (RoleBasicInfo hum : tempHums) {
+						hums[hum.y].add(hum);
 					}
 					tempHums.clear();
 				} else {
@@ -135,8 +135,8 @@ public final class MapActor extends WidgetGroup implements PropertyChangeListene
 						for (int h = 0; h < hums.length; ++h) {
 							hums[h] = new ArrayList<>();
 						}
-						for (Hum hum : tempHums) {
-							hums[hum.getY()].add(hum);
+						for (RoleBasicInfo hum : tempHums) {
+							hums[hum.y].add(hum);
 						}
 						tempHums.clear();
 						maps.put(mapNo, map);
@@ -232,17 +232,17 @@ public final class MapActor extends WidgetGroup implements PropertyChangeListene
 				// 绘制人物
 				var yHums = hums[gamey];
 				for (var hum : yHums) {
-					var x = hum.getX();
-					var y = hum.getY();
+					var x = hum.x;
+					var y = hum.y;
 					if (x < game.x || x > game.x + game.width - 1) continue;
 					if (y < game.y || y > game.y + game.height - 1) continue; // FIXME 这里需要修改一下，不然的话屏幕外的“半个人”不会显示
 					drawingX = pixel.x + (x - game.x) * 48;
 					drawingY = pixel.y + (y - game.y) * 32;
 					List<java.util.Map.Entry<M2Texture, Boolean>> humTexs = new LinkedList<>(); // 纹理以及是否需要混合。翅膀和光剑需要混合
-					var texDress = hum.getCurrentDressTexture();
-					var texEquip = hum.getCurrentWeaponTexture();
-					var texWing = hum.getCurrentWingTexture();
-					if (hum.getAction().dir == Direction.West || hum.getAction().dir == Direction.NorthWest) {
+					var texDress = AssetUtil.getDress(hum);
+					var texEquip = AssetUtil.getWeapon(hum);
+					var texWing = AssetUtil.getHumEffect(hum);
+					if (hum.action.dir == Direction.West || hum.action.dir == Direction.NorthWest) {
 						// 人物朝向左方或左上方时先绘制武器，不然会穿模
 						if (texEquip != null)
 							humTexs.add(new SimpleEntry<M2Texture, Boolean>(texEquip, false));
@@ -261,8 +261,8 @@ public final class MapActor extends WidgetGroup implements PropertyChangeListene
 							batch.setBlendFunction(GL20.GL_SRC_COLOR, GL20.GL_ONE);
 						}
 						transDraw(batch, (int) getWidth(), (int) getHeight(), tex_blend.getKey(),
-								drawingX + tex_blend.getKey().getOffsetX() + hum.getShiftX(),
-								drawingY + tex_blend.getKey().getOffsetY() + hum.getShiftY());
+								drawingX + tex_blend.getKey().getOffsetX() + hum.shiftX,
+								drawingY + tex_blend.getKey().getOffsetY() + hum.shiftY);
 						if (tex_blend.getValue()) {
 							batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 						}
@@ -427,12 +427,12 @@ public final class MapActor extends WidgetGroup implements PropertyChangeListene
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		if (evt.getSource() instanceof Hum && evt.getPropertyName() == "y") {
+		if (evt.getSource() instanceof RoleBasicInfo && evt.getPropertyName() == "y") {
 			var sy = ((Integer)evt.getOldValue()).intValue();
 			var ny = ((Integer)evt.getNewValue()).intValue();
 			if (hums != null) {
 				hums[sy].remove(evt.getSource());
-				hums[ny].add((Hum) evt.getSource());
+				hums[ny].add((RoleBasicInfo) evt.getSource());
 			}
 		}
 	}

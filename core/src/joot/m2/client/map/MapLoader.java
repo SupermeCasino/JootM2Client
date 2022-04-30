@@ -10,7 +10,7 @@ import com.badlogic.gdx.assets.loaders.AsynchronousAssetLoader;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
-import com.github.jootnet.mir2.core.map.Maps;
+import com.github.jootnet.m2.core.map.Maps;
 
 /** 地图异步加载对象 */
 public final class MapLoader extends AsynchronousAssetLoader<Map, AssetLoaderParameters<Map>> {

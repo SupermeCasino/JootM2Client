@@ -11,15 +11,16 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.github.jootnet.mir2.core.actor.Action;
-import com.github.jootnet.mir2.core.actor.Direction;
-import com.github.jootnet.mir2.core.actor.HumActionInfo;
-import com.github.jootnet.mir2.core.actor.HumActionInfos;
+import com.github.jootnet.m2.core.actor.Action;
+import com.github.jootnet.m2.core.actor.Direction;
+import com.github.jootnet.m2.core.actor.HumActionInfo;
+import com.github.jootnet.m2.core.actor.HumActionInfos;
+import com.github.jootnet.m2.core.actor.RoleBasicInfo;
+import com.github.jootnet.m2.core.net.Message;
+import com.github.jootnet.m2.core.net.MessageType;
+import com.github.jootnet.m2.core.net.messages.HumActionChange;
 
-import joot.m2.client.actor.Hum;
-import joot.m2.client.net.Message;
-import joot.m2.client.net.MessageType;
-import joot.m2.client.net.messages.HumActionChange;
+import joot.m2.client.App;
 import joot.m2.client.util.NetworkUtil;
 import ui.MapActor;
 import ui.StatusBar;
@@ -38,8 +39,8 @@ public final class GameScene extends BaseScene {
 	private StatusBar statusBar;
 
 	/** 人物 */
-	public Hum me; // “我”
-	public Map<String, Hum> hums; // 其他人
+	public RoleBasicInfo me; // “我”
+	public Map<String, RoleBasicInfo> hums; // 其他人
 	/**
 	 * 君の名は。
 	 */
@@ -63,12 +64,13 @@ public final class GameScene extends BaseScene {
 		super.show();
 
 
-		me = new Hum(MyName);
+		me = new RoleBasicInfo();
+		me.name = MyName;
 		Gdx.graphics.setTitle("将唐传奇" + "-" + MyName);
-		me.setPosition(300, 300).setAction(HumActionInfos.StandSouth)
-				.setDress(0, 19) // 穿着雷霆
-				.setWeapon(0, 69) // 拿着开天
-				.setWing(0, 1); // 扑扇着白色翅膀
+		me.setPosition(300, 300).setAction(HumActionInfos.StandSouth);
+		me.humIdx = 19; // 穿着雷霆
+		me.weaponIdx = 69; // 拿着开天
+		me.humEffectIdx = 1; // 扑扇着白色翅膀
 		hums = new HashMap<>();
 		hums.put(MyName, me);
 		mapActor.enter("0").add(me);
@@ -100,11 +102,11 @@ public final class GameScene extends BaseScene {
 		calcMeAction();
 		// 其他玩家
 		if (hums != null) {
-			hums.values().parallelStream().forEach(Hum::act);
+			hums.values().parallelStream().forEach(hum -> hum.act(App.SmoothMoving));
 		}
 		
 		// 地图的视角和绘制偏移以当前角色为准
-		mapActor.setCenter(me.getX(), me.getY()).setShiftX(me.getShiftX()).setShiftY(me.getShiftY());
+		mapActor.setCenter(me.x, me.y).setShiftX(me.shiftX).setShiftY(me.shiftY);
 		
 		super.render(delta);
 	}
@@ -151,13 +153,13 @@ public final class GameScene extends BaseScene {
 	// 计算当前玩家动作
 	private void calcMeAction() {
 
-		var isLastFrame = me.getActionTick() == me.getAction().frameCount; // 上一帧的人物动作是否为最后一帧
+		var isLastFrame = me.actionTick == me.action.frameCount; // 上一帧的人物动作是否为最后一帧
 
-		me.act(); // 尝试将人物动作向前推进一帧
+		me.act(App.SmoothMoving); // 尝试将人物动作向前推进一帧
 
-		isLastFrame &= me.getActionTick() == 1; // 还需成功推进一帧才表示前面确认是最后一帧
+		isLastFrame &= me.actionTick == 1; // 还需成功推进一帧才表示前面确认是最后一帧
 
-		var humAction = me.getAction(); // 人物按计划当前帧应该做的动作（可能是未完成的动作（走跑），也可能是站立（前一个走跑动作已完成））
+		var humAction = me.action; // 人物按计划当前帧应该做的动作（可能是未完成的动作（走跑），也可能是站立（前一个走跑动作已完成））
 
 		var nextAction = calcMeNextAction(humAction); // 根据鼠标动作计算出来的人物当前应该变更的动作
 		
@@ -172,9 +174,9 @@ public final class GameScene extends BaseScene {
 	private HumActionInfo calcMeNextAction(HumActionInfo action) {
 		if (!mouseDownFlag) return action;
 		// 鼠标与屏幕中心x、y轴的距离
-		var mapCenter = mapActor.humXY2MapXY(me.getX(), me.getY());
-        var disX = mouseX - (mapCenter[0] + me.getShiftX() + 24); // 脚踩地图块中心
-        var disY = mouseY - (mapCenter[1] + me.getShiftY() + 16);
+		var mapCenter = mapActor.humXY2MapXY(me.x, me.y);
+        var disX = mouseX - (mapCenter[0] + me.shiftX + 24); // 脚踩地图块中心
+        var disY = mouseY - (mapCenter[1] + me.shiftY + 16);
         
         if (Math.abs(disX) < 24 && Math.abs(disY) < 16) return action;
         
@@ -197,43 +199,43 @@ public final class GameScene extends BaseScene {
         var canWalk = false;
         if (angle >= 337.5 || angle < 22.5) {
         	dir = Direction.East;
-            canWalk = mapActor.isCanWalk(me.getX() + 1, me.getY()); // 目标位置（一个身位）是否可达
-            if(moveStep == 2 && !mapActor.isCanWalk(me.getX() + 2, me.getY())) // 若想要跑动，且目标不可达，则尝试改为走到最近的一个身位
+            canWalk = mapActor.isCanWalk(me.x + 1, me.y); // 目标位置（一个身位）是否可达
+            if(moveStep == 2 && !mapActor.isCanWalk(me.x + 2, me.y)) // 若想要跑动，且目标不可达，则尝试改为走到最近的一个身位
                 --moveStep;
         } else if (angle >= 22.5 && angle < 67.5) {
         	dir = Direction.SouthEast;
-            canWalk = mapActor.isCanWalk(me.getX() + 1, me.getY() + 1);
-            if(moveStep == 2 && !mapActor.isCanWalk(me.getX() + 2, me.getY() + 2))
+            canWalk = mapActor.isCanWalk(me.x + 1, me.y + 1);
+            if(moveStep == 2 && !mapActor.isCanWalk(me.x + 2, me.y + 2))
                 --moveStep;
         } else if (angle >= 67.5 && angle < 112.5) {
         	dir = Direction.South;
-            canWalk = mapActor.isCanWalk(me.getX(), me.getY() + 1);
-            if(moveStep == 2 && !mapActor.isCanWalk(me.getX(), me.getY() + 2))
+            canWalk = mapActor.isCanWalk(me.x, me.y + 1);
+            if(moveStep == 2 && !mapActor.isCanWalk(me.x, me.y + 2))
                 --moveStep;
         } else if (angle >= 112.5 && angle < 157.5) {
         	dir = Direction.SouthWest;
-            canWalk = mapActor.isCanWalk(me.getX() - 1, me.getY() + 1);
-            if(moveStep == 2 && !mapActor.isCanWalk(me.getX() - 2, me.getY() + 2))
+            canWalk = mapActor.isCanWalk(me.x - 1, me.y + 1);
+            if(moveStep == 2 && !mapActor.isCanWalk(me.x - 2, me.y + 2))
                 --moveStep;
         } else if (angle >= 157.5 && angle < 202.5) {
         	dir = Direction.West;
-            canWalk = mapActor.isCanWalk(me.getX() - 1, me.getY());
-            if(moveStep == 2 && !mapActor.isCanWalk(me.getX() - 2, me.getY()))
+            canWalk = mapActor.isCanWalk(me.x - 1, me.y);
+            if(moveStep == 2 && !mapActor.isCanWalk(me.x - 2, me.y))
                 --moveStep;
         } else if (angle >= 202.5 && angle < 247.5) {
         	dir = Direction.NorthWest;
-            canWalk = mapActor.isCanWalk(me.getX() - 1, me.getY() - 1);
-            if(moveStep == 2 && !mapActor.isCanWalk(me.getX() - 2, me.getY() - 2))
+            canWalk = mapActor.isCanWalk(me.x - 1, me.y - 1);
+            if(moveStep == 2 && !mapActor.isCanWalk(me.x - 2, me.y - 2))
                 --moveStep;
         } else if (angle >= 247.5 && angle < 292.5) {
         	dir = Direction.North;
-        	canWalk = mapActor.isCanWalk(me.getX(), me.getY() - 1);
-            if(moveStep == 2 && !mapActor.isCanWalk(me.getX(), me.getY() - 2))
+        	canWalk = mapActor.isCanWalk(me.x, me.y - 1);
+            if(moveStep == 2 && !mapActor.isCanWalk(me.x, me.y - 2))
                 --moveStep;
         } else if (angle >= 292.5 && angle < 337.5) {
         	dir = Direction.NorthEast;
-        	 canWalk = mapActor.isCanWalk(me.getX() + 1, me.getY() - 1);
-             if(moveStep == 2 && !mapActor.isCanWalk(me.getX() + 2, me.getY() - 2))
+        	 canWalk = mapActor.isCanWalk(me.x + 1, me.y - 1);
+             if(moveStep == 2 && !mapActor.isCanWalk(me.x + 2, me.y - 2))
                  --moveStep;
         }
         
@@ -275,24 +277,25 @@ public final class GameScene extends BaseScene {
 		for (var msg : messages) {
 			if (msg.type() == MessageType.HUM_ACTION_CHANGE) {
 				var action = (HumActionChange) msg;
-				if (action.name().equals(me.getName())) {
+				if (action.name.equals(me.name)) {
 					// 当前玩家动作改变消息，可以视为服务器确认
-					me.setNextX(action.nextX());
-					me.setNextY(action.nextY());
+					me.nextX = action.nextX;
+					me.nextY = action.nextY;
 				} else {
 					// 其他玩家消息，直接修改其状态
-					Hum hum;
-					if (hums.containsKey(action.name())) {
-						hum = hums.get(action.name());
+					RoleBasicInfo hum;
+					if (hums.containsKey(action.name)) {
+						hum = hums.get(action.name);
 					} else {
-						hum = new Hum(action.name());
+						hum = new RoleBasicInfo();
+						hum.name = action.name;
 						// 可能出现的一种情况，某个玩家出生（上线）消息未被正确处理。此时该玩家有新动作了，我们直接把他加进去
 						mapActor.add(hum);
-						hums.put(hum.getName(), hum);
+						hums.put(hum.name, hum);
 					}
-					hum.setAction(action.action()).setPosition(action.x(), action.y());
-					hum.setNextX(action.nextX());
-					hum.setNextY(action.nextY());
+					hum.setAction(action.action).setPosition(action.x, action.y);
+					hum.nextX = action.nextX;
+					hum.nextY = action.nextY;
 				}
 			}
 		}

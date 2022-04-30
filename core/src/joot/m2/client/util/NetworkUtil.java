@@ -1,16 +1,14 @@
 package joot.m2.client.util;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.github.czyzby.websocket.WebSocket;
 import com.github.czyzby.websocket.WebSocketListener;
 import com.github.czyzby.websocket.WebSockets;
-
-import joot.m2.client.actor.Hum;
-import joot.m2.client.net.Message;
-import joot.m2.client.net.Messages;
+import com.github.jootnet.m2.core.actor.RoleBasicInfo;
+import com.github.jootnet.m2.core.net.Message;
+import com.github.jootnet.m2.core.net.Messages;
 
 /**
  * 网络交互工具类
@@ -76,7 +74,7 @@ public final class NetworkUtil {
      * 
      * @param hum 已发生动作更改的人物
      */
-    public static void sendHumActionChange(Hum hum) {
+    public static void sendHumActionChange(RoleBasicInfo hum) {
     	try {
 			ws.send(Messages.pack(Messages.humActionChange(hum)));
 		} catch (Exception e) { }
@@ -116,7 +114,7 @@ public final class NetworkUtil {
 		public boolean onMessage(WebSocket webSocket, byte[] packet) {
 			try {
 				synchronized (recvMsgList) {
-					recvMsgList.add(Messages.unpack(ByteBuffer.wrap(packet)));	
+					recvMsgList.add(Messages.unpack(packet));
 				}
 			}catch(Exception ex) { }
 			return true;
