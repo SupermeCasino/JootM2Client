@@ -3,16 +3,23 @@ package joot.m2.client.ui;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider.SliderStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Null;
 
 import joot.m2.client.App;
 import joot.m2.client.image.M2Texture;
@@ -29,8 +36,13 @@ import joot.m2.client.util.FontUtil;
 public final class ChatBox extends WidgetGroup {	
 	/** 文本输入 */
 	TextField txtChat;
-	/** 历史消息展示 */
-	private TextArea txtMsg;
+	/** 逐行显示历史消息的控件 */
+	private Table[] linesMsg;
+	private String[] strsMsg; // 历史消息内容
+	private Drawable[] bgsMsg; // 历史消息背景色
+	private Color[] colorsMsg; // 历史消息文字颜色
+	private int readIdxMsg; // 历史消息显示索引
+	private int writeIdxMsg; // 历史消息存储索引
 	/** 历史消息滚动栏 */
 	private Slider slrMsg;
 	private Button btnMsgUp; // 向上单次滚动按钮
@@ -54,43 +66,42 @@ public final class ChatBox extends WidgetGroup {
 					String say = txtChat.getText().trim();
 					if (say.isEmpty()) return true;
 					if (say.equals("@smoothon")) {
-						txtMsg.appendText("[GREEN]enable smooth moving");
 						App.SmoothMoving = true;
-						txtMsg.appendText(System.lineSeparator());
+						appendMsg("enable smooth moving", Color.GREEN, null);
 						txtChat.setText("");
 						return true;
 					}
 					if (say.equals("@smoothoff")) {
-						txtMsg.appendText("[RED]disable smooth moving");
 						App.SmoothMoving = false;
-						txtMsg.appendText(System.lineSeparator());
+						appendMsg("disable smooth moving", Color.WHITE, DrawableUtil.Bg_Red);
 						txtChat.setText("");
 						return true;
 					}
-					txtMsg.appendText(say);
-					txtMsg.appendText(System.lineSeparator());
+					appendMsg(say, null, null);
 					txtChat.setText("");
 					return true;
 				}
 				return super.keyUp(event, keycode);
 			}
 		});
-		
-		addActor(txtMsg = new TextArea("", new TextField.TextFieldStyle(FontUtil.Song_12_all_colored,
-				Color.BLACK,
-				DrawableUtil.Cursor_DarkGray,
-				DrawableUtil.Selection_LightGray,
-				DrawableUtil.Bg_White)));
-		txtMsg.setPosition(16, 22);
-		txtMsg.setSize(380, 106);
-		txtMsg.setDisabled(true);
+		linesMsg = new Table[8]; // 显示8行文字
+		for (var i = 0; i < linesMsg.length; ++i) {
+			linesMsg[i] = new Table();
+			linesMsg[i].background(DrawableUtil.Bg_White);
+			linesMsg[i].setSize(380, 13);
+			linesMsg[i].setPosition(16, 117 - i * 13); // 每行13像素，其中12像素文字加1像素padding
+			addActor(linesMsg[i]);
+		}
+		strsMsg = new String[100];
+		bgsMsg = new Drawable[strsMsg.length];
+		colorsMsg = new Color[strsMsg.length];
 
 		AssetUtil.<M2Texture>get(texs -> {
 			int texIdx = 0;
 			var slrMsgStyle = new SliderStyle(new TextureRegionDrawable(texs[texIdx++]),
 					new TextureRegionDrawable(texs[texIdx++]));
 			slrMsgStyle.knobOver = new TextureRegionDrawable(texs[texIdx++]);
-			addActor(slrMsg = new Slider(0, 100, 1, true, slrMsgStyle));
+			addActor(slrMsg = new Slider(0, strsMsg.length - linesMsg.length, 1, true, slrMsgStyle));
 
 			addActor(btnMsgUp = new Button(new ButtonStyle(new TextureRegionDrawable(texs[texIdx++]),
 					new TextureRegionDrawable(texs[texIdx++]), null)));
@@ -113,12 +124,79 @@ public final class ChatBox extends WidgetGroup {
 		
 		slrMsg.setSize(16, 100);
 		slrMsg.setPosition(366, 28);
+		slrMsg.addListener(new ChangeListener() {
+			
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				var _writeIdx = writeIdxMsg;
+				if (_writeIdx == 0 && strsMsg[0] != null) {
+					_writeIdx = strsMsg.length;
+				}
+				readIdxMsg = Math.max(0, writeIdxMsg - linesMsg.length);
+				for (var i = 0; i < linesMsg.length; ++i) {
+					linesMsg[i].reset();
+				}
+				for (int i = 0, j = readIdxMsg; i < linesMsg.length; ++i, ++j) {
+					if (j >= strsMsg.length) j = 0;
+					if (strsMsg[j] == null) break;
+					var lblMsg = new Label(strsMsg[j], new LabelStyle(FontUtil.Song_12_all_colored, colorsMsg[j]));
+					linesMsg[i].background(bgsMsg[j])
+						.add(lblMsg)
+						.left()
+						.growX()
+						.padTop(1);
+					lblMsg.addListener(new ClickListener() {
+						
+						public void clicked(InputEvent event, float x, float y) {
+							txtChat.setText(lblMsg.getText().toString());
+						}
+						
+					});
+				}
+			}
+		});
 		btnMsgUp.setSize(16, 10);
 		btnMsgUp.setPosition(366, 128);
+		btnMsgUp.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				slrMsg.setValue(slrMsg.getValue() + slrMsg.getStepSize());
+			}
+		});
 		btnMsgDown.setSize(16, 10);
 		btnMsgDown.setPosition(366, 20);
+		btnMsgDown.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				slrMsg.setValue(slrMsg.getValue() - slrMsg.getStepSize());
+			}
+		});
 		btnExpandMsg.setSize(16, 16);
 		btnExpandMsg.setPosition(366, 4);
+	}
+	
+	/**
+	 * 追加新消息到消息框
+	 * 
+	 * @param msg 消息文字内容
+	 * @param fontColor 文字颜色，默认为黑色
+	 * @param bg 背景色，默认为{@link DrawableUtil#Bg_White}，系统消息可能为{@link DrawableUtil#Bg_Red}
+	 */
+	public void appendMsg(String msg, @Null Color fontColor, @Null Drawable bg) {
+		if (fontColor == null) {
+			fontColor = Color.BLACK;
+		}
+		if (bg == null) {
+			bg = DrawableUtil.Bg_White;
+		}
+		strsMsg[writeIdxMsg] = msg;
+		colorsMsg[writeIdxMsg] = fontColor;
+		bgsMsg[writeIdxMsg++] = bg;
+		readIdxMsg = Math.max(0, writeIdxMsg - linesMsg.length);
+		slrMsg.setValue(readIdxMsg);
+		if (writeIdxMsg >= strsMsg.length) {
+			writeIdxMsg = 0;
+		}
 	}
 
 	private M2Texture newopui10; // 聊天框左上角
@@ -200,10 +278,12 @@ public final class ChatBox extends WidgetGroup {
 	@Override
 	public void layout() {
 		txtChat.setWidth(getWidth() - 30);
-		txtMsg.setWidth(getWidth() - 30);
 		slrMsg.setX(getWidth() - 14);
 		btnMsgUp.setX(getWidth() - 14);
 		btnMsgDown.setX(getWidth() - 14);
 		btnExpandMsg.setX(getWidth() - 14);
+		for (var i = 0; i < linesMsg.length; ++i) {
+			linesMsg[i].setWidth(getWidth() - 30);
+		}
 	}
 }

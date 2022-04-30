@@ -21,12 +21,15 @@ public final class DrawableUtil {
 	public static Drawable Cursor_DarkGray = null;
 	/** 背景<br>纯白 */
 	public static Drawable Bg_White = null;
+	/** 背景<br>红色 */
+	public static Drawable Bg_Red = null;
 	
 	static {
 		var colorBits_LightGray = new byte[] {(byte) (Color.LIGHT_GRAY.r * 255), (byte) (Color.LIGHT_GRAY.g * 255), (byte) (Color.LIGHT_GRAY.b * 255), -1};
 		var colorBits_Black = new byte[] {(byte) (Color.DARK_GRAY.r * 255), (byte) (Color.DARK_GRAY.g * 255), (byte) (Color.DARK_GRAY.b * 255), -1};
 		var colorBits_Trans = new byte[4];
 		var colorBits_White = new byte[] {(byte) (Color.WHITE.r * 255), (byte) (Color.WHITE.g * 255), (byte) (Color.WHITE.b * 255), -1};
+		var colorBits_Red = new byte[] {(byte) (Color.RED.r * 255), (byte) (Color.RED.g * 255), (byte) (Color.RED.b * 255), -1};
 		
 		var pm = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
 		pm.getPixels().put(colorBits_LightGray);
@@ -50,5 +53,11 @@ public final class DrawableUtil {
 		pm.getPixels().put(colorBits_White);
 		pm.getPixels().flip();
 		Bg_White = new TextureRegionDrawable(new Texture(pm));
+		
+		pm = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+		pm = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+		pm.getPixels().put(colorBits_Red);
+		pm.getPixels().flip();
+		Bg_Red = new TextureRegionDrawable(new Texture(pm));
 	}
 }
