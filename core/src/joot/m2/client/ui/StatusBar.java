@@ -1,4 +1,4 @@
-package ui;
+package joot.m2.client.ui;
 
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox.CheckBoxStyle;

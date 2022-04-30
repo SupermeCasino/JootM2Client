@@ -1,4 +1,4 @@
-package ui;
+package joot.m2.client.ui;
 
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;

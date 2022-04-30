@@ -21,9 +21,9 @@ import com.github.jootnet.m2.core.net.MessageType;
 import com.github.jootnet.m2.core.net.messages.HumActionChange;
 
 import joot.m2.client.App;
+import joot.m2.client.ui.MapActor;
+import joot.m2.client.ui.StatusBar;
 import joot.m2.client.util.NetworkUtil;
-import ui.MapActor;
-import ui.StatusBar;
 
 /**
  * 游戏场景

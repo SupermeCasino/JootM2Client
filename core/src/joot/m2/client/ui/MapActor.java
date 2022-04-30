@@ -1,4 +1,4 @@
-package ui;
+package joot.m2.client.ui;
 
 import static joot.m2.client.util.DrawingUtil.transDraw;
 
