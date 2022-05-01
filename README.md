@@ -28,3 +28,5 @@ developed by libgdx
 
 ## 2022-4-30 split common functions
 history message (chatboard) done
+
+## 2022-5-1 almost done chrsel
