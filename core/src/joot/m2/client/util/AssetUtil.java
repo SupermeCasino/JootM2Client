@@ -11,7 +11,7 @@ import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.github.jootnet.m2.core.actor.Action;
 import com.github.jootnet.m2.core.actor.HumActionInfo;
-import com.github.jootnet.m2.core.actor.RoleBasicInfo;
+import com.github.jootnet.m2.core.actor.ChrBasicInfo;
 
 import joot.m2.client.image.M2Texture;
 import joot.m2.client.image.W_LLoader;
@@ -190,7 +190,7 @@ public final class AssetUtil {
 	 * @param hum 人物
 	 * @return 已加载的纹理贴图或null
 	 */
-	public static M2Texture getDress(RoleBasicInfo hum) {
+	public static M2Texture getDress(ChrBasicInfo hum) {
 		int fileIdx = hum.humFileIdx;
 		int dressIdx = hum.humIdx;
 		HumActionInfo action = hum.action;
@@ -234,9 +234,10 @@ public final class AssetUtil {
 	 * @param hum 人物
 	 * @return 已加载的纹理贴图或null
 	 */
-	public static M2Texture getWeapon(RoleBasicInfo hum) {
+	public static M2Texture getWeapon(ChrBasicInfo hum) {
 		int fileIdx = hum.weaponFileIdx;
 		int weaponIdx = hum.weaponIdx;
+		if (weaponIdx == 0) return null;
 		HumActionInfo action = hum.action;
 		int tick = hum.actionTick;
 		if (action.act == Action.Stand && tick > 4) tick -= 4;
@@ -278,9 +279,10 @@ public final class AssetUtil {
 	 * @param hum 人物
 	 * @return 已加载的纹理贴图或null
 	 */
-	public static M2Texture getHumEffect(RoleBasicInfo hum) {
+	public static M2Texture getHumEffect(ChrBasicInfo hum) {
 		int fileIdx = hum.humEffectFileIdx;
 		int humeffectIdx = hum.humEffectIdx;
+		if (humeffectIdx == 0) return null;
 		HumActionInfo action = hum.action;
 		int tick = hum.actionTick;
 		int texIdx = action.frameIdx + tick - 1;

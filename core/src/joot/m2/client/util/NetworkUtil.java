@@ -1,12 +1,13 @@
 package joot.m2.client.util;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.github.czyzby.websocket.WebSocket;
 import com.github.czyzby.websocket.WebSocketListener;
 import com.github.czyzby.websocket.WebSockets;
-import com.github.jootnet.m2.core.actor.RoleBasicInfo;
+import com.github.jootnet.m2.core.actor.ChrBasicInfo;
 import com.github.jootnet.m2.core.net.Message;
 import com.github.jootnet.m2.core.net.Messages;
 
@@ -20,21 +21,28 @@ public final class NetworkUtil {
 
     /** 接受到的数据 */
 	private static List<Message> recvMsgList = new ArrayList<>();
-	
+    
+    @FunctionalInterface
+    public interface MessageConsumer {
+    	boolean recv(Message msg);
+    }
+    
     /**
-     * 获取服务端发送过来的所有消息
+     * 接受并处理消息
      * <br>
-     * 在上一次渲染循环中
+     * 如果不是自己能处理的消息，返回false
      * 
-     * @return 服务器发送过来的所有消息
+     * @param consumer 消息消费者
      */
-    public static List<Message> getRecvMsgList() {
-        var recvMsgList_ = new ArrayList<Message>();
+    public static void recv(MessageConsumer consumer) {
 		synchronized (recvMsgList) {
+	    	var recvMsgList_ = new ArrayList<Message>();
 			recvMsgList_.addAll(recvMsgList);
+			recvMsgList.clear();
+			for (var msg : recvMsgList_) {
+				if (!consumer.recv(msg)) recvMsgList.add(msg);
+			}
 		}
-        recvMsgList.clear();
-        return recvMsgList_;
     }
 
 	private static WebSocket ws = null;
@@ -74,7 +82,7 @@ public final class NetworkUtil {
      * 
      * @param hum 已发生动作更改的人物
      */
-    public static void sendHumActionChange(RoleBasicInfo hum) {
+    public static void sendHumActionChange(ChrBasicInfo hum) {
     	try {
 			ws.send(Messages.pack(Messages.humActionChange(hum)));
 		} catch (Exception e) { }
@@ -114,7 +122,7 @@ public final class NetworkUtil {
 		public boolean onMessage(WebSocket webSocket, byte[] packet) {
 			try {
 				synchronized (recvMsgList) {
-					recvMsgList.add(Messages.unpack(packet));
+					recvMsgList.add(Messages.unpack(ByteBuffer.wrap(packet)));
 				}
 			}catch(Exception ex) { }
 			return true;

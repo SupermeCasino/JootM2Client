@@ -16,7 +16,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.github.jootnet.m2.core.actor.Direction;
-import com.github.jootnet.m2.core.actor.RoleBasicInfo;
+import com.github.jootnet.m2.core.actor.ChrBasicInfo;
 
 import joot.m2.client.image.M2Texture;
 import joot.m2.client.map.Map;
@@ -42,8 +42,8 @@ public final class MapActor extends WidgetGroup implements PropertyChangeListene
 	private int shiftY;
 	
 	/** 当前地图的所有人(按地图行存储，达到存取时间复杂度最低，绘制最优) */
-	private List<RoleBasicInfo>[] hums;
-	private List<RoleBasicInfo> tempHums = new ArrayList<>();
+	private List<ChrBasicInfo>[] hums;
+	private List<ChrBasicInfo> tempHums = new ArrayList<>();
 	
 	/**
 	 * 进入地图
@@ -66,7 +66,7 @@ public final class MapActor extends WidgetGroup implements PropertyChangeListene
 	 * @param hum 玩家
 	 * @return 当前对象
 	 */
-	public MapActor add(RoleBasicInfo hum) {
+	public MapActor add(ChrBasicInfo hum) {
 		if (hums != null) {
 			hums[hum.y].add(hum);
 		} else {
@@ -124,7 +124,7 @@ public final class MapActor extends WidgetGroup implements PropertyChangeListene
 					for (int h = 0; h < hums.length; ++h) {
 						hums[h] = new ArrayList<>();
 					}
-					for (RoleBasicInfo hum : tempHums) {
+					for (ChrBasicInfo hum : tempHums) {
 						hums[hum.y].add(hum);
 					}
 					tempHums.clear();
@@ -135,7 +135,7 @@ public final class MapActor extends WidgetGroup implements PropertyChangeListene
 						for (int h = 0; h < hums.length; ++h) {
 							hums[h] = new ArrayList<>();
 						}
-						for (RoleBasicInfo hum : tempHums) {
+						for (ChrBasicInfo hum : tempHums) {
 							hums[hum.y].add(hum);
 						}
 						tempHums.clear();
@@ -427,12 +427,12 @@ public final class MapActor extends WidgetGroup implements PropertyChangeListene
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		if (evt.getSource() instanceof RoleBasicInfo && evt.getPropertyName() == "y") {
+		if (evt.getSource() instanceof ChrBasicInfo && evt.getPropertyName() == "y") {
 			var sy = ((Integer)evt.getOldValue()).intValue();
 			var ny = ((Integer)evt.getNewValue()).intValue();
 			if (hums != null) {
 				hums[sy].remove(evt.getSource());
-				hums[ny].add((RoleBasicInfo) evt.getSource());
+				hums[ny].add((ChrBasicInfo) evt.getSource());
 			}
 		}
 	}

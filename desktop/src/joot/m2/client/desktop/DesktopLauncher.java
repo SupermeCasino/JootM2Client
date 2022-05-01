@@ -41,17 +41,10 @@ public class DesktopLauncher {
                 System.exit(0);
             }
         }
-        String path = "/Users/linxing/m2/ShengquGames/Legend of mir";
-        if (cmd.hasOption("path")) {
-            path = cmd.getOptionValue("path");
-        }
+        String path = cmd.getOptionValue("path");
         AssetUtil.init(path);
 
-        String server = "ws://127.0.0.1:55842/m2";
-        if (cmd.hasOption("server")) {
-            server = cmd.getOptionValue("server");
-        }
-
+        String server = "ws://127.0.0.1:55842/m2";//cmd.getOptionValue("server");
 		CommonWebSockets.initiate();
         NetworkUtil.init(server);
 

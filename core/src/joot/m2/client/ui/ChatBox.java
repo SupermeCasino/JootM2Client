@@ -61,7 +61,7 @@ public final class ChatBox extends WidgetGroup {
 		txtChat.addListener(new InputListener() {
 			@Override
 			public boolean keyUp(InputEvent event, int keycode) {
-				if (keycode == Keys.ENTER) {
+				if (keycode == Keys.ENTER || keycode == Keys.NUMPAD_ENTER) {
 					String say = txtChat.getText().trim();
 					if (say.isEmpty()) return true;
 					if (say.equals("@smoothon")) {
@@ -80,7 +80,7 @@ public final class ChatBox extends WidgetGroup {
 					txtChat.setText("");
 					return true;
 				}
-				return super.keyUp(event, keycode);
+				return false;
 			}
 		});
 		linesMsg = new Table[8]; // 显示8行文字

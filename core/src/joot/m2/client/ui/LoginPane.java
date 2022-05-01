@@ -3,8 +3,10 @@ package joot.m2.client.ui;
 import javax.swing.JOptionPane;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
@@ -18,7 +20,6 @@ import com.github.jootnet.m2.core.net.messages.LoginResp;
 
 import joot.m2.client.App;
 import joot.m2.client.image.M2Texture;
-import joot.m2.client.scene.GameScene;
 import joot.m2.client.util.AssetUtil;
 import joot.m2.client.util.DrawableUtil;
 import joot.m2.client.util.FontUtil;
@@ -126,38 +127,61 @@ public final class LoginPane extends WidgetGroup {
 		txtPsw.setMaxLength(20);
 		txtPsw.setPasswordMode(true);
 		txtPsw.setPasswordCharacter('*');
+		txtPsw.addListener(new InputListener() {
+			
+			@Override
+			public boolean keyUp(InputEvent event, int keycode) {
+				if (keycode == Keys.ENTER || keycode == Keys.NUMPAD_ENTER) {
+					String una = txtUna.getText().trim();
+					String psw = txtPsw.getText().trim();
+					if (!una.isEmpty() && !psw.isEmpty()) {
+						NetworkUtil.sendLoginReq(una, psw);
+					}
+					return true;
+				}
+				return false;
+			}
+			
+		});
 	}
 	
 	@Override
 	public void act(float delta) {
-		
-		for (var msg : NetworkUtil.getRecvMsgList()) {
+		NetworkUtil.recv(msg -> {
 			if (msg.type() == MessageType.LOGIN_RESP) {
 				var loginResp = (LoginResp) msg;
-				var code = loginResp.code();
+				var code = loginResp.code;
 				if (code == 0) {
-					//App.Roles = loginResp.roles();
-					//App.toChrSel();
-					GameScene.MyName = loginResp.roles()[0].name;
-					App.toGame();
-					return;
-				}
-				var tip = loginResp.serverTip();
-				if (tip == null) {
-					switch (loginResp.code()) {
-					case 1:
-						tip = "用户名或密码错误";
-						break;
-					case 2:
-						tip = "用户不存在";
-						break;
+					App.Roles = loginResp.roles;
+					App.lastName = loginResp.lastName;
+					App.toChrSel();
+				} else {
+					var tip = loginResp.serverTip;
+					if (tip == null) {
+						switch (loginResp.code) {
+						case 1:
+							tip = "用户名或密码错误";
+							break;
+						case 2:
+							tip = "用户不存在";
+							break;
+						}
 					}
+					JOptionPane.showMessageDialog(null, tip);
 				}
-				JOptionPane.showMessageDialog(null, tip);
+				return true;
 			}
-		}
+			return false;
+		});
 		
 		super.act(delta);
+	}
+	
+	/**
+	 * 将焦点给到输入框
+	 */
+	public void focusInput() {
+		getStage().setKeyboardFocus(txtUna);
 	}
 	
 	@Override

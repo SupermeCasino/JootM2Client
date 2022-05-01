@@ -1,7 +1,6 @@
 package joot.m2.client.scene;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
@@ -10,13 +9,11 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.github.jootnet.m2.core.actor.Action;
+import com.github.jootnet.m2.core.actor.ChrBasicInfo;
 import com.github.jootnet.m2.core.actor.Direction;
 import com.github.jootnet.m2.core.actor.HumActionInfo;
 import com.github.jootnet.m2.core.actor.HumActionInfos;
-import com.github.jootnet.m2.core.actor.RoleBasicInfo;
-import com.github.jootnet.m2.core.net.Message;
 import com.github.jootnet.m2.core.net.MessageType;
 import com.github.jootnet.m2.core.net.messages.HumActionChange;
 
@@ -39,17 +36,13 @@ public final class GameScene extends BaseScene {
 	private StatusBar statusBar;
 
 	/** 人物 */
-	public RoleBasicInfo me; // “我”
-	public Map<String, RoleBasicInfo> hums; // 其他人
-	/**
-	 * 君の名は。
-	 */
-	public static String MyName = null;
+	public ChrBasicInfo me; // “我”
+	public Map<String, ChrBasicInfo> hums; // 其他人
 	
 	
 	@Override
 	public void show() {
-        stage = new Stage(new ScreenViewport());
+        stage = new Stage();
 		
 		mapActor = new MapActor();
 		mapActor.setFillParent(true);
@@ -61,17 +54,9 @@ public final class GameScene extends BaseScene {
 		
 		super.show();
 
-
-		me = new RoleBasicInfo();
-		me.name = MyName;
-		Gdx.graphics.setTitle("将唐传奇" + "-" + MyName);
-		me.setPosition(300, 300).setAction(HumActionInfos.StandSouth);
-		me.humIdx = 19; // 穿着雷霆
-		me.weaponIdx = 69; // 拿着开天
-		me.humEffectIdx = 1; // 扑扇着白色翅膀
+		Gdx.graphics.setTitle("将唐传奇" + "-" + me.name);
 		hums = new HashMap<>();
-		hums.put(MyName, me);
-		mapActor.enter("0").add(me);
+		mapActor.enter(me.mapNo).add(me);
 	}
 	
 	@Override
@@ -94,7 +79,7 @@ public final class GameScene extends BaseScene {
 	public void render(float delta) {
 
 		// 处理服务器消息
-		doServerMessages(NetworkUtil.getRecvMsgList());
+		doServerMessages();
 
 		// 当前角色特殊处理
 		calcMeAction();
@@ -271,8 +256,8 @@ public final class GameScene extends BaseScene {
 	}
 
 	// 处理服务器消息
-	private void doServerMessages(List<Message> messages) {
-		for (var msg : messages) {
+	private void doServerMessages() {
+		NetworkUtil.recv(msg -> {
 			if (msg.type() == MessageType.HUM_ACTION_CHANGE) {
 				var action = (HumActionChange) msg;
 				if (action.name.equals(me.name)) {
@@ -281,22 +266,20 @@ public final class GameScene extends BaseScene {
 					me.nextY = action.nextY;
 				} else {
 					// 其他玩家消息，直接修改其状态
-					RoleBasicInfo hum;
 					if (hums.containsKey(action.name)) {
-						hum = hums.get(action.name);
-					} else {
-						hum = new RoleBasicInfo();
-						hum.name = action.name;
-						// 可能出现的一种情况，某个玩家出生（上线）消息未被正确处理。此时该玩家有新动作了，我们直接把他加进去
-						mapActor.add(hum);
-						hums.put(hum.name, hum);
+						ChrBasicInfo hum = hums.get(action.name);
+						hum.setAction(action.action).setPosition(action.x, action.y);
+						hum.nextX = action.nextX;
+						hum.nextY = action.nextY;
 					}
-					hum.setAction(action.action).setPosition(action.x, action.y);
-					hum.nextX = action.nextX;
-					hum.nextY = action.nextY;
 				}
+				return true;
+			} else if (msg.type() == MessageType.ENTER_RESP) {
+				
+				return true;
 			}
-		}
+			return false;
+		});
 	}
 	
 }

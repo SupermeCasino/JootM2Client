@@ -25,6 +25,7 @@ public final class LoginScene extends BaseScene {
 		loginPane = new LoginPane(null, null);
 		loginPane.setFillParent(true);
 		stage.addActor(loginPane);
+		loginPane.focusInput();
 	    
 		super.show();
 	}
