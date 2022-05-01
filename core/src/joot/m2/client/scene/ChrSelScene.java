@@ -4,6 +4,7 @@ import javax.swing.JOptionPane;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -18,6 +19,8 @@ import com.github.jootnet.m2.core.net.MessageType;
 import com.github.jootnet.m2.core.net.messages.EnterResp;
 
 import joot.m2.client.App;
+import joot.m2.client.image.M2Texture;
+import joot.m2.client.util.AssetUtil;
 import joot.m2.client.util.FontUtil;
 import joot.m2.client.util.NetworkUtil;
 
@@ -58,6 +61,10 @@ public final class ChrSelScene extends BaseScene {
 	private Label lblLevel2;
 	/** 第二个角色的职业 */
 	private Label lblOccu2;
+	/** 开门动画 */
+	private Animation<M2Texture> aniOpenDoor;
+	private float deltaAniOpenDoor;
+	private Image imgOpenDoor;
 
 	@Override
 	public void show() {
@@ -168,7 +175,15 @@ public final class ChrSelScene extends BaseScene {
 	
 	@Override
 	public void render(float delta) {
-
+		deltaAniOpenDoor += delta;
+		if (aniOpenDoor != null) {
+			if (aniOpenDoor.isAnimationFinished(deltaAniOpenDoor)) {
+				App.toGame();
+				return;
+			}
+			imgOpenDoor.setDrawable(new TextureRegionDrawable(aniOpenDoor.getKeyFrame(deltaAniOpenDoor)));
+		}
+		
 		NetworkUtil.recv(msg -> {
 			if (msg.type() == MessageType.ENTER_RESP) {
 				var enterResp = (EnterResp) msg;
@@ -177,7 +192,26 @@ public final class ChrSelScene extends BaseScene {
 				} else {
 					if (!enterResp.cbi.name.equals(App.LastName)) return false; // ??
 					App.Chr = enterResp.cbi;
-					App.toGame();
+					stage.clear();
+					stage.addActor(new Image(new Texture("ui1/02850.png")));
+					imgOpenDoor = new Image();
+					imgOpenDoor.setPosition(239, 236);
+					imgOpenDoor.setSize(496, 361);
+					stage.addActor(imgOpenDoor);
+					AssetUtil.<M2Texture>get(texs -> {
+						aniOpenDoor = new Animation<M2Texture>(0.15f, texs);
+						deltaAniOpenDoor = 0;
+					}
+					, "chrsel/23"
+					, "chrsel/24"
+					, "chrsel/25"
+					, "chrsel/26"
+					, "chrsel/27"
+					, "chrsel/28"
+					, "chrsel/29"
+					, "chrsel/30"
+					, "chrsel/31"
+					, "chrsel/32");
 				}
 				return true;
 			}

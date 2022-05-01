@@ -15,6 +15,7 @@ import com.github.jootnet.m2.core.actor.Direction;
 import com.github.jootnet.m2.core.actor.HumActionInfo;
 import com.github.jootnet.m2.core.actor.HumActionInfos;
 import com.github.jootnet.m2.core.net.MessageType;
+import com.github.jootnet.m2.core.net.messages.EnterResp;
 import com.github.jootnet.m2.core.net.messages.HumActionChange;
 
 import joot.m2.client.App;
@@ -274,7 +275,14 @@ public final class GameScene extends BaseScene {
 				}
 				return true;
 			} else if (msg.type() == MessageType.ENTER_RESP) {
-				
+				var enterResp = (EnterResp) msg;
+				if (enterResp.cbi != null) {
+					if (!hums.containsKey(enterResp.cbi.name)) {
+						// 有人进入地图
+						hums.put(enterResp.cbi.name, enterResp.cbi);
+						mapActor.add(enterResp.cbi);
+					}
+				}
 				return true;
 			}
 			return false;
