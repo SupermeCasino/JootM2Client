@@ -153,7 +153,7 @@ public final class LoginPane extends WidgetGroup {
 				var code = loginResp.code;
 				if (code == 0) {
 					App.Roles = loginResp.roles;
-					App.lastName = loginResp.lastName;
+					App.LastName = loginResp.lastName;
 					App.toChrSel();
 				} else {
 					var tip = loginResp.serverTip;

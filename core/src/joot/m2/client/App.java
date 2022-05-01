@@ -1,6 +1,7 @@
 package joot.m2.client;
 
 import com.badlogic.gdx.Game;
+import com.github.jootnet.m2.core.actor.ChrBasicInfo;
 import com.github.jootnet.m2.core.net.messages.LoginResp;
 
 import joot.m2.client.scene.ChrSelScene;
@@ -18,7 +19,9 @@ public class App extends Game {
 	/** 账号已有的角色列表 */
 	public static LoginResp.Role[] Roles;
 	/** 上次登录的昵称 */
-	public static String lastName;
+	public static String LastName;
+	/** 当前进入游戏的角色 */
+	public static ChrBasicInfo Chr;
 	/**
 	 * 是否平滑移动
 	 */

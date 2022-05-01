@@ -100,6 +100,16 @@ public final class NetworkUtil {
 		} catch (Exception e) { }
     }
     
+    /**
+     * 发送进入游戏
+     * 
+     * @param chrName 选择的角色昵称
+     */
+    public static void sendEnterGame(String chrName) {
+    	try {
+			ws.send(Messages.pack(Messages.selectChr(chrName)));
+		} catch (Exception e) { }
+    }
     
     private static class WebSocketListenerImpl implements WebSocketListener {
 

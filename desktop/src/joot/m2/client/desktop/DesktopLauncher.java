@@ -44,7 +44,7 @@ public class DesktopLauncher {
         String path = cmd.getOptionValue("path");
         AssetUtil.init(path);
 
-        String server = "ws://127.0.0.1:55842/m2";//cmd.getOptionValue("server");
+        String server = cmd.getOptionValue("server");
 		CommonWebSockets.initiate();
         NetworkUtil.init(server);
 
