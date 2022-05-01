@@ -1,6 +1,7 @@
 package joot.m2.client;
 
 import com.badlogic.gdx.Game;
+import com.github.jootnet.m2.core.net.messages.LoginResp;
 
 import joot.m2.client.scene.ChrSelScene;
 import joot.m2.client.scene.GameScene;
@@ -13,10 +14,9 @@ import joot.m2.client.scene.LoginScene;
  *
  */
 public class App extends Game {
-	/**
-	 * 游戏场景管理器
-	 */
-	public static App SceneManager = null;
+	private static App me = null;
+	/** 账号已有的角色列表 */
+	public static LoginResp.Role[] Roles;
 	/**
 	 * 是否平滑移动
 	 */
@@ -29,9 +29,12 @@ public class App extends Game {
 	// 游戏场景
 	private GameScene gameScene;
 
+	public App() {
+		me = this;
+	}
+	
 	@Override
 	public void create() {
-		SceneManager = this;
 		loginScene = new LoginScene();
 		chrSelScene = new ChrSelScene();
 		gameScene = new GameScene();
@@ -41,21 +44,21 @@ public class App extends Game {
 	/**
 	 * 去到登陆界面
 	 */
-	public void toLogin() {
-		setScreen(loginScene);
+	public static void toLogin() {
+		me.setScreen(me.loginScene);
 	}
 	
 	/**
 	 * 去到角色选择场景
 	 */
-	public void toChrSel() {
-		setScreen(chrSelScene);
+	public static void toChrSel() {
+		me.setScreen(me.chrSelScene);
 	}
 	
 	/**
 	 * 去到游戏场景
 	 */
-	public void toGame() {
-		setScreen(gameScene);
+	public static void toGame() {
+		me.setScreen(me.gameScene);
 	}
 }

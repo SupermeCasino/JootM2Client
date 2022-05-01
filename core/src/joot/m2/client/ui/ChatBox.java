@@ -53,7 +53,7 @@ public final class ChatBox extends WidgetGroup {
 		addActor(txtChat = new TextField("", new TextField.TextFieldStyle(FontUtil.Song_12_all_outline,
 				Color.BLACK,
 				DrawableUtil.Cursor_DarkGray,
-				DrawableUtil.Selection_LightGray,
+				DrawableUtil.Bg_LightGray,
 				null)));
 		txtChat.setPosition(16, 6);
 		txtChat.setWidth(380);
@@ -133,7 +133,6 @@ public final class ChatBox extends WidgetGroup {
 			}
 			
 		});
-		btnMsgUp.setSize(16, 10);
 		btnMsgUp.setPosition(366, 128);
 		btnMsgUp.addListener(new ClickListener() {
 			@Override
@@ -141,7 +140,6 @@ public final class ChatBox extends WidgetGroup {
 				slrMsg.setValue(slrMsg.getValue() + slrMsg.getStepSize());
 			}
 		});
-		btnMsgDown.setSize(16, 10);
 		btnMsgDown.setPosition(366, 20);
 		btnMsgDown.addListener(new ClickListener() {
 			@Override
@@ -149,7 +147,6 @@ public final class ChatBox extends WidgetGroup {
 				slrMsg.setValue(slrMsg.getValue() - slrMsg.getStepSize());
 			}
 		});
-		btnExpandMsg.setSize(16, 16);
 		btnExpandMsg.setPosition(366, 4);
 	}
 	

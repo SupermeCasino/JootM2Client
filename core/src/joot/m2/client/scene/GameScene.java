@@ -49,8 +49,6 @@ public final class GameScene extends BaseScene {
 	
 	@Override
 	public void show() {
-		Gdx.graphics.setWindowedMode(1024, 768);
-
         stage = new Stage(new ScreenViewport());
 		
 		mapActor = new MapActor();

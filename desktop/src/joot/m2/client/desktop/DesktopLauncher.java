@@ -57,8 +57,7 @@ public class DesktopLauncher {
 
 		var config = new Lwjgl3ApplicationConfiguration();
 		config.setResizable(false);
-		config.setWindowedMode(800, 600);
-		//config.setWindowSizeLimits(800, 600, 1024, 768);
+		config.setWindowedMode(1024, 768);
 		config.setWindowIcon(FileType.Internal, "mir.jpg");
 		config.setTitle("将唐传奇");
 		config.useVsync(true);

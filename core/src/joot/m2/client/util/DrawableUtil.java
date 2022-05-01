@@ -15,12 +15,14 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
  *
  */
 public final class DrawableUtil {
-	/** 文本选中背景<br>浅灰 */
-	public static Drawable Selection_LightGray = null;
 	/** 光标<br>深灰 */
 	public static Drawable Cursor_DarkGray = null;
+	/** 光标<br>白色 */
+	public static Drawable Cursor_White = null;
 	/** 背景<br>纯白 */
 	public static Drawable Bg_White = null;
+	/** 背景<br>浅灰 */
+	public static Drawable Bg_LightGray = null;
 	/** 背景<br>红色 */
 	public static Drawable Bg_Red = null;
 	
@@ -34,7 +36,7 @@ public final class DrawableUtil {
 		var pm = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
 		pm.getPixels().put(colorBits_LightGray);
 		pm.getPixels().flip();
-		Selection_LightGray = new TextureRegionDrawable(new Texture(pm));
+		Bg_LightGray = new TextureRegionDrawable(new Texture(pm));
 		
 		pm = new Pixmap(3, 3, Pixmap.Format.RGBA8888);
 		pm.getPixels().put(colorBits_Black);
@@ -48,6 +50,19 @@ public final class DrawableUtil {
 		pm.getPixels().put(colorBits_Black);
 		pm.getPixels().flip();
 		Cursor_DarkGray = new NinePatchDrawable(new NinePatch(new Texture(pm), 1, 1, 1, 1));
+		
+		pm = new Pixmap(3, 3, Pixmap.Format.RGBA8888);
+		pm.getPixels().put(colorBits_White);
+		pm.getPixels().put(colorBits_White);
+		pm.getPixels().put(colorBits_White);
+		pm.getPixels().put(colorBits_Trans);
+		pm.getPixels().put(colorBits_White);
+		pm.getPixels().put(colorBits_Trans);
+		pm.getPixels().put(colorBits_White);
+		pm.getPixels().put(colorBits_White);
+		pm.getPixels().put(colorBits_White);
+		pm.getPixels().flip();
+		Cursor_White = new NinePatchDrawable(new NinePatch(new Texture(pm), 1, 1, 1, 1));
 		
 		pm = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
 		pm.getPixels().put(colorBits_White);
