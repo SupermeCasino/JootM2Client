@@ -141,9 +141,9 @@ public final class ChrSelScene extends BaseScene {
 			lblOccu1.setPosition(154, 36);
 		}
 		if (App.Roles != null && App.Roles.length > 1) {
-			lblName2.setPosition(862, 108);
-			lblLevel2.setPosition(862, 70);
-			lblOccu2.setPosition(862, 32);
+			lblName2.setPosition(866, 108);
+			lblLevel2.setPosition(866, 70);
+			lblOccu2.setPosition(866, 32);
 		}
 		imgChr1.setPosition(152, 300);
 		imgChr1Effect.setPosition(156, 300);
@@ -188,6 +188,7 @@ public final class ChrSelScene extends BaseScene {
 			public void clicked(InputEvent event, float x, float y) {
 				if (App.Roles != null && App.Roles.length > 0) {
 					App.LastName = App.Roles[0].name;
+					select(0, true);
 				}	
 			}
 			
@@ -198,6 +199,7 @@ public final class ChrSelScene extends BaseScene {
 			public void clicked(InputEvent event, float x, float y) {
 				if (App.Roles != null && App.Roles.length > 1) {
 					App.LastName = App.Roles[1].name;
+					select(1, true);
 				}	
 			}
 			
@@ -245,6 +247,10 @@ public final class ChrSelScene extends BaseScene {
 		aniChr2 = null;
 		aniChr1Effect = null;
 		aniChr2Effect = null;
+		imgChr1.setDrawable(null);
+		imgChr1Effect.setDrawable(null);
+		imgChr2.setDrawable(null);
+		imgChr2Effect.setDrawable(null);
 		if (App.Roles != null && App.Roles.length > 0) {
 			if (App.Roles[0].gender == 0) {
 				// 男
@@ -284,29 +290,29 @@ public final class ChrSelScene extends BaseScene {
 				if (App.Roles[1].type == 0) {
 					// 战士
 					AssetUtil.<M2Texture>get(tex -> {
-						imgChr1.setDrawable(new TextureRegionDrawable(tex));
+						imgChr2.setDrawable(new TextureRegionDrawable(tex));
 					}, "chrsel/60");
 				} else if (App.Roles[1].type == 1) {
 					AssetUtil.<M2Texture>get(tex -> {
-						imgChr1.setDrawable(new TextureRegionDrawable(tex));
+						imgChr2.setDrawable(new TextureRegionDrawable(tex));
 					}, "chrsel/100");
 				} else if (App.Roles[1].type == 2) {
 					AssetUtil.<M2Texture>get(tex -> {
-						imgChr1.setDrawable(new TextureRegionDrawable(tex));
+						imgChr2.setDrawable(new TextureRegionDrawable(tex));
 					}, "chrsel/140");
 				}
 			} else {
 				if (App.Roles[1].type == 0) {
 					AssetUtil.<M2Texture>get(tex -> {
-						imgChr1.setDrawable(new TextureRegionDrawable(tex));
+						imgChr2.setDrawable(new TextureRegionDrawable(tex));
 					}, "chrsel/180");
 				} else if (App.Roles[1].type == 1) {
 					AssetUtil.<M2Texture>get(tex -> {
-						imgChr1.setDrawable(new TextureRegionDrawable(tex));
+						imgChr2.setDrawable(new TextureRegionDrawable(tex));
 					}, "chrsel/220");
 				} else if (App.Roles[1].type == 2) {
 					AssetUtil.<M2Texture>get(tex -> {
-						imgChr1.setDrawable(new TextureRegionDrawable(tex));
+						imgChr2.setDrawable(new TextureRegionDrawable(tex));
 					}, "chrsel/260");
 				}
 			}
@@ -316,7 +322,7 @@ public final class ChrSelScene extends BaseScene {
 				AssetUtil.<M2Texture>get(texs -> {
 					aniChr1 = new Animation<M2Texture>(0.15f, texs);
 				}
-				, reliveAniTexs[App.Roles[1].gender][App.Roles[1].type]);
+				, reliveAniTexs[App.Roles[0].gender][App.Roles[0].type]);
 				AssetUtil.<M2Texture>get(texs -> {
 					aniChr1Effect = new Animation<M2Texture>(0.15f, texs);
 				}, IntStream.range(4, 18).mapToObj(j -> "chrsel/" + j).collect(Collectors.toList()).toArray(new String[0]));
@@ -373,7 +379,7 @@ public final class ChrSelScene extends BaseScene {
 		if (aniChr2Effect != null) {
 			deltaAniChr2Effect += delta;
 			if (aniChr2Effect.isAnimationFinished(deltaAniChr2Effect)) {
-				select(0, false);
+				select(1, false);
 				return;
 			}
 			imgChr2Effect.setDrawable(new TextureRegionDrawable(aniChr2Effect.getKeyFrame(deltaAniChr2Effect)));
