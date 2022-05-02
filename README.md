@@ -30,3 +30,5 @@ developed by libgdx
 history message (chatboard) done
 
 ## 2022-5-2 done chrsel
+
+## 2022-5-2 decide material version

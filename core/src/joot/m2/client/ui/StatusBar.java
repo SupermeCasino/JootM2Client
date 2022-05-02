@@ -65,7 +65,7 @@ public final class StatusBar extends WidgetGroup {
 		AssetUtil.<M2Texture>get(tex -> {
 			addActor(new Image(tex));
 		}, "prguse3/690");
-		//addActor(chatBox = new ChatBox());
+		addActor(chatBox = new ChatBox());
 		AssetUtil.<M2Texture>get(texs -> {
 			int texIdx = 0;
 			addActor(chkPublicMsg = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(texs[texIdx++]),
@@ -145,7 +145,8 @@ public final class StatusBar extends WidgetGroup {
 			, "prguse3/307"
 			, "prguse3/309"
 			, "prguse3/310");
-		
+
+		chatBox.setBounds(194, 0, 636, 157);
 		chkPublicMsg.setPosition(176, 116);
 		chkAreaMsg.setPosition(176, 96);
 		chkPrivateMsg.setPosition(176, 76);
