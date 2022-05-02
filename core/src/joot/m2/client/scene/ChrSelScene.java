@@ -6,7 +6,6 @@ import java.util.stream.IntStream;
 import javax.swing.JOptionPane;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -87,7 +86,9 @@ public final class ChrSelScene extends BaseScene {
 	public void show() {
 		
 		stage = new Stage();
-		stage.addActor(new Image(new Texture("ui1/02851.png")));
+		AssetUtil.<M2Texture>get(tex -> {
+			stage.addActor(new Image(tex));
+		}, "ui1/02851");
 		stage.addActor(btnSelectChr1 = new ImageButton(new ImageButtonStyle()));
 		stage.addActor(btnSelectChr2 = new ImageButton(new ImageButtonStyle()));
 		stage.addActor(btnEnter = new ImageButton(new ImageButtonStyle()));
@@ -115,18 +116,32 @@ public final class ChrSelScene extends BaseScene {
 		stage.addActor(imgChr1Effect = new Image());
 		stage.addActor(imgChr2 = new Image());
 		stage.addActor(imgChr2Effect = new Image());
-		
-		btnSelectChr1.getStyle().over = new TextureRegionDrawable(new Texture("ui1/02854.png"));
-		btnSelectChr2.getStyle().over = new TextureRegionDrawable(new Texture("ui1/02856.png"));
-		btnEnter.getStyle().over = new TextureRegionDrawable(new Texture("ui1/02852.png"));
-		btnCreate.getStyle().over = new TextureRegionDrawable(new Texture("ui1/02858.png"));
-		btnCreate.getStyle().up = new TextureRegionDrawable(new Texture("ui1/02859.png"));
-		btnReback.getStyle().over = new TextureRegionDrawable(new Texture("ui1/02860.png"));
-		btnReback.getStyle().up = new TextureRegionDrawable(new Texture("ui1/02861.png"));
-		btnRemove.getStyle().over = new TextureRegionDrawable(new Texture("ui1/02862.png"));
-		btnRemove.getStyle().up = new TextureRegionDrawable(new Texture("ui1/02863.png"));
-		btnExit.getStyle().over = new TextureRegionDrawable(new Texture("ui1/02864.png"));
-		btnExit.getStyle().up = new TextureRegionDrawable(new Texture("ui1/02865.png"));
+
+		AssetUtil.<M2Texture>get(texs -> {
+			var texIdx = 0;
+			btnSelectChr1.getStyle().over = new TextureRegionDrawable(texs[texIdx++]);
+			btnSelectChr2.getStyle().over = new TextureRegionDrawable(texs[texIdx++]);
+			btnEnter.getStyle().over = new TextureRegionDrawable(texs[texIdx++]);
+			btnCreate.getStyle().over = new TextureRegionDrawable(texs[texIdx++]);
+			btnCreate.getStyle().up = new TextureRegionDrawable(texs[texIdx++]);
+			btnReback.getStyle().over = new TextureRegionDrawable(texs[texIdx++]);
+			btnReback.getStyle().up = new TextureRegionDrawable(texs[texIdx++]);
+			btnRemove.getStyle().over = new TextureRegionDrawable(texs[texIdx++]);
+			btnRemove.getStyle().up = new TextureRegionDrawable(texs[texIdx++]);
+			btnExit.getStyle().over = new TextureRegionDrawable(texs[texIdx++]);
+			btnExit.getStyle().up = new TextureRegionDrawable(texs[texIdx++]);
+		}
+		, "ui1/02854"
+		, "ui1/02856"
+		, "ui1/02852"
+		, "ui1/02858"
+		, "ui1/02859"
+		, "ui1/02860"
+		, "ui1/02861"
+		, "ui1/02862"
+		, "ui1/02863"
+		, "ui1/02864"
+		, "ui1/02865");
 		
 		btnSelectChr1.setPosition(176, 134);
 		btnSelectChr2.setPosition(887, 136);
@@ -396,7 +411,9 @@ public final class ChrSelScene extends BaseScene {
 					App.Chr = enterResp.cbi;
 					
 					stage.clear();
-					stage.addActor(new Image(new Texture("ui1/02850.png")));
+					AssetUtil.<M2Texture>get(tex -> {
+						stage.addActor(new Image(tex));
+					}, "ui1/02850");
 					
 					imgOpenDoor = new Image();
 					imgOpenDoor.setPosition(239, 236);

@@ -20,24 +20,18 @@ import joot.m2.client.util.FontUtil;
  *
  */
 public final class StatusBar extends WidgetGroup {
-	/** 右侧功能区背景图 */
-	private Image funAreaBg;
-	/** 药品随机卷使用栏背景图 */
-	private Image quikAreaBg;
-	/** 能量条背景图 */
-	private Image powerBg;
 	/** 聊天框 */
 	private ChatBox chatBox;
-	/** 世界聊天开关？ */
-	private CheckBox chkMsg1;
-	/** 行会聊天开关？ */
-	private CheckBox chkMsg2;
-	/** 队伍聊天开关？ */
-	private CheckBox chkMsg3;
-	/** 私聊开关？ */
-	private CheckBox chkMsg4;
-	/** 地图聊天开关？ */
-	private CheckBox chkMsg5;
+	/** 公共聊天显示开关 */
+	private CheckBox chkPublicMsg;
+	/** 区域喊话开关 */
+	private CheckBox chkAreaMsg;
+	/** 私聊开关 */
+	private CheckBox chkPrivateMsg;
+	/** 行会聊天开关 */
+	private CheckBox chkGuildMsg;
+	/** 自动喊话开关 */
+	private CheckBox chkAutoMsg;
 	/** 小地图开关 */
 	private ImageButton btnMMap;
 	/** 交易按钮 */
@@ -68,22 +62,21 @@ public final class StatusBar extends WidgetGroup {
 	private ImageButton btnShop;
 
 	public StatusBar() {
+		AssetUtil.<M2Texture>get(tex -> {
+			addActor(new Image(tex));
+		}, "prguse3/690");
+		//addActor(chatBox = new ChatBox());
 		AssetUtil.<M2Texture>get(texs -> {
 			int texIdx = 0;
-			addActor(new Image(texs[texIdx++])); // 左侧生命值法力值的背景图
-			addActor(funAreaBg = new Image(texs[texIdx++]));
-			addActor(quikAreaBg = new Image(texs[texIdx++]));
-			addActor(powerBg = new Image(texs[texIdx++]));
-			addActor(chatBox = new ChatBox());
-			addActor(chkMsg1 = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(texs[texIdx++]),
+			addActor(chkPublicMsg = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(texs[texIdx++]),
 					new TextureRegionDrawable(texs[texIdx++]), FontUtil.Default, null)));
-			addActor(chkMsg2 = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(texs[texIdx++]),
+			addActor(chkAreaMsg = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(texs[texIdx++]),
 					new TextureRegionDrawable(texs[texIdx++]), FontUtil.Default, null)));
-			addActor(chkMsg3 = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(texs[texIdx++]),
+			addActor(chkPrivateMsg = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(texs[texIdx++]),
 					new TextureRegionDrawable(texs[texIdx++]), FontUtil.Default, null)));
-			addActor(chkMsg4 = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(texs[texIdx++]),
+			addActor(chkGuildMsg = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(texs[texIdx++]),
 					new TextureRegionDrawable(texs[texIdx++]), FontUtil.Default, null)));
-			addActor(chkMsg5 = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(texs[texIdx++]),
+			addActor(chkAutoMsg = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(texs[texIdx++]),
 					new TextureRegionDrawable(texs[texIdx++]), FontUtil.Default, null)));
 			addActor(btnMMap = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(texs[texIdx++]),
 					new TextureRegionDrawable(texs[texIdx++]), null, null, null, null)));
@@ -113,52 +106,51 @@ public final class StatusBar extends WidgetGroup {
 			addActor(btnSound = new ImageButton(new ImageButtonStyle()));
 			btnSound.getStyle().over = new TextureRegionDrawable(texs[texIdx++]);
 			addActor(btnShop = new ImageButton(new ImageButtonStyle()));
+			btnShop.getStyle().up = new TextureRegionDrawable(texs[texIdx++]);
+			btnShop.getStyle().over = new TextureRegionDrawable(texs[texIdx++]);
 			btnShop.getStyle().down = new TextureRegionDrawable(texs[texIdx++]);
 		}
-				, "newopui/0"
-				, "newopui/1"
-				, "newopui/2"
-				, "newopui/3"
-				, "prguse3/280"
-				, "prguse3/281"
-				, "prguse3/282"
-				, "prguse3/283"
-				, "prguse3/284"
-				, "prguse3/285"
-				, "prguse3/286"
-				, "prguse3/287"
-				, "prguse3/288"
-				, "prguse3/289"
-				, "prguse/130"
-				, "prguse/131"
-				, "prguse/132"
-				, "prguse/133"
-				, "prguse/134"
-				, "prguse/135"
-				, "prguse/128"
-				, "prguse/129"
-				, "prguse3/34"
-				, "prguse3/35"
-				, "prguse3/36"
-				, "prguse3/37"
-				, "prguse3/460"
-				, "prguse3/461"
-				, "prguse/136"
-				, "prguse/137"
-				, "prguse/138"
-				, "prguse/139"
-				, "prguse/8"
-				, "prguse/9"
-				, "prguse/10"
-				, "prguse/11"
-				, "prguse3/297");
+			, "prguse3/280"
+			, "prguse3/281"
+			, "prguse3/282"
+			, "prguse3/283"
+			, "prguse3/284"
+			, "prguse3/285"
+			, "prguse3/286"
+			, "prguse3/287"
+			, "prguse3/288"
+			, "prguse3/289"
+			, "prguse/130"
+			, "prguse/131"
+			, "prguse/132"
+			, "prguse/133"
+			, "prguse/134"
+			, "prguse/135"
+			, "prguse/128"
+			, "prguse/129"
+			, "prguse3/34"
+			, "prguse3/35"
+			, "prguse3/36"
+			, "prguse3/37"
+			, "prguse3/460"
+			, "prguse3/461"
+			, "prguse/136"
+			, "prguse/137"
+			, "prguse/138"
+			, "prguse/139"
+			, "prguse/8"
+			, "prguse/9"
+			, "prguse/10"
+			, "prguse/11"
+			, "prguse3/307"
+			, "prguse3/309"
+			, "prguse3/310");
 		
-		quikAreaBg.setY(157);
-		chkMsg1.setPosition(176, 116);
-		chkMsg2.setPosition(176, 96);
-		chkMsg3.setPosition(176, 76);
-		chkMsg4.setPosition(176, 56);
-		chkMsg5.setPosition(176, 36);
+		chkPublicMsg.setPosition(176, 116);
+		chkAreaMsg.setPosition(176, 96);
+		chkPrivateMsg.setPosition(176, 76);
+		chkGuildMsg.setPosition(176, 56);
+		chkAutoMsg.setPosition(176, 36);
 		btnMMap.setPosition(210, 134);
 		btnTrade.setPosition(240, 134);
 		btnGuild.setPosition(270, 134);
@@ -169,15 +161,15 @@ public final class StatusBar extends WidgetGroup {
 		btnLogout.setPosition(754, 134);
 		btnExit.setPosition(784, 134);
 		btnHum.setSize(24, 24);
-		btnHum.setPosition(642, 166);
+		btnHum.setPosition(867, 166);
 		btnBag.setSize(24, 22);
-		btnBag.setPosition(682, 188);
+		btnBag.setPosition(906, 188);
 		btnSkill.setSize(24, 23);
-		btnSkill.setPosition(722, 207);
+		btnSkill.setPosition(946, 207);
 		btnSound.setSize(24, 23);
-		btnSound.setPosition(762, 217);
-		btnShop.setSize(28, 28);
-		btnShop.setPosition(750, 19);
+		btnSound.setPosition(988, 217);
+		btnShop.setSize(36, 38);
+		btnShop.setPosition(977, 19);
 	}
 	
 	/*@Override
@@ -191,18 +183,5 @@ public final class StatusBar extends WidgetGroup {
 	 */
 	public void focusInput() {
 		getStage().setKeyboardFocus(chatBox.txtChat);
-	}
-
-	@Override
-	public void layout() {
-		funAreaBg.setX(getWidth() - funAreaBg.getWidth());
-		quikAreaBg.setX((getWidth() - quikAreaBg.getWidth()) / 2);
-		powerBg.setX(getWidth() - funAreaBg.getWidth() + 6);
-		chatBox.setBounds(194, 0, getWidth() - 388, 157);
-		btnHum.setX(getWidth() - 157);
-		btnBag.setX(getWidth() - 118);
-		btnSkill.setX(getWidth() - 78);
-		btnSound.setX(getWidth() - 36);
-		btnShop.setX(getWidth() - 47);
 	}
 }

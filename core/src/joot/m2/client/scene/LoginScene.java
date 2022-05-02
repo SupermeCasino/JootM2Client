@@ -1,10 +1,11 @@
 package joot.m2.client.scene;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
+import joot.m2.client.image.M2Texture;
 import joot.m2.client.ui.LoginPane;
+import joot.m2.client.util.AssetUtil;
 
 /**
  * 登陆场景
@@ -20,7 +21,9 @@ public final class LoginScene extends BaseScene {
 	public void show() {
 		stage = new Stage();
 		
-		stage.addActor(new Image(new Texture("ui1/02850.png")));
+		AssetUtil.<M2Texture>get(tex -> {
+			stage.addActor(new Image(tex));
+		}, "ui1/02850");
 		
 		loginPane = new LoginPane(null, null);
 		loginPane.setFillParent(true);

@@ -50,6 +50,7 @@ public final class GameScene extends BaseScene {
 		stage.addActor(mapActor);
 
 		statusBar = new StatusBar();
+		statusBar.setSize(768, 251);
 		stage.addActor(statusBar);
 		
 		super.show();
@@ -57,22 +58,6 @@ public final class GameScene extends BaseScene {
 		Gdx.graphics.setTitle("将唐传奇" + "-" + App.Chr.name);
 		hums = new HashMap<>();
 		mapActor.enter(App.Chr.mapNo).add(App.Chr);
-	}
-	
-	@Override
-	public void resize(int width, int height) {
-		var sizeTooLower = false;
-		if (width < 800) {
-			sizeTooLower = true;
-		}
-		if (height < 600) {
-			sizeTooLower = true;
-		}
-
-		if (!sizeTooLower) {
-			statusBar.setWidth(width);
-			stage.getViewport().update(width, height, true);
-		}
 	}
 	
 	@Override
