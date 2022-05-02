@@ -24,6 +24,7 @@ import com.github.jootnet.m2.core.net.messages.EnterResp;
 
 import joot.m2.client.App;
 import joot.m2.client.image.M2Texture;
+import joot.m2.client.image.M2TextureRegionDrawable;
 import joot.m2.client.util.AssetUtil;
 import joot.m2.client.util.FontUtil;
 import joot.m2.client.util.NetworkUtil;
@@ -374,7 +375,7 @@ public final class ChrSelScene extends BaseScene {
 				select(0, false);
 				return;
 			}
-			imgChr1Effect.setDrawable(new TextureRegionDrawable(aniChr1Effect.getKeyFrame(deltaAniChr1Effect)));
+			imgChr1Effect.setDrawable(new M2TextureRegionDrawable(aniChr1Effect.getKeyFrame(deltaAniChr1Effect), true));
 		}
 		if (aniChr2Effect != null) {
 			deltaAniChr2Effect += delta;
@@ -382,7 +383,7 @@ public final class ChrSelScene extends BaseScene {
 				select(1, false);
 				return;
 			}
-			imgChr2Effect.setDrawable(new TextureRegionDrawable(aniChr2Effect.getKeyFrame(deltaAniChr2Effect)));
+			imgChr2Effect.setDrawable(new M2TextureRegionDrawable(aniChr2Effect.getKeyFrame(deltaAniChr2Effect), true));
 		}
 		
 		NetworkUtil.recv(msg -> {
