@@ -86,6 +86,12 @@ public final class StatusBar extends WidgetGroup {
 	private Image imgProgressExp;
 	/** 负重进度条 */
 	private Image imgProgressBagWeight;
+	/** 空血量图片<br>仅死亡时可见 */
+	private Image imgEmptyHp;
+	/** 血量百分比 */
+	private Image imgProgressHp;
+	/** 蓝量百分比 */
+	private Image imgProgressMp;
 
 	public StatusBar() {
 		AssetUtil.<M2Texture>get(tex -> {
@@ -173,13 +179,13 @@ public final class StatusBar extends WidgetGroup {
 			, "prguse3/310");
 		addActor(lblHp = new Label(App.ChrBasic.hp + "/" + App.ChrBasic.maxHp, new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
 		addActor(lblMp = new Label(App.ChrBasic.mp + "/" + App.ChrBasic.maxMp, new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
-		addActor(lblMapInfo = new Label(App.MapNames.get(App.MapNo) + " " + App.ChrBasic.x + ", " + App.ChrBasic.y, new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
+		addActor(lblMapInfo = new Label(App.MapNames.get(App.MapNo) + " " + App.ChrBasic.x + "," + App.ChrBasic.y, new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
 		App.ChrBasic.addPropertyChangeListener(e -> {
 			if (e.getPropertyName().equals("x")) {
-				lblMapInfo.setText(App.MapNames.get(App.MapNo) + " " + e.getNewValue() + ", " + App.ChrBasic.y);
+				lblMapInfo.setText(App.MapNames.get(App.MapNo) + " " + e.getNewValue() + "," + App.ChrBasic.y);
 			}
 			if (e.getPropertyName().equals("y")) {
-				lblMapInfo.setText(App.MapNames.get(App.MapNo) + " " + App.ChrBasic.x + ", " + e.getNewValue());
+				lblMapInfo.setText(App.MapNames.get(App.MapNo) + " " + App.ChrBasic.x + "," + e.getNewValue());
 			}
 			// TODO 血量等改变
 		});
@@ -212,6 +218,9 @@ public final class StatusBar extends WidgetGroup {
 		addActor(lblTime = new Label("", new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
 		addActor(imgProgressExp = new Image());
 		addActor(imgProgressBagWeight = new Image());
+		addActor(imgEmptyHp = new Image());
+		addActor(imgProgressHp = new Image());
+		addActor(imgProgressMp = new Image());
 
 		chatBox.setBounds(194, 0, 636, 157);
 		chkPublicMsg.setPosition(176, 116);
@@ -284,6 +293,45 @@ public final class StatusBar extends WidgetGroup {
 				imgProgressBagWeight.setDrawable(new TextureRegionDrawable(new TextureRegion(tex, progressWidth, 13)));
 				imgProgressBagWeight.setSize(progressWidth, 13);
 			}, "prguse/7");
+		}
+		
+		imgEmptyHp.setPosition(38, 69);
+		imgEmptyHp.setSize(96, 92);
+		imgEmptyHp.setVisible(false);
+		AssetUtil.<M2Texture>get(tex -> {
+			imgEmptyHp.setDrawable(new TextureRegionDrawable(tex));
+		}, "prguse/5");
+
+		imgProgressHp.setPosition(40, 69);
+		if (App.ChrBasic.hp == 0) {
+			imgProgressHp.setDrawable(null);
+		} else if (App.ChrBasic.hp >= App.ChrBasic.maxHp) {
+			AssetUtil.<M2Texture>get(tex -> {
+				imgProgressHp.setDrawable(new TextureRegionDrawable(new TextureRegion(tex, 42, 90)));
+				imgProgressHp.setSize(42, 90);
+			}, "prguse/4");
+		} else {
+			AssetUtil.<M2Texture>get(tex -> {
+				var progressHeight = (int) (90 * ((float)App.ChrBasic.hp / App.ChrBasic.maxHp));
+				imgProgressHp.setDrawable(new TextureRegionDrawable(new TextureRegion(tex, 42, progressHeight)));
+				imgProgressHp.setSize(42, progressHeight);
+			}, "prguse/4");
+		}
+
+		imgProgressMp.setPosition(87, 69);
+		if (App.ChrBasic.mp == 0) {
+			imgProgressMp.setDrawable(null);
+		} else if (App.ChrBasic.mp >= App.ChrBasic.maxMp) {
+			AssetUtil.<M2Texture>get(tex -> {
+				imgProgressMp.setDrawable(new TextureRegionDrawable(new TextureRegion(tex, 48, 0, 44, 90)));
+				imgProgressMp.setSize(44, 90);
+			}, "prguse/4");
+		} else {
+			AssetUtil.<M2Texture>get(tex -> {
+				var progressHeight = (int) (90 * ((float)App.ChrBasic.mp / App.ChrBasic.maxMp));
+				imgProgressMp.setDrawable(new TextureRegionDrawable(new TextureRegion(tex, 48, 90 - progressHeight, 44, progressHeight)));
+				imgProgressMp.setSize(44, progressHeight);
+			}, "prguse/4");
 		}
 	}
 	
