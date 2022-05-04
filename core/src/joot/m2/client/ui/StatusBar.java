@@ -5,6 +5,7 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox.CheckBoxStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -81,6 +82,10 @@ public final class StatusBar extends WidgetGroup {
 	private Label lblLevel;
 	/** 服务器时间 */
 	private Label lblTime;
+	/** 经验值进度条 */
+	private Image imgProgressExp;
+	/** 负重进度条 */
+	private Image imgProgressBagWeight;
 
 	public StatusBar() {
 		AssetUtil.<M2Texture>get(tex -> {
@@ -205,6 +210,8 @@ public final class StatusBar extends WidgetGroup {
 		}
 		addActor(lblLevel = new Label(String.valueOf(App.ChrBasic.level), new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
 		addActor(lblTime = new Label("", new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
+		addActor(imgProgressExp = new Image());
+		addActor(imgProgressBagWeight = new Image());
 
 		chatBox.setBounds(194, 0, 636, 157);
 		chkPublicMsg.setPosition(176, 116);
@@ -247,6 +254,37 @@ public final class StatusBar extends WidgetGroup {
 		lblAttackMode.setWidth(64);
 		lblLevel.setWidth(24);
 		lblTime.setWidth(52);
+		
+		imgProgressExp.setPosition(888, 60);
+		imgProgressBagWeight.setPosition(888, 27);
+		if (App.ChrPrivate.exp == 0) {
+			imgProgressExp.setDrawable(null);
+		} else if (App.ChrPrivate.exp >= App.ChrPrivate.levelUpExp) {
+			AssetUtil.<M2Texture>get(tex -> {
+				imgProgressExp.setDrawable(new TextureRegionDrawable(tex));
+				imgProgressExp.setSize(76, 13);
+			}, "prguse/7");
+		} else {
+			AssetUtil.<M2Texture>get(tex -> {
+				var progressWidth = (int) (76 * ((float)App.ChrPrivate.exp / App.ChrPrivate.levelUpExp));
+				imgProgressExp.setDrawable(new TextureRegionDrawable(new TextureRegion(tex, progressWidth, 13)));
+				imgProgressExp.setSize(progressWidth, 13);
+			}, "prguse/7");
+		}
+		if (App.ChrPrivate.bagWeight == 0) {
+			imgProgressBagWeight.setDrawable(null);
+		} else if (App.ChrPrivate.bagWeight >= App.ChrPrivate.maxBagWeight) {
+			AssetUtil.<M2Texture>get(tex -> {
+				imgProgressBagWeight.setDrawable(new TextureRegionDrawable(tex));
+				imgProgressBagWeight.setSize(76, 13);
+			}, "prguse/7");
+		} else {
+			AssetUtil.<M2Texture>get(tex -> {
+				var progressWidth = (int) (76 * ((float)App.ChrPrivate.bagWeight / App.ChrPrivate.maxBagWeight));
+				imgProgressBagWeight.setDrawable(new TextureRegionDrawable(new TextureRegion(tex, progressWidth, 13)));
+				imgProgressBagWeight.setSize(progressWidth, 13);
+			}, "prguse/7");
+		}
 	}
 	
 	@Override
