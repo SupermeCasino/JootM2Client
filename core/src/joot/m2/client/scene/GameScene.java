@@ -55,9 +55,9 @@ public final class GameScene extends BaseScene {
 		
 		super.show();
 
-		Gdx.graphics.setTitle("将唐传奇" + "-" + App.Chr.name);
+		Gdx.graphics.setTitle("将唐传奇" + "-" + App.ChrBasic.name);
 		hums = new HashMap<>();
-		mapActor.enter(App.Chr.mapNo).add(App.Chr);
+		mapActor.enter(App.MapNo).add(App.ChrBasic);
 	}
 	
 	@Override
@@ -74,7 +74,7 @@ public final class GameScene extends BaseScene {
 		}
 		
 		// 地图的视角和绘制偏移以当前角色为准
-		mapActor.setCenter(App.Chr.x, App.Chr.y).setShiftX(App.Chr.shiftX).setShiftY(App.Chr.shiftY);
+		mapActor.setCenter(App.ChrBasic.x, App.ChrBasic.y).setShiftX(App.ChrBasic.shiftX).setShiftY(App.ChrBasic.shiftY);
 		
 		super.render(delta);
 	}
@@ -121,30 +121,30 @@ public final class GameScene extends BaseScene {
 	// 计算当前玩家动作
 	private void calcMeAction() {
 
-		var isLastFrame = App.Chr.actionTick == App.Chr.action.frameCount; // 上一帧的人物动作是否为最后一帧
+		var isLastFrame = App.ChrBasic.actionTick == App.ChrBasic.action.frameCount; // 上一帧的人物动作是否为最后一帧
 
-		App.Chr.act(App.SmoothMoving); // 尝试将人物动作向前推进一帧
+		App.ChrBasic.act(App.SmoothMoving); // 尝试将人物动作向前推进一帧
 
-		isLastFrame &= App.Chr.actionTick == 1; // 还需成功推进一帧才表示前面确认是最后一帧
+		isLastFrame &= App.ChrBasic.actionTick == 1; // 还需成功推进一帧才表示前面确认是最后一帧
 
-		var humAction = App.Chr.action; // 人物按计划当前帧应该做的动作（可能是未完成的动作（走跑），也可能是站立（前一个走跑动作已完成））
+		var humAction = App.ChrBasic.action; // 人物按计划当前帧应该做的动作（可能是未完成的动作（走跑），也可能是站立（前一个走跑动作已完成））
 
 		var nextAction = calcMeNextAction(humAction); // 根据鼠标动作计算出来的人物当前应该变更的动作
 		
 		if (humAction.equals(nextAction)) return; // 这里一般是鼠标未按下或点击自己
 		if (humAction.act != Action.Stand && !isLastFrame) return; // 这一步还没走完，等一下下（如果当前是站立，则直接可以开始新动作）
 
-		App.Chr.setAction(nextAction);
-		NetworkUtil.sendHumActionChange(App.Chr); // 向服务器报告当前角色状态更改
+		App.ChrBasic.setAction(nextAction);
+		NetworkUtil.sendHumActionChange(App.ChrBasic); // 向服务器报告当前角色状态更改
 	}
 
 	// 根据鼠标（手指）动作计算当前人物应该进行的动作
 	private HumActionInfo calcMeNextAction(HumActionInfo action) {
 		if (!mouseDownFlag) return action;
 		// 鼠标与屏幕中心x、y轴的距离
-		var mapCenter = mapActor.humXY2MapXY(App.Chr.x, App.Chr.y);
-        var disX = mouseX - (mapCenter[0] + App.Chr.shiftX + 24); // 脚踩地图块中心
-        var disY = mouseY - (mapCenter[1] + App.Chr.shiftY + 16);
+		var mapCenter = mapActor.humXY2MapXY(App.ChrBasic.x, App.ChrBasic.y);
+        var disX = mouseX - (mapCenter[0] + App.ChrBasic.shiftX + 24); // 脚踩地图块中心
+        var disY = mouseY - (mapCenter[1] + App.ChrBasic.shiftY + 16);
         
         if (Math.abs(disX) < 24 && Math.abs(disY) < 16) return action;
         
@@ -167,43 +167,43 @@ public final class GameScene extends BaseScene {
         var canWalk = false;
         if (angle >= 337.5 || angle < 22.5) {
         	dir = Direction.East;
-            canWalk = mapActor.isCanWalk(App.Chr.x + 1, App.Chr.y); // 目标位置（一个身位）是否可达
-            if(moveStep == 2 && !mapActor.isCanWalk(App.Chr.x + 2, App.Chr.y)) // 若想要跑动，且目标不可达，则尝试改为走到最近的一个身位
+            canWalk = mapActor.isCanWalk(App.ChrBasic.x + 1, App.ChrBasic.y); // 目标位置（一个身位）是否可达
+            if(moveStep == 2 && !mapActor.isCanWalk(App.ChrBasic.x + 2, App.ChrBasic.y)) // 若想要跑动，且目标不可达，则尝试改为走到最近的一个身位
                 --moveStep;
         } else if (angle >= 22.5 && angle < 67.5) {
         	dir = Direction.SouthEast;
-            canWalk = mapActor.isCanWalk(App.Chr.x + 1, App.Chr.y + 1);
-            if(moveStep == 2 && !mapActor.isCanWalk(App.Chr.x + 2, App.Chr.y + 2))
+            canWalk = mapActor.isCanWalk(App.ChrBasic.x + 1, App.ChrBasic.y + 1);
+            if(moveStep == 2 && !mapActor.isCanWalk(App.ChrBasic.x + 2, App.ChrBasic.y + 2))
                 --moveStep;
         } else if (angle >= 67.5 && angle < 112.5) {
         	dir = Direction.South;
-            canWalk = mapActor.isCanWalk(App.Chr.x, App.Chr.y + 1);
-            if(moveStep == 2 && !mapActor.isCanWalk(App.Chr.x, App.Chr.y + 2))
+            canWalk = mapActor.isCanWalk(App.ChrBasic.x, App.ChrBasic.y + 1);
+            if(moveStep == 2 && !mapActor.isCanWalk(App.ChrBasic.x, App.ChrBasic.y + 2))
                 --moveStep;
         } else if (angle >= 112.5 && angle < 157.5) {
         	dir = Direction.SouthWest;
-            canWalk = mapActor.isCanWalk(App.Chr.x - 1, App.Chr.y + 1);
-            if(moveStep == 2 && !mapActor.isCanWalk(App.Chr.x - 2, App.Chr.y + 2))
+            canWalk = mapActor.isCanWalk(App.ChrBasic.x - 1, App.ChrBasic.y + 1);
+            if(moveStep == 2 && !mapActor.isCanWalk(App.ChrBasic.x - 2, App.ChrBasic.y + 2))
                 --moveStep;
         } else if (angle >= 157.5 && angle < 202.5) {
         	dir = Direction.West;
-            canWalk = mapActor.isCanWalk(App.Chr.x - 1, App.Chr.y);
-            if(moveStep == 2 && !mapActor.isCanWalk(App.Chr.x - 2, App.Chr.y))
+            canWalk = mapActor.isCanWalk(App.ChrBasic.x - 1, App.ChrBasic.y);
+            if(moveStep == 2 && !mapActor.isCanWalk(App.ChrBasic.x - 2, App.ChrBasic.y))
                 --moveStep;
         } else if (angle >= 202.5 && angle < 247.5) {
         	dir = Direction.NorthWest;
-            canWalk = mapActor.isCanWalk(App.Chr.x - 1, App.Chr.y - 1);
-            if(moveStep == 2 && !mapActor.isCanWalk(App.Chr.x - 2, App.Chr.y - 2))
+            canWalk = mapActor.isCanWalk(App.ChrBasic.x - 1, App.ChrBasic.y - 1);
+            if(moveStep == 2 && !mapActor.isCanWalk(App.ChrBasic.x - 2, App.ChrBasic.y - 2))
                 --moveStep;
         } else if (angle >= 247.5 && angle < 292.5) {
         	dir = Direction.North;
-        	canWalk = mapActor.isCanWalk(App.Chr.x, App.Chr.y - 1);
-            if(moveStep == 2 && !mapActor.isCanWalk(App.Chr.x, App.Chr.y - 2))
+        	canWalk = mapActor.isCanWalk(App.ChrBasic.x, App.ChrBasic.y - 1);
+            if(moveStep == 2 && !mapActor.isCanWalk(App.ChrBasic.x, App.ChrBasic.y - 2))
                 --moveStep;
         } else if (angle >= 292.5 && angle < 337.5) {
         	dir = Direction.NorthEast;
-        	 canWalk = mapActor.isCanWalk(App.Chr.x + 1, App.Chr.y - 1);
-             if(moveStep == 2 && !mapActor.isCanWalk(App.Chr.x + 2, App.Chr.y - 2))
+        	 canWalk = mapActor.isCanWalk(App.ChrBasic.x + 1, App.ChrBasic.y - 1);
+             if(moveStep == 2 && !mapActor.isCanWalk(App.ChrBasic.x + 2, App.ChrBasic.y - 2))
                  --moveStep;
         }
         
@@ -245,10 +245,10 @@ public final class GameScene extends BaseScene {
 		NetworkUtil.recv(msg -> {
 			if (msg.type() == MessageType.HUM_ACTION_CHANGE) {
 				var action = (HumActionChange) msg;
-				if (action.name.equals(App.Chr.name)) {
+				if (action.name.equals(App.ChrBasic.name)) {
 					// 当前玩家动作改变消息，可以视为服务器确认
-					App.Chr.nextX = action.nextX;
-					App.Chr.nextY = action.nextY;
+					App.ChrBasic.nextX = action.nextX;
+					App.ChrBasic.nextY = action.nextY;
 				} else {
 					// 其他玩家消息，直接修改其状态
 					if (hums.containsKey(action.name)) {
@@ -261,11 +261,11 @@ public final class GameScene extends BaseScene {
 				return true;
 			} else if (msg.type() == MessageType.ENTER_RESP) {
 				var enterResp = (EnterResp) msg;
-				if (enterResp.cbi != null) {
-					if (!hums.containsKey(enterResp.cbi.name)) {
+				if (enterResp.cBasic != null) {
+					if (!hums.containsKey(enterResp.cBasic.name)) {
 						// 有人进入地图
-						hums.put(enterResp.cbi.name, enterResp.cbi);
-						mapActor.add(enterResp.cbi);
+						hums.put(enterResp.cBasic.name, enterResp.cBasic);
+						mapActor.add(enterResp.cBasic);
 					}
 				}
 				return true;

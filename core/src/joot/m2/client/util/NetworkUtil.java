@@ -1,7 +1,10 @@
 package joot.m2.client.util;
 
 import java.nio.ByteBuffer;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.github.czyzby.websocket.WebSocket;
@@ -9,7 +12,11 @@ import com.github.czyzby.websocket.WebSocketListener;
 import com.github.czyzby.websocket.WebSockets;
 import com.github.jootnet.m2.core.actor.ChrBasicInfo;
 import com.github.jootnet.m2.core.net.Message;
+import com.github.jootnet.m2.core.net.MessageType;
 import com.github.jootnet.m2.core.net.Messages;
+import com.github.jootnet.m2.core.net.messages.SysInfo;
+
+import joot.m2.client.App;
 
 /**
  * 网络交互工具类
@@ -132,7 +139,18 @@ public final class NetworkUtil {
 		public boolean onMessage(WebSocket webSocket, byte[] packet) {
 			try {
 				synchronized (recvMsgList) {
-					recvMsgList.add(Messages.unpack(ByteBuffer.wrap(packet)));
+					var msg = Messages.unpack(ByteBuffer.wrap(packet));
+					if (msg.type() == MessageType.SYS_INFO) {
+						var sysInfo = (SysInfo) msg;
+						App.timeDiff = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) - sysInfo.time;
+						App.MapNames = new HashMap<>();
+						for (var i = 0; i < sysInfo.mapCount; ++i) {
+							App.MapNames.put(sysInfo.mapNos[i], sysInfo.mapNames[i]);
+							App.MapMMaps.put(sysInfo.mapNos[i], sysInfo.mapMMaps[i]);
+						}
+						return true;
+					}
+					recvMsgList.add(msg);
 				}
 			}catch(Exception ex) { }
 			return true;

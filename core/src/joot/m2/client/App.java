@@ -1,7 +1,11 @@
 package joot.m2.client;
 
+import java.util.Map;
+
 import com.badlogic.gdx.Game;
 import com.github.jootnet.m2.core.actor.ChrBasicInfo;
+import com.github.jootnet.m2.core.actor.ChrPrivateInfo;
+import com.github.jootnet.m2.core.actor.ChrPublicInfo;
 import com.github.jootnet.m2.core.net.messages.LoginResp;
 
 import joot.m2.client.scene.ChrSelScene;
@@ -20,8 +24,17 @@ public class App extends Game {
 	public static LoginResp.Role[] Roles;
 	/** 上次登录的昵称 */
 	public static String LastName;
-	/** 当前进入游戏的角色 */
-	public static ChrBasicInfo Chr;
+	/** 地图编号 */
+	public static String MapNo;
+	/** 与服务器时间差（秒） */
+	public static long timeDiff;
+	// 地图信息
+	public static Map<String, String> MapNames;
+	public static Map<String, Integer> MapMMaps;
+	// 当前进入游戏的角色信息
+	public static ChrBasicInfo ChrBasic;
+	public static ChrPublicInfo ChrPublic;
+	public static ChrPrivateInfo ChrPrivate;
 	/**
 	 * 是否平滑移动
 	 */

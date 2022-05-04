@@ -371,6 +371,12 @@ public final class ChrSelScene extends BaseScene {
 		if (aniOpenDoor != null) {
 			deltaAniOpenDoor += delta;
 			if (aniOpenDoor.isAnimationFinished(deltaAniOpenDoor)) {
+				for (var i = 0; i < App.Roles.length; ++i) {
+					if (App.Roles[i].name.equals(App.LastName)) {
+						App.MapNo = App.Roles[i].mapNo;
+						break;
+					}
+				}
 				App.toGame();
 				return;
 			}
@@ -407,8 +413,10 @@ public final class ChrSelScene extends BaseScene {
 				if (enterResp.forbidTip != null) {
 					JOptionPane.showMessageDialog(null, enterResp.forbidTip);
 				} else {
-					if (!enterResp.cbi.name.equals(App.LastName)) return false; // ??
-					App.Chr = enterResp.cbi;
+					if (!enterResp.cBasic.name.equals(App.LastName)) return false; // ??
+					App.ChrBasic = enterResp.cBasic;
+					App.ChrPublic = enterResp.cPublic;
+					App.ChrPrivate = enterResp.cPri;
 					
 					stage.clear();
 					AssetUtil.<M2Texture>get(tex -> {
