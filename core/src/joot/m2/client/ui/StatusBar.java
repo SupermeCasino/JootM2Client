@@ -1,13 +1,22 @@
 package joot.m2.client.ui;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox.CheckBoxStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
 
+import joot.m2.client.App;
 import joot.m2.client.image.M2Texture;
 import joot.m2.client.util.AssetUtil;
 import joot.m2.client.util.FontUtil;
@@ -60,6 +69,18 @@ public final class StatusBar extends WidgetGroup {
 	private ImageButton btnSound;
 	/** 打开商店 */
 	private ImageButton btnShop;
+	/** 血量 */
+	private Label lblHp;
+	/** 蓝量 */
+	private Label lblMp;
+	/** 地图信息 */
+	private Label lblMapInfo;
+	/** 攻击模式 */
+	private Label lblAttackMode;
+	/** 等级 */
+	private Label lblLevel;
+	/** 服务器时间 */
+	private Label lblTime;
 
 	public StatusBar() {
 		AssetUtil.<M2Texture>get(tex -> {
@@ -145,6 +166,45 @@ public final class StatusBar extends WidgetGroup {
 			, "prguse3/307"
 			, "prguse3/309"
 			, "prguse3/310");
+		addActor(lblHp = new Label(App.ChrBasic.hp + "/" + App.ChrBasic.maxHp, new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
+		addActor(lblMp = new Label(App.ChrBasic.mp + "/" + App.ChrBasic.maxMp, new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
+		addActor(lblMapInfo = new Label(App.MapNames.get(App.MapNo) + " " + App.ChrBasic.x + ", " + App.ChrBasic.y, new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
+		App.ChrBasic.addPropertyChangeListener(e -> {
+			if (e.getPropertyName().equals("x")) {
+				lblMapInfo.setText(App.MapNames.get(App.MapNo) + " " + e.getNewValue() + ", " + App.ChrBasic.y);
+			}
+			if (e.getPropertyName().equals("y")) {
+				lblMapInfo.setText(App.MapNames.get(App.MapNo) + " " + App.ChrBasic.x + ", " + e.getNewValue());
+			}
+			// TODO 血量等改变
+		});
+		addActor(lblAttackMode = new Label("", new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
+		switch (App.ChrPrivate.attackMode) {
+		case All :{
+			lblAttackMode.setText("[全体攻击模式]");
+			break;
+		}
+		case Team :{
+			lblAttackMode.setText("[队伍攻击模式]");
+			break;
+		}
+		case Guild :{
+			lblAttackMode.setText("[行会攻击模式]");
+			break;
+		}
+		case None :{
+			lblAttackMode.setText("[和平攻击模式]");
+			break;
+		}
+		case Good :{
+			lblAttackMode.setText("[善恶攻击模式]");
+			break;
+		}
+		default:
+			break;
+		}
+		addActor(lblLevel = new Label(String.valueOf(App.ChrBasic.level), new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
+		addActor(lblTime = new Label("", new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
 
 		chatBox.setBounds(194, 0, 636, 157);
 		chkPublicMsg.setPosition(176, 116);
@@ -171,6 +231,30 @@ public final class StatusBar extends WidgetGroup {
 		btnSound.setPosition(988, 217);
 		btnShop.setSize(36, 38);
 		btnShop.setPosition(977, 19);
+		
+		lblHp.setAlignment(Align.center);
+		lblMp.setAlignment(Align.center);
+		lblAttackMode.setAlignment(Align.center);
+		lblTime.setAlignment(Align.center);
+		lblHp.setPosition(25, 24);
+		lblMp.setPosition(88, 24);
+		lblMapInfo.setPosition(9, 4);
+		lblAttackMode.setPosition(863, 132);
+		lblLevel.setPosition(892, 93);
+		lblTime.setPosition(895, 15);
+		lblHp.setWidth(60);
+		lblMp.setWidth(59);
+		lblAttackMode.setWidth(64);
+		lblLevel.setWidth(24);
+		lblTime.setWidth(52);
+	}
+	
+	@Override
+	public void act(float delta) {
+		
+		lblTime.setText(LocalDateTime.ofEpochSecond(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) - App.timeDiff, 0, ZoneOffset.UTC).format(DateTimeFormatter.ISO_LOCAL_TIME));
+		
+		super.act(delta);
 	}
 	
 	/*@Override

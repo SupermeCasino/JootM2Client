@@ -122,6 +122,7 @@ public final class NetworkUtil {
 
 		@Override
 		public boolean onOpen(WebSocket webSocket) {
+			webSocket.send("Hello wrold!");
 			return true;
 		}
 
@@ -144,6 +145,7 @@ public final class NetworkUtil {
 						var sysInfo = (SysInfo) msg;
 						App.timeDiff = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) - sysInfo.time;
 						App.MapNames = new HashMap<>();
+						App.MapMMaps = new HashMap<>();
 						for (var i = 0; i < sysInfo.mapCount; ++i) {
 							App.MapNames.put(sysInfo.mapNos[i], sysInfo.mapNames[i]);
 							App.MapMMaps.put(sysInfo.mapNos[i], sysInfo.mapMMaps[i]);
