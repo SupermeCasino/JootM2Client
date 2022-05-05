@@ -416,7 +416,7 @@ public final class ChrSelScene extends BaseScene {
 					if (!enterResp.cBasic.name.equals(App.LastName)) return false; // ??
 					App.ChrBasic = enterResp.cBasic;
 					App.ChrPublic = enterResp.cPublic;
-					App.ChrPrivate = enterResp.cPri;
+					App.ChrPrivate = enterResp.cPrivate;
 					
 					stage.clear();
 					AssetUtil.<M2Texture>get(tex -> {

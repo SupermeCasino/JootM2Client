@@ -179,6 +179,7 @@ public final class ChatBox extends WidgetGroup {
 	private void refreshMsgShow() {
 		int readIdxMsg = (int) (slrMsg.getMaxValue() - slrMsg.getValue());
 		for (var i = 0; i < linesMsg.length; ++i) {
+			linesMsg[i].background((Drawable) null);
 			linesMsg[i].reset();
 		}
 		for (int i = 0, j = readIdxMsg; i < linesMsg.length; ++i, ++j) {
