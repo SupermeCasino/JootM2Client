@@ -3,8 +3,6 @@ package joot.m2.client.scene;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import javax.swing.JOptionPane;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
@@ -25,6 +23,7 @@ import joot.m2.client.App;
 import joot.m2.client.image.M2Texture;
 import joot.m2.client.image.M2TextureRegionDrawable;
 import joot.m2.client.util.AssetUtil;
+import joot.m2.client.util.DialogUtil;
 import joot.m2.client.util.FontUtil;
 import joot.m2.client.util.NetworkUtil;
 
@@ -411,7 +410,7 @@ public final class ChrSelScene extends BaseScene {
 			if (msg.type() == MessageType.ENTER_RESP) {
 				var enterResp = (EnterResp) msg;
 				if (enterResp.forbidTip != null) {
-					JOptionPane.showMessageDialog(null, enterResp.forbidTip);
+					DialogUtil.alert(null, enterResp.forbidTip);
 				} else {
 					if (!enterResp.cBasic.name.equals(App.LastName)) return false; // ??
 					App.ChrBasic = enterResp.cBasic;

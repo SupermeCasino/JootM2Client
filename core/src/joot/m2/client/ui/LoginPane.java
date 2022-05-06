@@ -1,7 +1,5 @@
 package joot.m2.client.ui;
 
-import javax.swing.JOptionPane;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
@@ -21,6 +19,7 @@ import com.github.jootnet.m2.core.net.messages.LoginResp;
 import joot.m2.client.App;
 import joot.m2.client.image.M2Texture;
 import joot.m2.client.util.AssetUtil;
+import joot.m2.client.util.DialogUtil;
 import joot.m2.client.util.DrawableUtil;
 import joot.m2.client.util.FontUtil;
 import joot.m2.client.util.NetworkUtil;
@@ -167,7 +166,7 @@ public final class LoginPane extends WidgetGroup {
 							break;
 						}
 					}
-					JOptionPane.showMessageDialog(null, tip);
+					DialogUtil.alert(null, tip);
 				}
 				return true;
 			}
