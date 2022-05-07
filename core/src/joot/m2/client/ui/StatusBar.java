@@ -92,6 +92,12 @@ public final class StatusBar extends WidgetGroup {
 	private Image imgProgressHp;
 	/** 蓝量百分比 */
 	private Image imgProgressMp;
+	/** 日晷 */
+	private Image imgClock;
+	private TextureRegionDrawable trdMorning;
+	private TextureRegionDrawable trdAFNoon;
+	private TextureRegionDrawable trdNight;
+	private TextureRegionDrawable trdLANight;
 
 	public StatusBar() {
 		AssetUtil.<M2Texture>get(tex -> {
@@ -333,12 +339,44 @@ public final class StatusBar extends WidgetGroup {
 				imgProgressMp.setSize(44, progressHeight);
 			}, "prguse/4");
 		}
+		
+		addActor(imgClock = new Image());
+		AssetUtil.<M2Texture>get(texs -> {
+			trdMorning = new TextureRegionDrawable(texs[0]);
+			trdAFNoon = new TextureRegionDrawable(texs[1]);
+			trdNight = new TextureRegionDrawable(texs[2]);
+			trdLANight = new TextureRegionDrawable(texs[3]);
+		}, "prguse/12", "prguse/13", "prguse/14", "prguse/15");
+		imgClock.setSize(32, 54);
+		imgClock.setPosition(972, 118);
 	}
 	
 	@Override
 	public void act(float delta) {
+		var now = LocalDateTime.ofEpochSecond(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) - App.timeDiff, 0, ZoneOffset.UTC);
 		
-		lblTime.setText(LocalDateTime.ofEpochSecond(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) - App.timeDiff, 0, ZoneOffset.UTC).format(DateTimeFormatter.ISO_LOCAL_TIME));
+		lblTime.setText(now.format(DateTimeFormatter.ISO_LOCAL_TIME));
+		
+		switch(now.getHour()) {
+		case 6:case 7:case 8:case 9:case 10:case 11:case 12:case 13:
+			// 上午
+			imgClock.setDrawable(trdMorning);
+			break;
+		case 14:case 15:case 16:case 17:
+			// 下午
+			imgClock.setDrawable(trdAFNoon);
+			break;
+		case 18:case 19:case 20:case 21:case 22:
+			// 晚上
+			imgClock.setDrawable(trdNight);
+			break;
+		case 23:case 0:case 1:case 2:case 3:case 4:case 5:
+			// 深夜
+			imgClock.setDrawable(trdLANight);
+			break;
+		default:
+			break;
+		}
 		
 		super.act(delta);
 	}
