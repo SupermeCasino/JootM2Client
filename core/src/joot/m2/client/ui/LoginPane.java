@@ -42,9 +42,6 @@ public final class LoginPane extends WidgetGroup {
 	/** 密码 */
 	private TextField txtPsw;
 	
-	private OperationConsumer requestNewUser;
-	private OperationConsumer requestModifyPsw;
-	
 	@FunctionalInterface
 	public interface OperationConsumer {
 		void op();
@@ -56,8 +53,6 @@ public final class LoginPane extends WidgetGroup {
 	 * @param modifyPswOperationConsumer 点击“修改密码”按钮进行的操作
 	 */
 	public LoginPane(OperationConsumer newUserOperationConsumer, OperationConsumer modifyPswOperationConsumer) {
-		requestNewUser = newUserOperationConsumer;
-		requestModifyPsw = modifyPswOperationConsumer;
 		
 		AssetUtil.<M2Texture>get(texs -> {
 			var texIdx = 0;
@@ -76,7 +71,7 @@ public final class LoginPane extends WidgetGroup {
 			
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				if (requestNewUser != null) requestNewUser.op();
+				if (newUserOperationConsumer != null) newUserOperationConsumer.op();
 			}
 			
 		});
@@ -84,7 +79,7 @@ public final class LoginPane extends WidgetGroup {
 			
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				if (requestModifyPsw != null) requestModifyPsw.op();
+				if (modifyPswOperationConsumer != null) modifyPswOperationConsumer.op();
 			}
 			
 		});
