@@ -4,8 +4,10 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox.CheckBoxStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -14,12 +16,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 
 import joot.m2.client.App;
 import joot.m2.client.image.M2Texture;
 import joot.m2.client.util.AssetUtil;
+import joot.m2.client.util.DialogUtil;
 import joot.m2.client.util.FontUtil;
 
 /**
@@ -349,6 +353,25 @@ public final class StatusBar extends WidgetGroup {
 		}, "prguse/12", "prguse/13", "prguse/14", "prguse/15");
 		imgClock.setSize(32, 54);
 		imgClock.setPosition(972, 118);
+		
+		btnLogout.addListener(new ClickListener() {
+			
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				Gdx.app.postRunnable(() -> App.toChrSel());
+			}
+			
+		});
+		
+		btnExit.addListener(new ClickListener() {
+			
+			public void clicked(InputEvent event, float x, float y) {
+				DialogUtil.confirm(null, "确定要退出吗？", () -> {
+					Gdx.app.exit();
+				});
+			}
+			
+		});
 	}
 	
 	@Override

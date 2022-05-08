@@ -376,6 +376,7 @@ public final class ChrSelScene extends BaseScene {
 						break;
 					}
 				}
+				aniOpenDoor = null;
 				App.toGame();
 				return;
 			}
