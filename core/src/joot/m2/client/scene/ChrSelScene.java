@@ -22,6 +22,7 @@ import com.github.jootnet.m2.core.net.messages.EnterResp;
 import joot.m2.client.App;
 import joot.m2.client.image.M2Texture;
 import joot.m2.client.image.M2TextureRegionDrawable;
+import joot.m2.client.ui.NewChrPane;
 import joot.m2.client.util.AssetUtil;
 import joot.m2.client.util.DialogUtil;
 import joot.m2.client.util.FontUtil;
@@ -80,6 +81,8 @@ public final class ChrSelScene extends BaseScene {
 	private Animation<M2Texture> aniChr2Effect;
 	private float deltaAniChr2Effect;
 	private Image imgChr2Effect;
+	/** 创建角色 */
+	private NewChrPane newChrPane;
 
 	@Override
 	public void show() {
@@ -216,6 +219,22 @@ public final class ChrSelScene extends BaseScene {
 					App.LastName = App.Roles[1].name;
 					select(1, true);
 				}	
+			}
+			
+		});
+		
+		stage.addActor(newChrPane = new NewChrPane(() -> {
+			imgChr1.setVisible(true);
+		}));
+		newChrPane.setFillParent(true);
+		newChrPane.setVisible(false);
+		
+		btnCreate.addListener(new ClickListener() {
+			
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				imgChr1.setVisible(false);
+				newChrPane.setVisible(true);
 			}
 			
 		});
