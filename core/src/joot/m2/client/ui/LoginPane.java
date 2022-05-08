@@ -159,6 +159,9 @@ public final class LoginPane extends WidgetGroup {
 						case 2:
 							tip = "用户不存在";
 							break;
+						case 3:
+							tip = "用户已在其他地方登陆";
+							break;
 						}
 					}
 					DialogUtil.alert(null, tip);

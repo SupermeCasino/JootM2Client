@@ -1,9 +1,11 @@
 package joot.m2.client.util;
 
 import java.nio.ByteBuffer;
+import java.security.MessageDigest;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 
@@ -11,9 +13,14 @@ import com.github.czyzby.websocket.WebSocket;
 import com.github.czyzby.websocket.WebSocketListener;
 import com.github.czyzby.websocket.WebSockets;
 import com.github.jootnet.m2.core.actor.ChrBasicInfo;
+import com.github.jootnet.m2.core.actor.Occupation;
 import com.github.jootnet.m2.core.net.Message;
 import com.github.jootnet.m2.core.net.MessageType;
 import com.github.jootnet.m2.core.net.Messages;
+import com.github.jootnet.m2.core.net.messages.EnterReq;
+import com.github.jootnet.m2.core.net.messages.LoginReq;
+import com.github.jootnet.m2.core.net.messages.NewChrReq;
+import com.github.jootnet.m2.core.net.messages.NewUserReq;
 import com.github.jootnet.m2.core.net.messages.SysInfo;
 
 import joot.m2.client.App;
@@ -91,7 +98,7 @@ public final class NetworkUtil {
      */
     public static void sendHumActionChange(ChrBasicInfo hum) {
     	try {
-			ws.send(Messages.pack(Messages.humActionChange(hum)));
+			ws.send(Messages.humActionChange(hum).pack());
 		} catch (Exception e) { }
     }
     
@@ -103,8 +110,40 @@ public final class NetworkUtil {
      */
     public static void sendLoginReq(String una, String psw) {
     	try {
-			ws.send(Messages.pack(Messages.loginReq(una, psw)));
+			ws.send(new LoginReq(una, Base64.getEncoder().encodeToString(MessageDigest.getInstance("MD5").digest(psw.getBytes()))).pack());
 		} catch (Exception e) { }
+    }
+    
+    /**
+     * 发送创建用户
+     * @param una
+     * @param psw
+     * @param name
+     * @param q1
+     * @param a1
+     * @param q2
+     * @param a2
+     * @param tel
+     * @param iPhone
+     * @param mail
+     */
+    public static void sendNewUser(String una, String psw, String name, String q1, String a1, String q2, String a2, String tel,
+			String iPhone, String mail) {
+    	try {
+    		ws.send(new NewUserReq(una, Base64.getEncoder().encodeToString(MessageDigest.getInstance("MD5").digest(psw.getBytes()))
+    				, name, q1, a1, q2, a2, tel, iPhone,mail).pack());
+		} catch (Exception e) { }
+    }
+    /**
+     * 发送创建角色
+     * @param name 昵称
+     * @param occupation 职业
+     * @param gender 性别
+     */
+    public static void sendNewChr(String name, Occupation occupation, byte gender) {
+    	try {
+    		ws.send(new NewChrReq(name, occupation, gender).pack());
+    	} catch (Exception e) { }
     }
     
     /**
@@ -114,7 +153,7 @@ public final class NetworkUtil {
      */
     public static void sendEnterGame(String chrName) {
     	try {
-			ws.send(Messages.pack(Messages.selectChr(chrName)));
+			ws.send(new EnterReq(chrName).pack());
 		} catch (Exception e) { }
     }
     
@@ -140,7 +179,7 @@ public final class NetworkUtil {
 		public boolean onMessage(WebSocket webSocket, byte[] packet) {
 			try {
 				synchronized (recvMsgList) {
-					var msg = Messages.unpack(ByteBuffer.wrap(packet));
+					var msg = Message.unpack(ByteBuffer.wrap(packet));
 					if (msg.type() == MessageType.SYS_INFO) {
 						var sysInfo = (SysInfo) msg;
 						App.timeDiff = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) - sysInfo.time;

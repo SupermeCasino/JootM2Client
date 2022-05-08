@@ -16,11 +16,15 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.github.jootnet.m2.core.net.MessageType;
+import com.github.jootnet.m2.core.net.messages.NewUserResp;
 
 import joot.m2.client.image.M2Texture;
 import joot.m2.client.util.AssetUtil;
+import joot.m2.client.util.DialogUtil;
 import joot.m2.client.util.DrawableUtil;
 import joot.m2.client.util.FontUtil;
+import joot.m2.client.util.NetworkUtil;
 
 /**
  * 创建用户
@@ -316,6 +320,14 @@ public class NewUserPane extends WidgetGroup {
 				if (closeConsumer != null) closeConsumer.op();
 			}
 		});
+		btnCommit.addListener(new ClickListener() {
+			
+			public void clicked(InputEvent event, float x, float y) {
+				NetworkUtil.sendNewUser(txtUna.getText(), txtPsw.getText(), txtName.getText(), txtQ1.getText()
+						, txtA1.getText(), txtQ2.getText(), txtA2.getText(), txtTelPhone.getText(), txtiPhone.getText(), txtMail.getText());
+			}
+			
+		});
 	}
 	
 	private boolean lastVisible = true;
@@ -325,6 +337,27 @@ public class NewUserPane extends WidgetGroup {
 			getStage().setKeyboardFocus(txtUna);
 		}
 		lastVisible = isVisible();
+		
+		NetworkUtil.recv(msg -> {
+			if (msg.type() == MessageType.NEW_USER_RESP) {
+				var newUserResp = (NewUserResp) msg;
+				var tip = "未知错误";
+				switch(newUserResp.code) {
+				case 0:
+					tip = "账号创建成功\n请牢记您的密码找回问题以及答案";
+					break;
+				case 1:
+					tip = "用户名已存在";
+					break;
+					//TODO
+				default:
+					break;
+				}
+				DialogUtil.alert(null, tip);
+				return true;
+			}
+			return false;
+		});
 		
 		super.act(delta);
 	}

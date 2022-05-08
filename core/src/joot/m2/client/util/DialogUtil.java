@@ -15,6 +15,11 @@ public final class DialogUtil {
 
 	private static GDXDialogs dialogs = GDXDialogsSystem.install();
 	
+	@FunctionalInterface
+	public interface OperationConsumer {
+		void op();
+	}
+	
 	/**
 	 * 警告信息
 	 * 
@@ -31,11 +36,6 @@ public final class DialogUtil {
 		bDialog.build().show();
 	}
 
-	
-	@FunctionalInterface
-	public interface OperationConsumer {
-		void op();
-	}
 	
 	/**
 	 * 确认信息

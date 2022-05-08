@@ -17,11 +17,17 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Scaling;
 import com.github.jootnet.m2.core.actor.Occupation;
+import com.github.jootnet.m2.core.net.MessageType;
+import com.github.jootnet.m2.core.net.messages.LoginResp;
+import com.github.jootnet.m2.core.net.messages.NewChrResp;
 
+import joot.m2.client.App;
 import joot.m2.client.image.M2Texture;
 import joot.m2.client.util.AssetUtil;
+import joot.m2.client.util.DialogUtil;
 import joot.m2.client.util.DrawableUtil;
 import joot.m2.client.util.FontUtil;
+import joot.m2.client.util.NetworkUtil;
 
 /**
  * 创建角色
@@ -153,6 +159,15 @@ public class NewChrPane extends WidgetGroup {
 			}
 			
 		});
+		btnCommit.addListener(new ClickListener() {
+			
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				if (!txtName.getText().isBlank())
+					NetworkUtil.sendNewChr(txtName.getText(), occu, gender);
+			}
+			
+		});
 		
 		select();
 	}
@@ -164,6 +179,43 @@ public class NewChrPane extends WidgetGroup {
 			getStage().setKeyboardFocus(txtName);
 		}
 		lastVisible = isVisible();
+		
+		NetworkUtil.recv(msg -> {
+			if (msg.type() == MessageType.NEW_CHR_RESP) {
+				var newChrResp = (NewChrResp) msg;
+				var tip = "未知错误";
+				switch(newChrResp.code) {
+				case 0:
+					if (App.Roles != null && App.Roles.length > 0) {
+						var roles = new LoginResp.Role[2];
+						roles[0] = App.Roles[0];
+						roles[1] = newChrResp.role;
+						App.Roles = roles;
+					}
+					if (App.Roles == null || App.Roles.length == 0) {
+						App.Roles = new LoginResp.Role[1];
+						App.Roles[0] = newChrResp.role;
+					}
+					tip = "角色创建成功";
+					break;
+				case 1:
+					tip = "角色已满";
+					break;
+				case 2:
+					tip = "昵称已存在";
+					break;
+				case 3:
+					tip = "昵称不合法";
+					break;
+				default:
+					break;
+				}
+				DialogUtil.alert(null, tip);
+				return true;
+			}
+			
+			return false;
+		});
 
 		if (aniChr1 != null) {
 			deltaAniChr1 += delta;

@@ -100,7 +100,7 @@ public final class ChrSelScene extends BaseScene {
 		stage.addActor(btnRemove = new ImageButton(new ImageButtonStyle()));
 		stage.addActor(btnExit = new ImageButton(new ImageButtonStyle()));
 		stage.addActor(lblTitle = new Label("将唐传奇", new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
-		if (App.Roles != null && App.Roles.length > 0) {
+		/*if (App.Roles != null && App.Roles.length > 0) {
 			stage.addActor(lblName1 = new Label(App.Roles[0].name, new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
 			stage.addActor(lblLevel1 = new Label(String.valueOf(App.Roles[0].level), new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
 			String occuString = App.Roles[0].type == 0 ? "战士" : App.Roles[0].type == 1 ? "法师" : App.Roles[0].type == 2 ? "道士" : "刺客";
@@ -114,7 +114,7 @@ public final class ChrSelScene extends BaseScene {
 			stage.addActor(lblLevel2 = new Label(String.valueOf(App.Roles[1].level), new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
 			String occuString = App.Roles[1].type == 0 ? "战士" : App.Roles[1].type == 1 ? "法师" : App.Roles[1].type == 2 ? "道士" : "刺客";
 			stage.addActor(lblOccu2 = new Label(occuString, new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
-		}
+		}*/
 		stage.addActor(imgChr1 = new Image());
 		stage.addActor(imgChr1Effect = new Image());
 		stage.addActor(imgChr2 = new Image());
@@ -154,16 +154,6 @@ public final class ChrSelScene extends BaseScene {
 		btnRemove.setPosition(448, 49);
 		btnExit.setPosition(487, 21);
 		lblTitle.setPosition(464, 744);
-		if (App.Roles != null && App.Roles.length > 0) {
-			lblName1.setPosition(154, 112);
-			lblLevel1.setPosition(154, 74);
-			lblOccu1.setPosition(154, 36);
-		}
-		if (App.Roles != null && App.Roles.length > 1) {
-			lblName2.setPosition(866, 108);
-			lblLevel2.setPosition(866, 70);
-			lblOccu2.setPosition(866, 32);
-		}
 		imgChr1.setPosition(152, 300);
 		imgChr1Effect.setPosition(156, 300);
 		imgChr2.setPosition(586, 300);
@@ -187,13 +177,14 @@ public final class ChrSelScene extends BaseScene {
 		imgChr2.setScaling(Scaling.none);
 		imgChr2Effect.setScaling(Scaling.none);
 
-		if (App.LastName != null) {
+		/*if (App.LastName != null) {
 			if (App.Roles != null && App.Roles.length > 1 && App.Roles[1].name.equals(App.LastName)) {
 				select(1, false);
 			} else if (App.Roles != null && App.Roles.length > 0) {
 				select(0, false);
 			}
-		}
+		}*/
+		loadRoles();
 		
 		btnEnter.addListener(new ClickListener() {
 			
@@ -230,6 +221,7 @@ public final class ChrSelScene extends BaseScene {
 		
 		stage.addActor(newChrPane = new NewChrPane(() -> {
 			imgChr1.setVisible(true);
+			loadRoles();
 		}));
 		newChrPane.setFillParent(true);
 		newChrPane.setVisible(false);
@@ -238,6 +230,7 @@ public final class ChrSelScene extends BaseScene {
 			
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
+				if (App.Roles != null && App.Roles.length > 1) return;
 				imgChr1.setVisible(false);
 				newChrPane.setVisible(true);
 			}
@@ -277,6 +270,46 @@ public final class ChrSelScene extends BaseScene {
 			IntStream.range(240, 256).mapToObj(i -> "chrsel/" + i).collect(Collectors.toList()).toArray(new String[0])
 		}
 	};
+	private void loadRoles() {
+		if (App.Roles != null && App.Roles.length > 0) {
+			if (lblName1 != null) stage.getActors().removeValue(lblName1, true);
+			stage.addActor(lblName1 = new Label(App.Roles[0].name, new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
+			if (lblLevel1 != null) stage.getActors().removeValue(lblName1, true);
+			stage.addActor(lblLevel1 = new Label(String.valueOf(App.Roles[0].level), new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
+			String occuString = App.Roles[0].type == 0 ? "战士" : App.Roles[0].type == 1 ? "法师" : App.Roles[0].type == 2 ? "道士" : "刺客";
+			if (lblOccu1 != null) stage.getActors().removeValue(lblOccu1, true);
+			stage.addActor(lblOccu1 = new Label(occuString, new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
+			if (App.LastName == null) {
+				App.LastName = App.Roles[0].name;
+			}
+		}
+		if (App.Roles != null && App.Roles.length > 1) {
+			if (lblName2 != null) stage.getActors().removeValue(lblName2, true);
+			stage.addActor(lblName2 = new Label(App.Roles[1].name, new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
+			if (lblLevel2 != null) stage.getActors().removeValue(lblLevel2, true);
+			stage.addActor(lblLevel2 = new Label(String.valueOf(App.Roles[1].level), new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
+			String occuString = App.Roles[1].type == 0 ? "战士" : App.Roles[1].type == 1 ? "法师" : App.Roles[1].type == 2 ? "道士" : "刺客";
+			if (lblOccu2 != null) stage.getActors().removeValue(lblOccu2, true);
+			stage.addActor(lblOccu2 = new Label(occuString, new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
+		}
+		if (App.LastName != null) {
+			if (App.Roles != null && App.Roles.length > 1 && App.Roles[1].name.equals(App.LastName)) {
+				select(1, false);
+			} else if (App.Roles != null && App.Roles.length > 0) {
+				select(0, false);
+			}
+		}
+		if (App.Roles != null && App.Roles.length > 0) {
+			lblName1.setPosition(154, 112);
+			lblLevel1.setPosition(154, 74);
+			lblOccu1.setPosition(154, 36);
+		}
+		if (App.Roles != null && App.Roles.length > 1) {
+			lblName2.setPosition(866, 108);
+			lblLevel2.setPosition(866, 70);
+			lblOccu2.setPosition(866, 32);
+		}
+	}
 	private void select(int i, boolean effect) {
 		deltaAniChr1 = 0;
 		deltaAniChr1Effect = 0;
