@@ -101,6 +101,17 @@ public class ModifyPswPane extends WidgetGroup {
 			
 		});
 	}
+	
+	private boolean lastVisible = true;
+	@Override
+	public void act(float delta) {
+		if (isVisible() && !lastVisible) {
+			getStage().setKeyboardFocus(txtUna);
+		}
+		lastVisible = isVisible();
+		
+		super.act(delta);
+	}
 
 	@Override
 	public void layout() {

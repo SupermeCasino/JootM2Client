@@ -318,11 +318,22 @@ public class NewUserPane extends WidgetGroup {
 		});
 	}
 	
+	private boolean lastVisible = true;
+	@Override
+	public void act(float delta) {
+		if (isVisible() && !lastVisible) {
+			getStage().setKeyboardFocus(txtUna);
+		}
+		lastVisible = isVisible();
+		
+		super.act(delta);
+	}
+	
 	@Override
 	public void layout() {
 		bg.setPosition((getWidth() - bg.getWidth()) / 2, (getHeight() - bg.getHeight()) / 2);
-		btnCommit.setPosition((getWidth() - bg.getWidth()) / 2 + 158, (int) (getHeight() - bg.getHeight()) / 2 + 25);
-		btnCancel.setPosition((getWidth() - bg.getWidth()) / 2 + 446, (int) (getHeight() - bg.getHeight()) / 2 + 22);
+		btnCommit.setPosition((getWidth() - bg.getWidth()) / 2 + 158, (getHeight() - bg.getHeight()) / 2 + 24.5f);
+		btnCancel.setPosition((getWidth() - bg.getWidth()) / 2 + 446, (getHeight() - bg.getHeight()) / 2 + 21.5f);
 		btnClose.setPosition((getWidth() - bg.getWidth()) / 2 + 587, (getHeight() - bg.getHeight()) / 2 + 417.5f);
 		txtUna.setPosition((getWidth() - bg.getWidth()) / 2 + 164, (getHeight() - bg.getHeight()) / 2 + 344);
 		txtPsw.setPosition((getWidth() - bg.getWidth()) / 2 + 164, (getHeight() - bg.getHeight()) / 2 + 323);

@@ -33,13 +33,16 @@ public final class LoginScene extends BaseScene {
 		
 		loginPane = new LoginPane(() -> {
 			createPane.setVisible(true);
+			loginPane.setVisible(false);
 		}, () -> {
 			modifyPswPane.setVisible(true);
+			loginPane.setVisible(false);
 		});
 		loginPane.setFillParent(true);
 		stage.addActor(loginPane);
 		
 		createPane = new NewUserPane(() -> {
+			loginPane.setVisible(true);
 			createPane.setVisible(false);
 			loginPane.focusInput();
 		});
@@ -48,6 +51,7 @@ public final class LoginScene extends BaseScene {
 		stage.addActor(createPane);
 		
 		modifyPswPane = new ModifyPswPane(() -> {
+			loginPane.setVisible(true);
 			modifyPswPane.setVisible(false);
 			loginPane.focusInput();
 		});
