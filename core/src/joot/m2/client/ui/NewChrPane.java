@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Scaling;
 import com.github.jootnet.m2.core.actor.Occupation;
 
 import joot.m2.client.image.M2Texture;
@@ -86,6 +87,7 @@ public class NewChrPane extends WidgetGroup {
 		addActor(imgChr1 = new Image());
 		imgChr1.setPosition(152, 300);
 		imgChr1.setSize(300, 360);
+		imgChr1.setScaling(Scaling.none);
 		
 		btnWarrior.addListener(new ClickListener() {
 			

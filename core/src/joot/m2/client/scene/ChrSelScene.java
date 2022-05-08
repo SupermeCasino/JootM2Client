@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Scaling;
 import com.github.jootnet.m2.core.net.MessageType;
 import com.github.jootnet.m2.core.net.messages.EnterResp;
 
@@ -181,6 +182,10 @@ public final class ChrSelScene extends BaseScene {
 		imgChr1Effect.setSize(292, 350);
 		imgChr2.setSize(300, 360);
 		imgChr2Effect.setSize(292, 350);
+		imgChr1.setScaling(Scaling.none);
+		imgChr1Effect.setScaling(Scaling.none);
+		imgChr2.setScaling(Scaling.none);
+		imgChr2Effect.setScaling(Scaling.none);
 
 		if (App.LastName != null) {
 			if (App.Roles != null && App.Roles.length > 1 && App.Roles[1].name.equals(App.LastName)) {
