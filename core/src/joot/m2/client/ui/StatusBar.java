@@ -25,6 +25,7 @@ import joot.m2.client.image.M2Texture;
 import joot.m2.client.util.AssetUtil;
 import joot.m2.client.util.DialogUtil;
 import joot.m2.client.util.FontUtil;
+import joot.m2.client.util.NetworkUtil;
 
 /**
  * 
@@ -367,6 +368,7 @@ public final class StatusBar extends WidgetGroup {
 			
 			public void clicked(InputEvent event, float x, float y) {
 				DialogUtil.confirm(null, "确定要退出吗？", () -> {
+					NetworkUtil.shutdown();
 					Gdx.app.exit();
 				});
 			}

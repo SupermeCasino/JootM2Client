@@ -468,7 +468,7 @@ public final class ChrSelScene extends BaseScene {
 			if (msg.type() == MessageType.ENTER_RESP) {
 				var enterResp = (EnterResp) msg;
 				if (enterResp.forbidTip != null) {
-					DialogUtil.alert(null, enterResp.forbidTip);
+					DialogUtil.alert(null, enterResp.forbidTip, null);
 				} else {
 					if (!enterResp.cBasic.name.equals(App.LastName)) return false; // ??
 					App.ChrBasic = enterResp.cBasic;

@@ -1,15 +1,5 @@
 package joot.m2.client.desktop;
 
-import com.badlogic.gdx.Files.FileType;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import com.github.czyzby.websocket.CommonWebSockets;
-
-import joot.m2.client.App;
-import joot.m2.client.util.NetworkUtil;
-import joot.m2.client.util.AssetUtil;
-import joot.m2.client.util.FontUtil;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -17,6 +7,16 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+
+import com.badlogic.gdx.Files.FileType;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.github.czyzby.websocket.MyWebSockets;
+
+import joot.m2.client.App;
+import joot.m2.client.util.AssetUtil;
+import joot.m2.client.util.FontUtil;
+import joot.m2.client.util.NetworkUtil;
 
 public class DesktopLauncher {
     public static void main(String[] args) {
@@ -45,7 +45,7 @@ public class DesktopLauncher {
         AssetUtil.init(path);
 
         String server = cmd.getOptionValue("server");
-		CommonWebSockets.initiate();
+		MyWebSockets.initiate();
         NetworkUtil.init(server);
 
 		var config = new Lwjgl3ApplicationConfiguration();
@@ -59,8 +59,8 @@ public class DesktopLauncher {
 		
 		AssetUtil.shutdown();
 		FontUtil.shutdown();
-		//NetworkUtil.shutdown();
+		NetworkUtil.shutdown();
 		// 这个websocket客户端的后台线程退不出
-		System.exit(0);
+		//System.exit(0);
     }
 }

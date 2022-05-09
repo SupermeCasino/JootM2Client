@@ -11,6 +11,7 @@ import com.github.jootnet.m2.core.net.messages.LoginResp;
 import joot.m2.client.scene.ChrSelScene;
 import joot.m2.client.scene.GameScene;
 import joot.m2.client.scene.LoginScene;
+import joot.m2.client.util.NetworkUtil;
 
 /**
  * 游戏入口
@@ -49,6 +50,7 @@ public class App extends Game {
 
 	public App() {
 		me = this;
+		NetworkUtil.start();
 	}
 	
 	@Override

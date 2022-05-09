@@ -9,6 +9,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 
+import com.badlogic.gdx.Gdx;
 import com.github.czyzby.websocket.WebSocket;
 import com.github.czyzby.websocket.WebSocketListener;
 import com.github.czyzby.websocket.WebSockets;
@@ -59,6 +60,7 @@ public final class NetworkUtil {
 		}
     }
 
+    private static String wsUrl = null;
 	private static WebSocket ws = null;
 	/**
 	 * 使用服务器URL创建网络交互工具类
@@ -66,29 +68,28 @@ public final class NetworkUtil {
 	 * @param url 服务器路径
 	 */
 	public static void init(String url) {
-		ws = WebSockets.newSocket(url);
+		wsUrl = url;
+	}
+	/**
+	 * 启动网络交互
+	 */
+	public static void start() {
+		ws = WebSockets.newSocket(wsUrl);
 		ws.setSendGracefully(true);
 		ws.addListener(new WebSocketListenerImpl());
 		ws.setUseTcpNoDelay(true);
-		ws.connect();
-		var reConnectThread = new ReconnectThread();
-		reConnectThread.setName("M2ReconnectThread-" + reConnectThread.getId());
-		reConnectThread.start();
+		try {
+			ws.connect();
+		} catch (Exception ex) { }
 	}
 	
 	/**
 	 * 停止网络交互
 	 */
 	public static void shutdown() {
+		if (ws == null) return;
 		ws.close();
-		needReconnect = false;
-		try {
-			Thread.sleep(2000);
-			ws.close();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		ws = null;
 	}
     
     /**
@@ -97,6 +98,7 @@ public final class NetworkUtil {
      * @param hum 已发生动作更改的人物
      */
     public static void sendHumActionChange(ChrBasicInfo hum) {
+		if (ws == null) return;
     	try {
 			ws.send(Messages.humActionChange(hum).pack());
 		} catch (Exception e) { }
@@ -109,6 +111,7 @@ public final class NetworkUtil {
      * @param psw 密码
      */
     public static void sendLoginReq(String una, String psw) {
+		if (ws == null) return;
     	try {
 			ws.send(new LoginReq(una, Base64.getEncoder().encodeToString(MessageDigest.getInstance("MD5").digest(psw.getBytes()))).pack());
 		} catch (Exception e) { }
@@ -129,6 +132,7 @@ public final class NetworkUtil {
      */
     public static void sendNewUser(String una, String psw, String name, String q1, String a1, String q2, String a2, String tel,
 			String iPhone, String mail) {
+		if (ws == null) return;
     	try {
     		ws.send(new NewUserReq(una, Base64.getEncoder().encodeToString(MessageDigest.getInstance("MD5").digest(psw.getBytes()))
     				, name, q1, a1, q2, a2, tel, iPhone,mail).pack());
@@ -141,6 +145,7 @@ public final class NetworkUtil {
      * @param gender 性别
      */
     public static void sendNewChr(String name, Occupation occupation, byte gender) {
+		if (ws == null) return;
     	try {
     		ws.send(new NewChrReq(name, occupation, gender).pack());
     	} catch (Exception e) { }
@@ -152,6 +157,7 @@ public final class NetworkUtil {
      * @param chrName 选择的角色昵称
      */
     public static void sendEnterGame(String chrName) {
+		if (ws == null) return;
     	try {
 			ws.send(new EnterReq(chrName).pack());
 		} catch (Exception e) { }
@@ -167,6 +173,12 @@ public final class NetworkUtil {
 
 		@Override
 		public boolean onClose(WebSocket webSocket, int closeCode, String reason) {
+			if (ws != null) {
+				ws = null;
+				DialogUtil.alert(null, "与服务器的连接断开...", () -> {
+					Gdx.app.exit();
+				});
+			}
 			return true;
 		}
 
@@ -199,24 +211,14 @@ public final class NetworkUtil {
 
 		@Override
 		public boolean onError(WebSocket webSocket, Throwable error) {
+			if (ws != null) {
+				ws = null;
+				DialogUtil.alert(null, "与服务器的连接断开...", () -> {
+					Gdx.app.exit();
+				});
+			}
 			return true;
 		}
     	
-    }
-	
-	private static volatile boolean needReconnect = true;
-    
-    private static class ReconnectThread extends Thread {
-    	@Override
-    	public void run() {
-    		while (needReconnect) {
-    			try {
-	    			if (!ws.isOpen()) {
-	    				ws.connect();
-	    			}
-					Thread.sleep(1000);
-    			} catch(Exception ex) { }
-    		}
-    	}
     }
 }

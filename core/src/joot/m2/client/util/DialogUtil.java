@@ -3,7 +3,6 @@ package joot.m2.client.util;
 import de.tomgrill.gdxdialogs.core.GDXDialogs;
 import de.tomgrill.gdxdialogs.core.GDXDialogsSystem;
 import de.tomgrill.gdxdialogs.core.dialogs.GDXButtonDialog;
-import de.tomgrill.gdxdialogs.core.listener.ButtonClickListener;
 
 /**
  * 弹窗工具类
@@ -25,13 +24,18 @@ public final class DialogUtil {
 	 * 
 	 * @param title 标题
 	 * @param message 信息内容
+	 * @param closed 窗体关闭后的操作
 	 */
-	public static void alert(String title, String message) {
+	public static void alert(String title, String message, OperationConsumer closed) {
 		GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
 		bDialog.setTitle(title);
 		bDialog.setMessage(message);
 
 		bDialog.addButton("确定");
+		
+		bDialog.setClickListener(button -> {
+			if (closed != null) closed.op();
+		});
 
 		bDialog.build().show();
 	}
@@ -52,12 +56,8 @@ public final class DialogUtil {
 		bDialog.addButton("确定");
 		bDialog.addButton("取消");
 		
-		bDialog.setClickListener(new ButtonClickListener() {
-			
-			@Override
-			public void click(int button) {
-				if (button == 0 && ok != null) ok.op();
-			}
+		bDialog.setClickListener(button -> {
+			if (button == 0 && ok != null) ok.op();
 		});
 
 		bDialog.build().show();

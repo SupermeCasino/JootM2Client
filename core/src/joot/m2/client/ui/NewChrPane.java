@@ -210,7 +210,7 @@ public class NewChrPane extends WidgetGroup {
 				default:
 					break;
 				}
-				DialogUtil.alert(null, tip);
+				DialogUtil.alert(null, tip, null);
 				return true;
 			}
 			

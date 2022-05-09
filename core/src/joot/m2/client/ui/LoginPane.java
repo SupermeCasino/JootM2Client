@@ -164,7 +164,7 @@ public final class LoginPane extends WidgetGroup {
 							break;
 						}
 					}
-					DialogUtil.alert(null, tip);
+					DialogUtil.alert(null, tip, null);
 				}
 				return true;
 			}
