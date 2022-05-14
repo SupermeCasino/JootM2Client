@@ -38,3 +38,5 @@ history message (chatboard) done
 ## 2022-5-8 add newUser pane/modifyPsw pane and newChr pane
 
 ## 2022-5-8 redis oriented
+
+## 2022-5-14 add weiduan support
