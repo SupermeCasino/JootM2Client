@@ -212,6 +212,20 @@ public final class MapActor extends WidgetGroup implements PropertyChangeListene
 				drawingX += 48;
 			}
 			
+			drawingX = pixel.x;
+			for (var w = 0; w < game.width; ++w) {
+				drawingY = pixel.y;
+				for (var h = 0; h < game.height; ++h) {
+					var smTile = map.smTilesTexture[game.x + w][game.y + h];
+					// 绘制小地砖
+					if (smTile != null) {
+						transDraw(batch, (int) getWidth(), (int) getHeight(), smTile, drawingX, drawingY);
+					}
+					drawingY += 32;
+				}
+				drawingX += 48;
+			}
+			
 			// TODO 半透明，opengl这里我真不知道怎么做半透明了。如果我猜得没错的话应该是先用某种混合把obj图和人物图先合成，再叠到画布上。但我不会……
 			for (var gamey = game.y; gamey <= map.height; ++gamey) {
 				// 在同一行，人物应该把对象层踩在脚下或挡在身后
