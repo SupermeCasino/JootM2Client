@@ -6,30 +6,28 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
-import com.github.jootnet.m2.core.actor.Direction;
 import com.github.jootnet.m2.core.actor.ChrBasicInfo;
+import com.github.jootnet.m2.core.actor.Direction;
 
+import joot.m2.client.image.Images;
 import joot.m2.client.image.M2Texture;
 import joot.m2.client.map.Map;
-import joot.m2.client.util.AssetUtil;
+import joot.m2.client.map.Maps;
+import joot.m2.client.util.DialogUtil;
 import joot.m2.client.util.DrawingUtil.RectI;
 
 /**
  * 地图绘制对象
  */
 public final class MapActor extends WidgetGroup implements PropertyChangeListener {
-	
-	/** 地图缓存 */
-	private static java.util.Map<String, Map> maps = new HashMap<>();
 	private String mapNo;
 	
 	/** 当前显示地图对象 */
@@ -118,9 +116,9 @@ public final class MapActor extends WidgetGroup implements PropertyChangeListene
 	public void act(float delta) {
 		if (map == null) {
 			if (mapNo != null) {
-				if (maps.containsKey(mapNo)) {
-					map = maps.get(mapNo);
-					hums = new List[map.height + 1]; // 避免坐标转换
+				map = Maps.get(mapNo);
+				if (map != null) {
+					hums = new List[map.height + 1];
 					for (int h = 0; h < hums.length; ++h) {
 						hums[h] = new ArrayList<>();
 					}
@@ -129,18 +127,9 @@ public final class MapActor extends WidgetGroup implements PropertyChangeListene
 					}
 					tempHums.clear();
 				} else {
-					map = AssetUtil.get("map/" + mapNo);
-					if (map != null) {
-						hums = new List[map.height + 1];
-						for (int h = 0; h < hums.length; ++h) {
-							hums[h] = new ArrayList<>();
-						}
-						for (ChrBasicInfo hum : tempHums) {
-							hums[hum.y].add(hum);
-						}
-						tempHums.clear();
-						maps.put(mapNo, map);
-					}
+					DialogUtil.alert(null, "数据错误...", () -> {
+						Gdx.app.exit();
+					});
 				}
 			}
 		} else {
@@ -153,33 +142,33 @@ public final class MapActor extends WidgetGroup implements PropertyChangeListene
 					var smTileFileName = map.smTilesFileName[game.x + w][game.y + h];
 					var objFileName = map.objsFileName[game.x + w][game.y + h];
 					if (tileFileName != null) {
-						Texture tileTex = AssetUtil.get(tileFileName);
+						var tileTex = Images.get(tileFileName);
 						if (tileTex != null) {
 							map.tilesFileName[game.x + w][game.y + h] = null;
-							map.tilesTexture[game.x + w][game.y + h] = tileTex;
+							map.tilesTexture[game.x + w][game.y + h] = tileTex[0];
 						}
 					}
 					if (smTileFileName != null) {
-						Texture smTileTex = AssetUtil.get(smTileFileName);
+						var smTileTex = Images.get(smTileFileName);
 						if (smTileTex != null) {
 							map.smTilesFileName[game.x + w][game.y + h] = null;
-							map.smTilesTexture[game.x + w][game.y + h] = smTileTex;
+							map.smTilesTexture[game.x + w][game.y + h] = smTileTex[0];
 						}
 					}
 					if (objFileName != null) {
-						Texture objTex = AssetUtil.get(objFileName);
+						var objTex = Images.get(objFileName);
 						if (objTex != null) {
 							map.objsFileName[game.x + w][game.y + h] = null;
 							// 这里是我的一个灵感，我将原来的m2中纵向横跨多个地图块的obj图像以地图块高度拆分到多个
 							// 即向上分，比如我们在（1，10）处有一个48*160的obj图像，则把这幅图分到（1，10）=>（1，6）
 							// 这样有好处，绘制的时候不需要多画（原来必须向下多画一些才能保证视区元素完整），更好做半透明（当人物在树下房檐下时更好针对某个地图块做半透明）
 							//	唯一可能出现的麻烦是多层问题。比如原来（1，9）处也有一个超出32高度的obj
-							var upCellCount = (int) Math.ceil(objTex.getHeight() / 32.f);
+							var upCellCount = (int) Math.ceil(objTex[0].getHeight() / 32.f);
 							for (var upIdx = 0; upIdx < upCellCount; ++upIdx) {
-								var region = new TextureRegion(objTex, 0, 
-										Math.max(0, objTex.getHeight() - (upIdx + 1) * 32),
-										objTex.getWidth(),
-										Math.min(32, objTex.getHeight() - upIdx * 32));
+								var region = new TextureRegion(objTex[0], 0, 
+										Math.max(0, objTex[0].getHeight() - (upIdx + 1) * 32),
+										objTex[0].getWidth(),
+										Math.min(32, objTex[0].getHeight() - upIdx * 32));
 								map.addObjTextureRegion(game.x + w, game.y - upIdx + h, region, game.y + h);
 							}
 						}
@@ -253,9 +242,9 @@ public final class MapActor extends WidgetGroup implements PropertyChangeListene
 					drawingX = pixel.x + (x - game.x) * 48;
 					drawingY = pixel.y + (y - game.y) * 32;
 					List<java.util.Map.Entry<M2Texture, Boolean>> humTexs = new LinkedList<>(); // 纹理以及是否需要混合。翅膀和光剑需要混合
-					var texDress = AssetUtil.getDress(hum);
-					var texEquip = AssetUtil.getWeapon(hum);
-					var texWing = AssetUtil.getHumEffect(hum);
+					var texDress = Images.getDress(hum);
+					var texEquip = Images.getWeapon(hum);
+					var texWing = Images.getHumEffect(hum);
 					if (hum.action.dir == Direction.West || hum.action.dir == Direction.NorthWest) {
 						// 人物朝向左方或左上方时先绘制武器，不然会穿模
 						if (texEquip != null)

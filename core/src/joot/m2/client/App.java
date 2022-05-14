@@ -8,6 +8,7 @@ import com.github.jootnet.m2.core.actor.ChrPrivateInfo;
 import com.github.jootnet.m2.core.actor.ChrPublicInfo;
 import com.github.jootnet.m2.core.net.messages.LoginResp;
 
+import joot.m2.client.image.Images;
 import joot.m2.client.scene.ChrSelScene;
 import joot.m2.client.scene.GameScene;
 import joot.m2.client.scene.LoginScene;
@@ -51,6 +52,12 @@ public class App extends Game {
 	public App() {
 		me = this;
 		NetworkUtil.start();
+	}
+	
+	@Override
+	public void render() {
+		Images.update(40);
+		super.render();
 	}
 	
 	@Override

@@ -6,6 +6,7 @@ import java.util.Map;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -39,11 +40,14 @@ public final class GameScene extends BaseScene {
 	/** 人物 */
 	public Map<String, ChrBasicInfo> hums; // 其他人
 	
+	public GameScene() {
+		super(new Stage());
+	}
 	
+	private boolean inited;
 	@Override
-	public void show() {
-        stage = new Stage();
-		
+	protected boolean initializeComponents() {
+		if (inited) return true;
 		mapActor = new MapActor();
 		mapActor.setFillParent(true);
 		mapActor.addListener(new InputListenerInMap());
@@ -52,16 +56,17 @@ public final class GameScene extends BaseScene {
 		statusBar = new StatusBar();
 		statusBar.setSize(768, 251);
 		stage.addActor(statusBar);
-		
-		super.show();
 
 		Gdx.graphics.setTitle("将唐传奇" + "-" + App.ChrBasic.name);
 		hums = new HashMap<>();
 		mapActor.enter(App.MapNo).add(App.ChrBasic);
+		inited = true;
+		return true;
 	}
 	
 	@Override
 	public void render(float delta) {
+		if (!initializeComponents()) return;
 
 		// 处理服务器消息
 		doServerMessages();
@@ -76,7 +81,10 @@ public final class GameScene extends BaseScene {
 		// 地图的视角和绘制偏移以当前角色为准
 		mapActor.setCenter(App.ChrBasic.x, App.ChrBasic.y).setShiftX(App.ChrBasic.shiftX).setShiftY(App.ChrBasic.shiftY);
 		
-		super.render(delta);
+		//super.render(delta);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		stage.act(delta);
+		stage.draw();
 	}
 
     /** 地图事件 */

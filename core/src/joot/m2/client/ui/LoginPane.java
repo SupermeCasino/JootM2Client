@@ -17,8 +17,7 @@ import com.github.jootnet.m2.core.net.MessageType;
 import com.github.jootnet.m2.core.net.messages.LoginResp;
 
 import joot.m2.client.App;
-import joot.m2.client.image.M2Texture;
-import joot.m2.client.util.AssetUtil;
+import joot.m2.client.image.Images;
 import joot.m2.client.util.DialogUtil;
 import joot.m2.client.util.DrawableUtil;
 import joot.m2.client.util.FontUtil;
@@ -41,7 +40,9 @@ public final class LoginPane extends WidgetGroup {
 	private TextField txtUna;
 	/** 密码 */
 	private TextField txtPsw;
-	
+	private OperationConsumer modifyPswOperationConsumer;
+	private OperationConsumer newUserOperationConsumer;
+
 	@FunctionalInterface
 	public interface OperationConsumer {
 		void op();
@@ -49,98 +50,17 @@ public final class LoginPane extends WidgetGroup {
 
 	/**
 	 * 
-	 * @param newUserOperationConsumer 点击“新用户”按钮进行的操作
+	 * @param newUserOperationConsumer   点击“新用户”按钮进行的操作
 	 * @param modifyPswOperationConsumer 点击“修改密码”按钮进行的操作
 	 */
 	public LoginPane(OperationConsumer newUserOperationConsumer, OperationConsumer modifyPswOperationConsumer) {
-		
-		AssetUtil.<M2Texture>get(texs -> {
-			var texIdx = 0;
-			addActor(bg = new Image(texs[texIdx++]));
-			addActor(btnNew = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(texs[texIdx++]), null, null, null, null, null)));
-			addActor(btnModifyPsw = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(texs[texIdx++]), null, null, null, null, null)));
-			addActor(btnLogin = new ImageButton(new ImageButtonStyle(null, new TextureRegionDrawable(texs[texIdx++]), null, null, null, null)));
-			addActor(btnExit = new ImageButton(new ImageButtonStyle(null, new TextureRegionDrawable(texs[texIdx++]), null, null, null, null)));
-		}
-				, "prguse/60"
-				, "prguse/61"
-				, "prguse/53"
-				, "prguse/62"
-				, "prguse/64");
-		btnNew.addListener(new ClickListener() {
-			
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				if (newUserOperationConsumer != null) newUserOperationConsumer.op();
-			}
-			
-		});
-		btnModifyPsw.addListener(new ClickListener() {
-			
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				if (modifyPswOperationConsumer != null) modifyPswOperationConsumer.op();
-			}
-			
-		});
-		btnExit.addListener(new ClickListener() {
-			
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				Gdx.app.exit();
-			}
-			
-		});
-		btnLogin.addListener(new ClickListener() {
-			
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				String una = txtUna.getText().trim();
-				String psw = txtPsw.getText().trim();
-				if (una.isEmpty() || psw.isEmpty()) {
-					return;
-				}
-				NetworkUtil.sendLoginReq(una, psw);
-			}
-			
-		});
-		
-		addActor(txtUna = new TextField("", new TextFieldStyle(FontUtil.Song_12_all_colored,
-				Color.WHITE,
-				DrawableUtil.Cursor_White,
-				DrawableUtil.Bg_LightGray,
-				null)));
-		txtUna.setWidth(130);
-		txtUna.setMaxLength(20);
-		addActor(txtPsw = new TextField("", new TextFieldStyle(FontUtil.Song_12_all_colored,
-				Color.WHITE,
-				DrawableUtil.Cursor_White,
-				DrawableUtil.Bg_LightGray,
-				null)));
-		txtPsw.setWidth(130);
-		txtPsw.setMaxLength(20);
-		txtPsw.setPasswordMode(true);
-		txtPsw.setPasswordCharacter('*');
-		txtPsw.addListener(new InputListener() {
-			
-			@Override
-			public boolean keyUp(InputEvent event, int keycode) {
-				if (keycode == Keys.ENTER || keycode == Keys.NUMPAD_ENTER) {
-					String una = txtUna.getText().trim();
-					String psw = txtPsw.getText().trim();
-					if (!una.isEmpty() && !psw.isEmpty()) {
-						NetworkUtil.sendLoginReq(una, psw);
-					}
-					return true;
-				}
-				return false;
-			}
-			
-		});
+		this.newUserOperationConsumer = newUserOperationConsumer;
+		this.modifyPswOperationConsumer = modifyPswOperationConsumer;
 	}
-	
+
 	@Override
 	public void act(float delta) {
+		initializeComponents();
 		NetworkUtil.recv(msg -> {
 			if (msg.type() == MessageType.LOGIN_RESP) {
 				var loginResp = (LoginResp) msg;
@@ -170,19 +90,103 @@ public final class LoginPane extends WidgetGroup {
 			}
 			return false;
 		});
-		
+
 		super.act(delta);
 	}
-	
+
 	/**
 	 * 将焦点给到输入框
 	 */
 	public void focusInput() {
 		getStage().setKeyboardFocus(txtUna);
 	}
-	
-	@Override
-	public void layout() {
+
+	private boolean inited;
+	private boolean initializeComponents() {
+		if (inited)
+			return true;
+		var texs = Images.get("prguse/60", "prguse/61", "prguse/53", "prguse/62", "prguse/64");
+		if (texs == null)
+			return false;
+
+		var texIdx = 0;
+		addActor(bg = new Image(texs[texIdx++]));
+		addActor(btnNew = new ImageButton(
+				new ImageButtonStyle(new TextureRegionDrawable(texs[texIdx++]), null, null, null, null, null)));
+		addActor(btnModifyPsw = new ImageButton(
+				new ImageButtonStyle(new TextureRegionDrawable(texs[texIdx++]), null, null, null, null, null)));
+		addActor(btnLogin = new ImageButton(
+				new ImageButtonStyle(null, new TextureRegionDrawable(texs[texIdx++]), null, null, null, null)));
+		addActor(btnExit = new ImageButton(
+				new ImageButtonStyle(null, new TextureRegionDrawable(texs[texIdx++]), null, null, null, null)));
+
+		btnNew.addListener(new ClickListener() {
+
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				if (newUserOperationConsumer != null)
+					newUserOperationConsumer.op();
+			}
+
+		});
+		btnModifyPsw.addListener(new ClickListener() {
+
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				if (modifyPswOperationConsumer != null)
+					modifyPswOperationConsumer.op();
+			}
+
+		});
+		btnExit.addListener(new ClickListener() {
+
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				Gdx.app.exit();
+			}
+
+		});
+		btnLogin.addListener(new ClickListener() {
+
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				String una = txtUna.getText().trim();
+				String psw = txtPsw.getText().trim();
+				if (una.isEmpty() || psw.isEmpty()) {
+					return;
+				}
+				NetworkUtil.sendLoginReq(una, psw);
+			}
+
+		});
+
+		addActor(txtUna = new TextField("", new TextFieldStyle(FontUtil.Song_12_all_colored, Color.WHITE,
+				DrawableUtil.Cursor_White, DrawableUtil.Bg_LightGray, null)));
+		txtUna.setWidth(130);
+		txtUna.setMaxLength(20);
+		addActor(txtPsw = new TextField("", new TextFieldStyle(FontUtil.Song_12_all_colored, Color.WHITE,
+				DrawableUtil.Cursor_White, DrawableUtil.Bg_LightGray, null)));
+		txtPsw.setWidth(130);
+		txtPsw.setMaxLength(20);
+		txtPsw.setPasswordMode(true);
+		txtPsw.setPasswordCharacter('*');
+		txtPsw.addListener(new InputListener() {
+
+			@Override
+			public boolean keyUp(InputEvent event, int keycode) {
+				if (keycode == Keys.ENTER || keycode == Keys.NUMPAD_ENTER) {
+					String una = txtUna.getText().trim();
+					String psw = txtPsw.getText().trim();
+					if (!una.isEmpty() && !psw.isEmpty()) {
+						NetworkUtil.sendLoginReq(una, psw);
+					}
+					return true;
+				}
+				return false;
+			}
+
+		});
+
 		bg.setPosition((getWidth() - bg.getWidth()) / 2, (getHeight() - bg.getHeight()) / 2);
 		btnNew.setPosition((getWidth() - bg.getWidth()) / 2 + 25, (getHeight() - bg.getHeight()) / 2 + 17);
 		btnModifyPsw.setPosition((getWidth() - bg.getWidth()) / 2 + 130, (getHeight() - bg.getHeight()) / 2 + 17);
@@ -190,5 +194,9 @@ public final class LoginPane extends WidgetGroup {
 		btnExit.setPosition((getWidth() - bg.getWidth()) / 2 + 252, (getHeight() - bg.getHeight()) / 2 + 203);
 		txtUna.setPosition((getWidth() - bg.getWidth()) / 2 + 100, (getHeight() - bg.getHeight()) / 2 + 154);
 		txtPsw.setPosition((getWidth() - bg.getWidth()) / 2 + 100, (getHeight() - bg.getHeight()) / 2 + 122);
+
+		getStage().setKeyboardFocus(txtUna);
+		inited = true;
+		return true;
 	}
 }

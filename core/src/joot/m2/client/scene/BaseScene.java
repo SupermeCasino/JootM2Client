@@ -5,8 +5,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
-import joot.m2.client.util.AssetUtil;
-
 /**
  * 场景基类
  * 
@@ -16,18 +14,23 @@ import joot.m2.client.util.AssetUtil;
 abstract class BaseScene implements Screen {
 	// 舞台
 	protected Stage stage;
+	
+	public BaseScene(Stage stage) {
+		this.stage = stage;
+	}
 
 	@Override
 	public void show() {
 		if (stage != null)
 			Gdx.input.setInputProcessor(stage);
 	}
+	
+	protected abstract boolean initializeComponents();
 
 	@Override
 	public void render(float delta) {
-		AssetUtil.update(40);
-		
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		if (!initializeComponents()) return;
 		if (stage != null) {
 			stage.act(delta);
 			stage.draw();

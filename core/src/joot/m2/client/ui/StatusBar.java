@@ -21,8 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 
 import joot.m2.client.App;
-import joot.m2.client.image.M2Texture;
-import joot.m2.client.util.AssetUtil;
+import joot.m2.client.image.Images;
 import joot.m2.client.util.DialogUtil;
 import joot.m2.client.util.FontUtil;
 import joot.m2.client.util.NetworkUtil;
@@ -91,7 +90,10 @@ public final class StatusBar extends WidgetGroup {
 	private Image imgProgressExp;
 	/** 负重进度条 */
 	private Image imgProgressBagWeight;
-	/** 空血量图片<br>仅死亡时可见 */
+	/**
+	 * 空血量图片<br>
+	 * 仅死亡时可见
+	 */
 	private Image imgEmptyHp;
 	/** 血量百分比 */
 	private Image imgProgressHp;
@@ -104,93 +106,139 @@ public final class StatusBar extends WidgetGroup {
 	private TextureRegionDrawable trdNight;
 	private TextureRegionDrawable trdLANight;
 
-	public StatusBar() {
-		AssetUtil.<M2Texture>get(tex -> {
-			addActor(new Image(tex));
-		}, "prguse3/690");
-		addActor(chatBox = new ChatBox());
-		AssetUtil.<M2Texture>get(texs -> {
-			int texIdx = 0;
-			addActor(chkPublicMsg = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(texs[texIdx++]),
-					new TextureRegionDrawable(texs[texIdx++]), FontUtil.Default, null)));
-			addActor(chkAreaMsg = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(texs[texIdx++]),
-					new TextureRegionDrawable(texs[texIdx++]), FontUtil.Default, null)));
-			addActor(chkPrivateMsg = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(texs[texIdx++]),
-					new TextureRegionDrawable(texs[texIdx++]), FontUtil.Default, null)));
-			addActor(chkGuildMsg = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(texs[texIdx++]),
-					new TextureRegionDrawable(texs[texIdx++]), FontUtil.Default, null)));
-			addActor(chkAutoMsg = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(texs[texIdx++]),
-					new TextureRegionDrawable(texs[texIdx++]), FontUtil.Default, null)));
-			addActor(btnMMap = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(texs[texIdx++]),
-					new TextureRegionDrawable(texs[texIdx++]), null, null, null, null)));
-			addActor(btnTrade = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(texs[texIdx++]),
-					new TextureRegionDrawable(texs[texIdx++]), null, null, null, null)));
-			addActor(btnGuild = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(texs[texIdx++]),
-					new TextureRegionDrawable(texs[texIdx++]), null, null, null, null)));
-			
-			addActor(btnTeam = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(texs[texIdx++]),
-					new TextureRegionDrawable(texs[texIdx++]), null, null, null, null)));
-			addActor(btnFriend = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(texs[texIdx++]),
-					new TextureRegionDrawable(texs[texIdx++]), null, null, null, null)));
-			addActor(btnTalkHistory = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(texs[texIdx++]),
-					new TextureRegionDrawable(texs[texIdx++]), null, null, null, null)));
-			addActor(btnRankList = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(texs[texIdx++]),
-					new TextureRegionDrawable(texs[texIdx++]), null, null, null, null)));
-			addActor(btnLogout = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(texs[texIdx++]),
-					new TextureRegionDrawable(texs[texIdx++]), null, null, null, null)));
-			addActor(btnExit = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(texs[texIdx++]),
-					new TextureRegionDrawable(texs[texIdx++]), null, null, null, null)));
-			addActor(btnHum = new ImageButton(new ImageButtonStyle()));
-			btnHum.getStyle().over = new TextureRegionDrawable(texs[texIdx++]);
-			addActor(btnBag = new ImageButton(new ImageButtonStyle()));
-			btnBag.getStyle().over = new TextureRegionDrawable(texs[texIdx++]);
-			addActor(btnSkill = new ImageButton(new ImageButtonStyle()));
-			btnSkill.getStyle().over = new TextureRegionDrawable(texs[texIdx++]);
-			addActor(btnSound = new ImageButton(new ImageButtonStyle()));
-			btnSound.getStyle().over = new TextureRegionDrawable(texs[texIdx++]);
-			addActor(btnShop = new ImageButton(new ImageButtonStyle()));
-			btnShop.getStyle().up = new TextureRegionDrawable(texs[texIdx++]);
-			btnShop.getStyle().over = new TextureRegionDrawable(texs[texIdx++]);
-			btnShop.getStyle().down = new TextureRegionDrawable(texs[texIdx++]);
+	@Override
+	public void act(float delta) {
+		if (initializeComponents()) {
+			var now = LocalDateTime.ofEpochSecond(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) - App.timeDiff, 0,
+					ZoneOffset.UTC);
+
+			lblTime.setText(now.format(DateTimeFormatter.ISO_LOCAL_TIME));
+
+			switch (now.getHour()) {
+			case 6:
+			case 7:
+			case 8:
+			case 9:
+			case 10:
+			case 11:
+			case 12:
+			case 13:
+				// 上午
+				imgClock.setDrawable(trdMorning);
+				break;
+			case 14:
+			case 15:
+			case 16:
+			case 17:
+				// 下午
+				imgClock.setDrawable(trdAFNoon);
+				break;
+			case 18:
+			case 19:
+			case 20:
+			case 21:
+			case 22:
+				// 晚上
+				imgClock.setDrawable(trdNight);
+				break;
+			case 23:
+			case 0:
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+			case 5:
+				// 深夜
+				imgClock.setDrawable(trdLANight);
+				break;
+			default:
+				break;
+			}
 		}
-			, "prguse3/280"
-			, "prguse3/281"
-			, "prguse3/282"
-			, "prguse3/283"
-			, "prguse3/284"
-			, "prguse3/285"
-			, "prguse3/286"
-			, "prguse3/287"
-			, "prguse3/288"
-			, "prguse3/289"
-			, "prguse/130"
-			, "prguse/131"
-			, "prguse/132"
-			, "prguse/133"
-			, "prguse/134"
-			, "prguse/135"
-			, "prguse/128"
-			, "prguse/129"
-			, "prguse3/34"
-			, "prguse3/35"
-			, "prguse3/36"
-			, "prguse3/37"
-			, "prguse3/460"
-			, "prguse3/461"
-			, "prguse/136"
-			, "prguse/137"
-			, "prguse/138"
-			, "prguse/139"
-			, "prguse/8"
-			, "prguse/9"
-			, "prguse/10"
-			, "prguse/11"
-			, "prguse3/307"
-			, "prguse3/309"
-			, "prguse3/310");
-		addActor(lblHp = new Label(App.ChrBasic.hp + "/" + App.ChrBasic.maxHp, new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
-		addActor(lblMp = new Label(App.ChrBasic.mp + "/" + App.ChrBasic.maxMp, new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
-		addActor(lblMapInfo = new Label(App.MapNames.get(App.MapNo) + " " + App.ChrBasic.x + "," + App.ChrBasic.y, new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
+
+		super.act(delta);
+	}
+
+	/**
+	 * <pre>
+	 * &#64;Override
+	 * public Actor hit(float x, float y, boolean touchable) {
+	 * 	// TODO 把镂空的地方返回false，鼠标点选之后可以走跑
+	 * 	return super.hit(x, y, touchable);
+	 * }
+	 * </pre>
+	 */
+
+	/**
+	 * 将焦点给到输入框
+	 */
+	public void focusInput() {
+		getStage().setKeyboardFocus(chatBox.txtChat);
+	}
+
+	private boolean inited;
+	private boolean initializeComponents() {
+		if (inited)
+			return true;
+		var texs = Images.get("prguse3/690", "prguse3/280", "prguse3/281", "prguse3/282", "prguse3/283", "prguse3/284",
+				"prguse3/285", "prguse3/286", "prguse3/287", "prguse3/288", "prguse3/289", "prguse/130", "prguse/131",
+				"prguse/132", "prguse/133", "prguse/134", "prguse/135", "prguse/128", "prguse/129", "prguse3/34",
+				"prguse3/35", "prguse3/36", "prguse3/37", "prguse3/460", "prguse3/461", "prguse/136", "prguse/137",
+				"prguse/138", "prguse/139", "prguse/8", "prguse/9", "prguse/10", "prguse/11", "prguse3/307",
+				"prguse3/309", "prguse3/310", "prguse/7", "prguse/5", "prguse/4", "prguse/12", "prguse/13", "prguse/14",
+				"prguse/15");
+		if (texs == null)
+			return false;
+		int texIdx = 0;
+		addActor(new Image(texs[texIdx++]));
+		addActor(chatBox = new ChatBox());
+		addActor(chkPublicMsg = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(texs[texIdx++]),
+				new TextureRegionDrawable(texs[texIdx++]), FontUtil.Default, null)));
+		addActor(chkAreaMsg = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(texs[texIdx++]),
+				new TextureRegionDrawable(texs[texIdx++]), FontUtil.Default, null)));
+		addActor(chkPrivateMsg = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(texs[texIdx++]),
+				new TextureRegionDrawable(texs[texIdx++]), FontUtil.Default, null)));
+		addActor(chkGuildMsg = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(texs[texIdx++]),
+				new TextureRegionDrawable(texs[texIdx++]), FontUtil.Default, null)));
+		addActor(chkAutoMsg = new CheckBox(null, new CheckBoxStyle(new TextureRegionDrawable(texs[texIdx++]),
+				new TextureRegionDrawable(texs[texIdx++]), FontUtil.Default, null)));
+		addActor(btnMMap = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(texs[texIdx++]),
+				new TextureRegionDrawable(texs[texIdx++]), null, null, null, null)));
+		addActor(btnTrade = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(texs[texIdx++]),
+				new TextureRegionDrawable(texs[texIdx++]), null, null, null, null)));
+		addActor(btnGuild = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(texs[texIdx++]),
+				new TextureRegionDrawable(texs[texIdx++]), null, null, null, null)));
+
+		addActor(btnTeam = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(texs[texIdx++]),
+				new TextureRegionDrawable(texs[texIdx++]), null, null, null, null)));
+		addActor(btnFriend = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(texs[texIdx++]),
+				new TextureRegionDrawable(texs[texIdx++]), null, null, null, null)));
+		addActor(btnTalkHistory = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(texs[texIdx++]),
+				new TextureRegionDrawable(texs[texIdx++]), null, null, null, null)));
+		addActor(btnRankList = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(texs[texIdx++]),
+				new TextureRegionDrawable(texs[texIdx++]), null, null, null, null)));
+		addActor(btnLogout = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(texs[texIdx++]),
+				new TextureRegionDrawable(texs[texIdx++]), null, null, null, null)));
+		addActor(btnExit = new ImageButton(new ImageButtonStyle(new TextureRegionDrawable(texs[texIdx++]),
+				new TextureRegionDrawable(texs[texIdx++]), null, null, null, null)));
+		addActor(btnHum = new ImageButton(new ImageButtonStyle()));
+		btnHum.getStyle().over = new TextureRegionDrawable(texs[texIdx++]);
+		addActor(btnBag = new ImageButton(new ImageButtonStyle()));
+		btnBag.getStyle().over = new TextureRegionDrawable(texs[texIdx++]);
+		addActor(btnSkill = new ImageButton(new ImageButtonStyle()));
+		btnSkill.getStyle().over = new TextureRegionDrawable(texs[texIdx++]);
+		addActor(btnSound = new ImageButton(new ImageButtonStyle()));
+		btnSound.getStyle().over = new TextureRegionDrawable(texs[texIdx++]);
+		addActor(btnShop = new ImageButton(new ImageButtonStyle()));
+		btnShop.getStyle().up = new TextureRegionDrawable(texs[texIdx++]);
+		btnShop.getStyle().over = new TextureRegionDrawable(texs[texIdx++]);
+		btnShop.getStyle().down = new TextureRegionDrawable(texs[texIdx++]);
+		addActor(lblHp = new Label(App.ChrBasic.hp + "/" + App.ChrBasic.maxHp,
+				new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
+		addActor(lblMp = new Label(App.ChrBasic.mp + "/" + App.ChrBasic.maxMp,
+				new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
+		addActor(lblMapInfo = new Label(App.MapNames.get(App.MapNo) + " " + App.ChrBasic.x + "," + App.ChrBasic.y,
+				new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
 		App.ChrBasic.addPropertyChangeListener(e -> {
 			if (e.getPropertyName().equals("x")) {
 				lblMapInfo.setText(App.MapNames.get(App.MapNo) + " " + e.getNewValue() + "," + App.ChrBasic.y);
@@ -202,30 +250,31 @@ public final class StatusBar extends WidgetGroup {
 		});
 		addActor(lblAttackMode = new Label("", new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
 		switch (App.ChrPrivate.attackMode) {
-		case All :{
+		case All: {
 			lblAttackMode.setText("[全体攻击模式]");
 			break;
 		}
-		case Team :{
+		case Team: {
 			lblAttackMode.setText("[队伍攻击模式]");
 			break;
 		}
-		case Guild :{
+		case Guild: {
 			lblAttackMode.setText("[行会攻击模式]");
 			break;
 		}
-		case None :{
+		case None: {
 			lblAttackMode.setText("[和平攻击模式]");
 			break;
 		}
-		case Good :{
+		case Good: {
 			lblAttackMode.setText("[善恶攻击模式]");
 			break;
 		}
 		default:
 			break;
 		}
-		addActor(lblLevel = new Label(String.valueOf(App.ChrBasic.level), new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
+		addActor(lblLevel = new Label(String.valueOf(App.ChrBasic.level),
+				new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
 		addActor(lblTime = new Label("", new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
 		addActor(imgProgressExp = new Image());
 		addActor(imgProgressBagWeight = new Image());
@@ -258,7 +307,7 @@ public final class StatusBar extends WidgetGroup {
 		btnSound.setPosition(988, 217);
 		btnShop.setSize(36, 38);
 		btnShop.setPosition(977, 19);
-		
+
 		lblHp.setAlignment(Align.center);
 		lblMp.setAlignment(Align.center);
 		lblAttackMode.setAlignment(Align.center);
@@ -274,148 +323,95 @@ public final class StatusBar extends WidgetGroup {
 		lblAttackMode.setWidth(64);
 		lblLevel.setWidth(24);
 		lblTime.setWidth(52);
-		
+
 		imgProgressExp.setPosition(888, 60);
 		imgProgressBagWeight.setPosition(888, 27);
+
+		var texIdx_Prguse7 = texIdx;
 		if (App.ChrPrivate.exp == 0) {
 			imgProgressExp.setDrawable(null);
 		} else if (App.ChrPrivate.exp >= App.ChrPrivate.levelUpExp) {
-			AssetUtil.<M2Texture>get(tex -> {
-				imgProgressExp.setDrawable(new TextureRegionDrawable(tex));
-				imgProgressExp.setSize(76, 13);
-			}, "prguse/7");
+			imgProgressExp.setDrawable(new TextureRegionDrawable(texs[texIdx_Prguse7]));
+			imgProgressExp.setSize(76, 13);
 		} else {
-			AssetUtil.<M2Texture>get(tex -> {
-				var progressWidth = (int) (76 * ((float)App.ChrPrivate.exp / App.ChrPrivate.levelUpExp));
-				imgProgressExp.setDrawable(new TextureRegionDrawable(new TextureRegion(tex, progressWidth, 13)));
-				imgProgressExp.setSize(progressWidth, 13);
-			}, "prguse/7");
+			var progressWidth = (int) (76 * ((float) App.ChrPrivate.exp / App.ChrPrivate.levelUpExp));
+			imgProgressExp
+					.setDrawable(new TextureRegionDrawable(new TextureRegion(texs[texIdx_Prguse7], progressWidth, 13)));
+			imgProgressExp.setSize(progressWidth, 13);
 		}
 		if (App.ChrPrivate.bagWeight == 0) {
 			imgProgressBagWeight.setDrawable(null);
 		} else if (App.ChrPrivate.bagWeight >= App.ChrPrivate.maxBagWeight) {
-			AssetUtil.<M2Texture>get(tex -> {
-				imgProgressBagWeight.setDrawable(new TextureRegionDrawable(tex));
-				imgProgressBagWeight.setSize(76, 13);
-			}, "prguse/7");
+			imgProgressBagWeight.setDrawable(new TextureRegionDrawable(texs[texIdx_Prguse7]));
+			imgProgressBagWeight.setSize(76, 13);
 		} else {
-			AssetUtil.<M2Texture>get(tex -> {
-				var progressWidth = (int) (76 * ((float)App.ChrPrivate.bagWeight / App.ChrPrivate.maxBagWeight));
-				imgProgressBagWeight.setDrawable(new TextureRegionDrawable(new TextureRegion(tex, progressWidth, 13)));
-				imgProgressBagWeight.setSize(progressWidth, 13);
-			}, "prguse/7");
+			var progressWidth = (int) (76 * ((float) App.ChrPrivate.bagWeight / App.ChrPrivate.maxBagWeight));
+			imgProgressBagWeight
+					.setDrawable(new TextureRegionDrawable(new TextureRegion(texs[texIdx_Prguse7], progressWidth, 13)));
+			imgProgressBagWeight.setSize(progressWidth, 13);
 		}
-		
+		texIdx++;
 		imgEmptyHp.setPosition(38, 69);
 		imgEmptyHp.setSize(96, 92);
 		imgEmptyHp.setVisible(false);
-		AssetUtil.<M2Texture>get(tex -> {
-			imgEmptyHp.setDrawable(new TextureRegionDrawable(tex));
-		}, "prguse/5");
-
+		imgEmptyHp.setDrawable(new TextureRegionDrawable(texs[texIdx++]));
+		var texIdx_Prguse4 = texIdx;
 		imgProgressHp.setPosition(40, 69);
 		if (App.ChrBasic.hp == 0) {
 			imgProgressHp.setDrawable(null);
 		} else if (App.ChrBasic.hp >= App.ChrBasic.maxHp) {
-			AssetUtil.<M2Texture>get(tex -> {
-				imgProgressHp.setDrawable(new TextureRegionDrawable(new TextureRegion(tex, 42, 90)));
-				imgProgressHp.setSize(42, 90);
-			}, "prguse/4");
+			imgProgressHp.setDrawable(new TextureRegionDrawable(new TextureRegion(texs[texIdx_Prguse4], 42, 90)));
+			imgProgressHp.setSize(42, 90);
 		} else {
-			AssetUtil.<M2Texture>get(tex -> {
-				var progressHeight = (int) (90 * ((float)App.ChrBasic.hp / App.ChrBasic.maxHp));
-				imgProgressHp.setDrawable(new TextureRegionDrawable(new TextureRegion(tex, 42, progressHeight)));
-				imgProgressHp.setSize(42, progressHeight);
-			}, "prguse/4");
+			var progressHeight = (int) (90 * ((float) App.ChrBasic.hp / App.ChrBasic.maxHp));
+			imgProgressHp.setDrawable(
+					new TextureRegionDrawable(new TextureRegion(texs[texIdx_Prguse4], 42, progressHeight)));
+			imgProgressHp.setSize(42, progressHeight);
 		}
 
 		imgProgressMp.setPosition(87, 69);
 		if (App.ChrBasic.mp == 0) {
 			imgProgressMp.setDrawable(null);
 		} else if (App.ChrBasic.mp >= App.ChrBasic.maxMp) {
-			AssetUtil.<M2Texture>get(tex -> {
-				imgProgressMp.setDrawable(new TextureRegionDrawable(new TextureRegion(tex, 48, 0, 44, 90)));
-				imgProgressMp.setSize(44, 90);
-			}, "prguse/4");
+			imgProgressMp
+					.setDrawable(new TextureRegionDrawable(new TextureRegion(texs[texIdx_Prguse4], 48, 0, 44, 90)));
+			imgProgressMp.setSize(44, 90);
 		} else {
-			AssetUtil.<M2Texture>get(tex -> {
-				var progressHeight = (int) (90 * ((float)App.ChrBasic.mp / App.ChrBasic.maxMp));
-				imgProgressMp.setDrawable(new TextureRegionDrawable(new TextureRegion(tex, 48, 90 - progressHeight, 44, progressHeight)));
-				imgProgressMp.setSize(44, progressHeight);
-			}, "prguse/4");
+			var progressHeight = (int) (90 * ((float) App.ChrBasic.mp / App.ChrBasic.maxMp));
+			imgProgressMp.setDrawable(new TextureRegionDrawable(
+					new TextureRegion(texs[texIdx_Prguse4], 48, 90 - progressHeight, 44, progressHeight)));
+			imgProgressMp.setSize(44, progressHeight);
 		}
-		
+		texIdx++;
 		addActor(imgClock = new Image());
-		AssetUtil.<M2Texture>get(texs -> {
-			trdMorning = new TextureRegionDrawable(texs[0]);
-			trdAFNoon = new TextureRegionDrawable(texs[1]);
-			trdNight = new TextureRegionDrawable(texs[2]);
-			trdLANight = new TextureRegionDrawable(texs[3]);
-		}, "prguse/12", "prguse/13", "prguse/14", "prguse/15");
+		trdMorning = new TextureRegionDrawable(texs[texIdx++]);
+		trdAFNoon = new TextureRegionDrawable(texs[texIdx++]);
+		trdNight = new TextureRegionDrawable(texs[texIdx++]);
+		trdLANight = new TextureRegionDrawable(texs[texIdx++]);
 		imgClock.setSize(32, 54);
 		imgClock.setPosition(972, 118);
-		
+
 		btnLogout.addListener(new ClickListener() {
-			
+
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				App.toChrSel();
 			}
-			
+
 		});
-		
+
 		btnExit.addListener(new ClickListener() {
-			
+
 			public void clicked(InputEvent event, float x, float y) {
 				DialogUtil.confirm(null, "确定要退出吗？", () -> {
 					NetworkUtil.shutdown();
 					Gdx.app.exit();
 				});
 			}
-			
+
 		});
-	}
-	
-	@Override
-	public void act(float delta) {
-		var now = LocalDateTime.ofEpochSecond(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) - App.timeDiff, 0, ZoneOffset.UTC);
-		
-		lblTime.setText(now.format(DateTimeFormatter.ISO_LOCAL_TIME));
-		
-		switch(now.getHour()) {
-		case 6:case 7:case 8:case 9:case 10:case 11:case 12:case 13:
-			// 上午
-			imgClock.setDrawable(trdMorning);
-			break;
-		case 14:case 15:case 16:case 17:
-			// 下午
-			imgClock.setDrawable(trdAFNoon);
-			break;
-		case 18:case 19:case 20:case 21:case 22:
-			// 晚上
-			imgClock.setDrawable(trdNight);
-			break;
-		case 23:case 0:case 1:case 2:case 3:case 4:case 5:
-			// 深夜
-			imgClock.setDrawable(trdLANight);
-			break;
-		default:
-			break;
-		}
-		
-		super.act(delta);
-	}
-	
-	/*@Override
-	public Actor hit(float x, float y, boolean touchable) {
-		// TODO 把镂空的地方返回false，鼠标点选之后可以走跑
-		return super.hit(x, y, touchable);
-	}*/
-	
-	/**
-	 * 将焦点给到输入框
-	 */
-	public void focusInput() {
-		getStage().setKeyboardFocus(chatBox.txtChat);
+
+		inited = true;
+		return true;
 	}
 }

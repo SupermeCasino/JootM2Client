@@ -14,7 +14,8 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.github.czyzby.websocket.MyWebSockets;
 
 import joot.m2.client.App;
-import joot.m2.client.util.AssetUtil;
+import joot.m2.client.image.Images;
+import joot.m2.client.map.Maps;
 import joot.m2.client.util.FontUtil;
 import joot.m2.client.util.NetworkUtil;
 
@@ -24,6 +25,7 @@ public class DesktopLauncher {
         Options options = new Options()
                 .addOption(Option.builder("p").longOpt("path").desc("JootM2Client Folder Path").hasArg().build())
                 .addOption(Option.builder("srv").longOpt("server").desc("JootM2Client Server IP").hasArg().build())
+                .addOption(Option.builder("w").longOpt("weiduan").desc("WeiDuan Base Url").hasArg().build())
                 .addOption(Option.builder("log").longOpt("log-level").desc("log verbosity for debugging purposes").hasArg().build());
 
         CommandLine cmd = null;
@@ -41,8 +43,10 @@ public class DesktopLauncher {
                 System.exit(0);
             }
         }
-        String path = cmd.getOptionValue("path");
-        AssetUtil.init(path);
+        var path = cmd.getOptionValue("path");
+        var wdBaseUrl = cmd.getOptionValue("weiduan");
+        Maps.init(path, wdBaseUrl);
+        Images.init(path, wdBaseUrl);
 
         String server = cmd.getOptionValue("server");
 		MyWebSockets.initiate();
@@ -57,10 +61,8 @@ public class DesktopLauncher {
 	    config.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate);
 		new Lwjgl3Application(new App(), config);
 		
-		AssetUtil.shutdown();
 		FontUtil.shutdown();
 		NetworkUtil.shutdown();
-		// 这个websocket客户端的后台线程退不出
-		//System.exit(0);
+		Images.shutdown();
     }
 }

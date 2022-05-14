@@ -3,11 +3,10 @@ package joot.m2.client.scene;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
-import joot.m2.client.image.M2Texture;
-import joot.m2.client.ui.NewUserPane;
+import joot.m2.client.image.Images;
 import joot.m2.client.ui.LoginPane;
 import joot.m2.client.ui.ModifyPswPane;
-import joot.m2.client.util.AssetUtil;
+import joot.m2.client.ui.NewUserPane;
 
 /**
  * 登陆框
@@ -23,13 +22,17 @@ public final class LoginScene extends BaseScene {
 	/** 修改密码 */
 	private ModifyPswPane modifyPswPane;
 	
-	@Override
-	public void show() {
-		stage = new Stage();
-		
-		AssetUtil.<M2Texture>get(tex -> {
-			stage.addActor(new Image(tex));
-		}, "ui1/02850");
+	public LoginScene() {
+		super(new Stage());
+	}
+	
+	private boolean inited;
+	protected boolean initializeComponents() {
+		if (inited) return true;
+		var texs = Images.get("ui1/2850");
+		if (texs == null)
+			return false;
+		stage.addActor(new Image(texs[0]));
 		
 		loginPane = new LoginPane(() -> {
 			createPane.setVisible(true);
@@ -59,8 +62,7 @@ public final class LoginScene extends BaseScene {
 		modifyPswPane.setVisible(false);
 		stage.addActor(modifyPswPane);
 		
-		loginPane.focusInput();
-	    
-		super.show();
+		inited = true;
+		return true;
 	}
 }

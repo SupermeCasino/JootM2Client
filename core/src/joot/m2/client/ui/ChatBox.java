@@ -24,8 +24,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Null;
 
 import joot.m2.client.App;
-import joot.m2.client.image.M2Texture;
-import joot.m2.client.util.AssetUtil;
+import joot.m2.client.image.Images;
 import joot.m2.client.util.DrawableUtil;
 import joot.m2.client.util.FontUtil;
 
@@ -48,103 +47,6 @@ public final class ChatBox extends WidgetGroup {
 	private Slider slrMsg;
 	private Button btnMsgUp; // 向上单次滚动按钮
 	private Button btnMsgDown; // 向上单次滚动按钮
-
-	public ChatBox() {
-		addActor(txtChat = new TextField("", new TextField.TextFieldStyle(FontUtil.Song_12_all_outline,
-				Color.BLACK,
-				DrawableUtil.Cursor_DarkGray,
-				DrawableUtil.Bg_LightGray,
-				null)));
-		txtChat.setPosition(16, 6);
-		txtChat.setWidth(606);
-		txtChat.setMaxLength(100);
-		txtChat.addListener(new InputListener() {
-			@Override
-			public boolean keyUp(InputEvent event, int keycode) {
-				if (keycode == Keys.ENTER || keycode == Keys.NUMPAD_ENTER) {
-					String say = txtChat.getText().trim();
-					if (say.isEmpty()) return true;
-					if (say.equals("@smoothon")) {
-						App.SmoothMoving = true;
-						appendMsg("enable smooth moving", Color.GREEN, null);
-						txtChat.setText("");
-						return true;
-					}
-					if (say.equals("@smoothoff")) {
-						App.SmoothMoving = false;
-						appendMsg("disable smooth moving", Color.WHITE, DrawableUtil.Bg_Red);
-						txtChat.setText("");
-						return true;
-					}
-					appendMsg(say, null, null);
-					txtChat.setText("");
-					return true;
-				}
-				return false;
-			}
-		});
-		linesMsg = new Table[8]; // 显示8行文字
-		for (var i = 0; i < linesMsg.length; ++i) {
-			linesMsg[i] = new Table();
-			linesMsg[i].background(DrawableUtil.Bg_White);
-			linesMsg[i].setSize(606, 13);
-			linesMsg[i].setPosition(16, 117 - i * 13); // 每行13像素，其中12像素文字加1像素padding
-			addActor(linesMsg[i]);
-		}
-		strsMsg = new String[100]; // 最多记录历史数据条目数，可以改动此值来增加历史消息数目
-		bgsMsg = new Drawable[strsMsg.length];
-		colorsMsg = new Color[strsMsg.length];
-
-		AssetUtil.<M2Texture>get(texs -> {
-			int texIdx = 0;
-			var slrMsgStyle = new SliderStyle(new TextureRegionDrawable(texs[texIdx++]), null);
-
-			addActor(btnMsgUp = new Button(new ButtonStyle()));
-			btnMsgUp.getStyle().up = new TextureRegionDrawable(texs[texIdx++]);
-			btnMsgUp.getStyle().over = new TextureRegionDrawable(texs[texIdx++]);
-			btnMsgUp.getStyle().down = new TextureRegionDrawable(texs[texIdx++]);
-
-			addActor(btnMsgDown = new Button(new ButtonStyle()));
-			btnMsgDown.getStyle().up = new TextureRegionDrawable(texs[texIdx++]);
-			btnMsgDown.getStyle().over = new TextureRegionDrawable(texs[texIdx++]);
-			btnMsgDown.getStyle().down = new TextureRegionDrawable(texs[texIdx++]);
-
-			slrMsgStyle.knob = new TextureRegionDrawable(texs[texIdx++]);
-			slrMsgStyle.knobOver = new TextureRegionDrawable(texs[texIdx++]);
-			slrMsgStyle.knobDown = new TextureRegionDrawable(texs[texIdx++]);
-			addActor(slrMsg = new Slider(0, strsMsg.length - 1, 1, true, slrMsgStyle));
-		}
-			, IntStream.range(500, 510).mapToObj(i -> "ui3/" + i).collect(Collectors.toList()).toArray(new String[0]));
-		
-		// libgdx的slider虽然可以竖直显示，但只能以上为增大，下为减小。因此后文为兼容数据与界面，用“max-”来设置和获取实际数值
-		slrMsg.setValue(slrMsg.getMaxValue());
-		slrMsg.setSize(16, 100);
-		slrMsg.setPosition(622, 28);
-		slrMsg.addListener(new ChangeListener() {
-			
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				refreshMsgShow();
-			}
-			
-		});
-		btnMsgUp.setSize(16, 10);
-		btnMsgUp.setPosition(622, 128);
-		btnMsgUp.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				slrMsg.setValue(slrMsg.getValue() + slrMsg.getStepSize());
-			}
-		});
-		btnMsgDown.setSize(16, 10);
-		btnMsgDown.setPosition(622, 20);
-		btnMsgDown.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				slrMsg.setValue(slrMsg.getValue() - slrMsg.getStepSize());
-			}
-		});
-	}
 	
 	/**
 	 * 追加新消息到消息框
@@ -201,15 +103,109 @@ public final class ChatBox extends WidgetGroup {
 		}
 	}
 	
-	/*@Override
-	public void layout() {
-		txtChat.setWidth(getWidth() - 30);
-		slrMsg.setX(getWidth() - 14);
-		btnMsgUp.setX(getWidth() - 14);
-		btnMsgDown.setX(getWidth() - 14);
-		btnExpandMsg.setX(getWidth() - 14);
+	@Override
+	public void act(float delta) {
+		initializeComponents();
+		super.act(delta);
+	}
+	
+	private boolean inited;
+	private boolean initializeComponents() {
+		if (inited) return true;
+		var texs = Images.get(IntStream.range(500, 510).mapToObj(i -> "ui3/" + i).collect(Collectors.toList()).toArray(new String[0]));
+		if (texs == null) return false;
+		addActor(txtChat = new TextField("", new TextField.TextFieldStyle(FontUtil.Song_12_all_outline,
+				Color.BLACK,
+				DrawableUtil.Cursor_DarkGray,
+				DrawableUtil.Bg_LightGray,
+				null)));
+		txtChat.setPosition(16, 6);
+		txtChat.setWidth(606);
+		txtChat.setMaxLength(100);
+		txtChat.addListener(new InputListener() {
+			@Override
+			public boolean keyUp(InputEvent event, int keycode) {
+				if (keycode == Keys.ENTER || keycode == Keys.NUMPAD_ENTER) {
+					String say = txtChat.getText().trim();
+					if (say.isEmpty()) return true;
+					if (say.equals("@smoothon")) {
+						App.SmoothMoving = true;
+						appendMsg("enable smooth moving", Color.GREEN, null);
+						txtChat.setText("");
+						return true;
+					}
+					if (say.equals("@smoothoff")) {
+						App.SmoothMoving = false;
+						appendMsg("disable smooth moving", Color.WHITE, DrawableUtil.Bg_Red);
+						txtChat.setText("");
+						return true;
+					}
+					appendMsg(say, null, null);
+					txtChat.setText("");
+					return true;
+				}
+				return false;
+			}
+		});
+		linesMsg = new Table[8]; // 显示8行文字
 		for (var i = 0; i < linesMsg.length; ++i) {
-			linesMsg[i].setWidth(getWidth() - 30);
+			linesMsg[i] = new Table();
+			linesMsg[i].background(DrawableUtil.Bg_White);
+			linesMsg[i].setSize(606, 13);
+			linesMsg[i].setPosition(16, 117 - i * 13); // 每行13像素，其中12像素文字加1像素padding
+			addActor(linesMsg[i]);
 		}
-	}*/
+		strsMsg = new String[100]; // 最多记录历史数据条目数，可以改动此值来增加历史消息数目
+		bgsMsg = new Drawable[strsMsg.length];
+		colorsMsg = new Color[strsMsg.length];
+
+		var texIdx = 0;
+		var slrMsgStyle = new SliderStyle(new TextureRegionDrawable(texs[texIdx++]), null);
+
+		addActor(btnMsgUp = new Button(new ButtonStyle()));
+		btnMsgUp.getStyle().up = new TextureRegionDrawable(texs[texIdx++]);
+		btnMsgUp.getStyle().over = new TextureRegionDrawable(texs[texIdx++]);
+		btnMsgUp.getStyle().down = new TextureRegionDrawable(texs[texIdx++]);
+
+		addActor(btnMsgDown = new Button(new ButtonStyle()));
+		btnMsgDown.getStyle().up = new TextureRegionDrawable(texs[texIdx++]);
+		btnMsgDown.getStyle().over = new TextureRegionDrawable(texs[texIdx++]);
+		btnMsgDown.getStyle().down = new TextureRegionDrawable(texs[texIdx++]);
+
+		slrMsgStyle.knob = new TextureRegionDrawable(texs[texIdx++]);
+		slrMsgStyle.knobOver = new TextureRegionDrawable(texs[texIdx++]);
+		slrMsgStyle.knobDown = new TextureRegionDrawable(texs[texIdx++]);
+		addActor(slrMsg = new Slider(0, strsMsg.length - 1, 1, true, slrMsgStyle));
+		
+		// libgdx的slider虽然可以竖直显示，但只能以上为增大，下为减小。因此后文为兼容数据与界面，用“max-”来设置和获取实际数值
+		slrMsg.setValue(slrMsg.getMaxValue());
+		slrMsg.setSize(16, 100);
+		slrMsg.setPosition(622, 28);
+		slrMsg.addListener(new ChangeListener() {
+			
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				refreshMsgShow();
+			}
+			
+		});
+		btnMsgUp.setSize(16, 10);
+		btnMsgUp.setPosition(622, 128);
+		btnMsgUp.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				slrMsg.setValue(slrMsg.getValue() + slrMsg.getStepSize());
+			}
+		});
+		btnMsgDown.setSize(16, 10);
+		btnMsgDown.setPosition(622, 20);
+		btnMsgDown.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				slrMsg.setValue(slrMsg.getValue() - slrMsg.getStepSize());
+			}
+		});
+		inited = true;
+		return true;
+	}
 }
