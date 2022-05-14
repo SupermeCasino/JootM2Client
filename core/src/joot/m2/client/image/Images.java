@@ -55,7 +55,7 @@ public final class Images {
 	 */
 	public static void shutdown() {
 		WZLs.values().forEach(WZL::cancelLoad);
-		pendingTextureSemaphore.release(WZLs.size());
+		pendingTextureSemaphore.release(Short.MAX_VALUE);
 	}
 	
 	/**
