@@ -193,7 +193,7 @@ public final class Images {
 		if (WZLs.containsKey(lib_idx[0])) {
 			WZLs.get(lib_idx[0]).load(Integer.parseInt(lib_idx[1]));
 		} else {
-			var wzl = new WZL(Paths.get(Dir, lib_idx[0] + ".wzx").toString(), wdBaseUrl, 60 * 1000, 1024 * 1024); // 每次处理1M数据，自动加载间隔1分钟
+			var wzl = new WZL(Paths.get(Dir, lib_idx[0] + ".wzx").toString(), wdBaseUrl);
 			wzl.onTextureLoaded((fno, no, tex) -> {
 				try {
 					pendingTextureSemaphore.acquire();
