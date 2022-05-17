@@ -40,3 +40,5 @@ history message (chatboard) done
 ## 2022-5-8 redis oriented
 
 ## 2022-5-14 add weiduan support
+
+## 2022-5-17 post a user guide

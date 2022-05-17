@@ -40,6 +40,7 @@ public class DesktopLauncher {
             if (cmd == null || cmd.getOptions().length == 0) {
                 HelpFormatter formatter = new HelpFormatter();
                 formatter.printHelp("JootM2Client", options);
+                System.out.println("如果您不知道如何正确运行，请参考https://www.cnblogs.com/Johness/p/jootm2-how-to-run.html");
                 System.exit(0);
             }
         }
