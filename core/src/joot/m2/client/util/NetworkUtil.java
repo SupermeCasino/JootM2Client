@@ -20,8 +20,10 @@ import com.github.jootnet.m2.core.net.MessageType;
 import com.github.jootnet.m2.core.net.Messages;
 import com.github.jootnet.m2.core.net.messages.EnterReq;
 import com.github.jootnet.m2.core.net.messages.LoginReq;
+import com.github.jootnet.m2.core.net.messages.LogoutReq;
 import com.github.jootnet.m2.core.net.messages.NewChrReq;
 import com.github.jootnet.m2.core.net.messages.NewUserReq;
+import com.github.jootnet.m2.core.net.messages.OutReq;
 import com.github.jootnet.m2.core.net.messages.SysInfo;
 
 import joot.m2.client.App;
@@ -36,6 +38,12 @@ public final class NetworkUtil {
 
     /** 接受到的数据 */
 	private static List<Message> recvMsgList = new ArrayList<>();
+	/** 启用保活的标志 */
+	private static boolean keepAliveFlag;
+	/** 上次接收到数据的时间 */
+	private static long lastRecvTime;
+	/** 上一次发送数据的时间 */
+	private static long lastSendTime;
     
     @FunctionalInterface
     public interface MessageConsumer {
@@ -56,6 +64,22 @@ public final class NetworkUtil {
 			recvMsgList.clear();
 			for (var msg : recvMsgList_) {
 				if (!consumer.recv(msg)) recvMsgList.add(msg);
+			}
+		}
+		if (keepAliveFlag && System.currentTimeMillis() - lastSendTime > 15 * 1000) {
+			if (ws != null) {
+				try {
+					ws.send("PING");
+				} catch (Exception ex) { }
+			}
+		}
+		if (System.currentTimeMillis() - lastRecvTime > 60 * 1000) {
+			// 一分钟超时
+			if (ws != null) {
+				ws = null;
+				DialogUtil.alert(null, "与服务器的连接断开...", () -> {
+					Gdx.app.exit();
+				});
 			}
 		}
     }
@@ -91,6 +115,17 @@ public final class NetworkUtil {
 		ws.close();
 		ws = null;
 	}
+	
+	/**
+	 * 是否启用保活
+	 * <br>
+	 * 一般进入游戏画面之后，开启保活，会在闲时与服务器产生交互避免被服务器断开
+	 * 
+	 * @param flag 是否启用保活
+	 */
+	public static void keepAlive(boolean flag) {
+		keepAliveFlag = flag;
+	}
     
     /**
      * 发送人物动作更改到服务器
@@ -102,6 +137,7 @@ public final class NetworkUtil {
     	try {
 			ws.send(Messages.humActionChange(hum).pack());
 		} catch (Exception e) { }
+		lastSendTime = System.currentTimeMillis();
     }
     
     /**
@@ -115,6 +151,7 @@ public final class NetworkUtil {
     	try {
 			ws.send(new LoginReq(una, Base64.getEncoder().encodeToString(MessageDigest.getInstance("MD5").digest(psw.getBytes()))).pack());
 		} catch (Exception e) { }
+		lastSendTime = System.currentTimeMillis();
     }
     
     /**
@@ -137,6 +174,7 @@ public final class NetworkUtil {
     		ws.send(new NewUserReq(una, Base64.getEncoder().encodeToString(MessageDigest.getInstance("MD5").digest(psw.getBytes()))
     				, name, q1, a1, q2, a2, tel, iPhone,mail).pack());
 		} catch (Exception e) { }
+		lastSendTime = System.currentTimeMillis();
     }
     /**
      * 发送创建角色
@@ -149,6 +187,7 @@ public final class NetworkUtil {
     	try {
     		ws.send(new NewChrReq(name, occupation, gender).pack());
     	} catch (Exception e) { }
+		lastSendTime = System.currentTimeMillis();
     }
     
     /**
@@ -161,6 +200,29 @@ public final class NetworkUtil {
     	try {
 			ws.send(new EnterReq(chrName).pack());
 		} catch (Exception e) { }
+		lastSendTime = System.currentTimeMillis();
+    }
+    
+    /**
+     * 发送登出
+     */
+    public static void sendLogout() {
+		if (ws == null) return;
+    	try {
+			ws.send(new LogoutReq().pack());
+		} catch (Exception e) { }
+		lastSendTime = System.currentTimeMillis();
+    }
+    
+    /**
+     * 发送离开游戏世界
+     */
+    public static void sendOut() {
+		if (ws == null) return;
+    	try {
+			ws.send(new OutReq().pack());
+		} catch (Exception e) { }
+		lastSendTime = System.currentTimeMillis();
     }
     
     private static class WebSocketListenerImpl implements WebSocketListener {
@@ -168,6 +230,8 @@ public final class NetworkUtil {
 		@Override
 		public boolean onOpen(WebSocket webSocket) {
 			webSocket.send("Hello wrold!");
+			lastRecvTime = System.currentTimeMillis();
+			lastSendTime = System.currentTimeMillis();
 			return true;
 		}
 
@@ -184,11 +248,13 @@ public final class NetworkUtil {
 
 		@Override
 		public boolean onMessage(WebSocket webSocket, String packet) {
+			lastRecvTime = System.currentTimeMillis();
 			return true;
 		}
 
 		@Override
 		public boolean onMessage(WebSocket webSocket, byte[] packet) {
+			lastRecvTime = System.currentTimeMillis();
 			try {
 				synchronized (recvMsgList) {
 					var msg = Message.unpack(ByteBuffer.wrap(packet));

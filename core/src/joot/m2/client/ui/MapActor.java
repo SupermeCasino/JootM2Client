@@ -75,6 +75,22 @@ public final class MapActor extends WidgetGroup implements PropertyChangeListene
 	}
 	
 	/**
+	 * 玩家离开地图
+	 * 
+	 * @param hum 玩家
+	 * @return 当前对象
+	 */
+	public MapActor remove(ChrBasicInfo hum) {
+		if (hums != null) {
+			hums[hum.y].remove(hum);
+		} else {
+			tempHums.remove(hum);
+		}
+		hum.removePropertyChangeListener(this);
+		return this;
+	}
+	
+	/**
 	 * 设置地图展示中心坐标
 	 * <br>
 	 * 即是当前玩家游戏坐标

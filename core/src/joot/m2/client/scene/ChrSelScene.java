@@ -23,6 +23,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 import com.github.jootnet.m2.core.net.MessageType;
 import com.github.jootnet.m2.core.net.messages.EnterResp;
+import com.github.jootnet.m2.core.net.messages.LogoutResp;
 
 import joot.m2.client.App;
 import joot.m2.client.image.Images;
@@ -91,6 +92,12 @@ public final class ChrSelScene extends BaseScene {
 
 	public ChrSelScene() {
 		super(new Stage());
+	}
+	
+	@Override
+	public void hide() {
+		inited = false;
+		super.hide();
 	}
 
 	private boolean inited;
@@ -229,6 +236,16 @@ public final class ChrSelScene extends BaseScene {
 				newChrPane.setVisible(true);
 			}
 
+		});
+		
+		btnExit.addListener(new ClickListener() {
+			
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				NetworkUtil.sendLogout();
+				App.toLogin();
+			}
+			
 		});
 
 		inited = true;
@@ -473,6 +490,14 @@ public final class ChrSelScene extends BaseScene {
 					aniOpenDoor = new Animation<M2Texture>(0.15f, Images.get(IntStream.range(23, 33)
 							.mapToObj(j -> "chrsel/" + j).collect(Collectors.toList()).toArray(new String[0])));
 				}
+				return true;
+			} else if (msg.type() == MessageType.LOGOUT_RESP) {
+				var logoutResp = (LogoutResp) msg;
+				if (logoutResp.code != 0) {
+					DialogUtil.alert(null, logoutResp.serverTip, null);
+					return true;
+				}
+				App.toLogin();
 				return true;
 			}
 			return false;

@@ -26,6 +26,12 @@ public final class LoginScene extends BaseScene {
 		super(new Stage());
 	}
 	
+	@Override
+	public void hide() {
+		inited = false;
+		super.hide();
+	}
+	
 	private boolean inited;
 	protected boolean initializeComponents() {
 		if (inited) return true;

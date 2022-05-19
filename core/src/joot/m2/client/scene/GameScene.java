@@ -18,10 +18,13 @@ import com.github.jootnet.m2.core.actor.HumActionInfos;
 import com.github.jootnet.m2.core.net.MessageType;
 import com.github.jootnet.m2.core.net.messages.EnterResp;
 import com.github.jootnet.m2.core.net.messages.HumActionChange;
+import com.github.jootnet.m2.core.net.messages.LogoutResp;
+import com.github.jootnet.m2.core.net.messages.OutResp;
 
 import joot.m2.client.App;
 import joot.m2.client.ui.MapActor;
 import joot.m2.client.ui.StatusBar;
+import joot.m2.client.util.DialogUtil;
 import joot.m2.client.util.NetworkUtil;
 
 /**
@@ -42,6 +45,12 @@ public final class GameScene extends BaseScene {
 	
 	public GameScene() {
 		super(new Stage());
+	}
+	
+	@Override
+	public void hide() {
+		inited = false;
+		super.hide();
 	}
 	
 	private boolean inited;
@@ -70,6 +79,7 @@ public final class GameScene extends BaseScene {
 
 		// 处理服务器消息
 		doServerMessages();
+		if (App.ChrBasic == null) return; // 可能退出登录了
 
 		// 当前角色特殊处理
 		calcMeAction();
@@ -251,7 +261,8 @@ public final class GameScene extends BaseScene {
 	// 处理服务器消息
 	private void doServerMessages() {
 		NetworkUtil.recv(msg -> {
-			if (msg.type() == MessageType.HUM_ACTION_CHANGE) {
+			var msgType = msg.type();
+			if (msgType == MessageType.HUM_ACTION_CHANGE) {
 				var action = (HumActionChange) msg;
 				if (action.name.equals(App.ChrBasic.name)) {
 					// 当前玩家动作改变消息，可以视为服务器确认
@@ -267,7 +278,7 @@ public final class GameScene extends BaseScene {
 					}
 				}
 				return true;
-			} else if (msg.type() == MessageType.ENTER_RESP) {
+			} else if (msgType == MessageType.ENTER_RESP) {
 				var enterResp = (EnterResp) msg;
 				if (enterResp.cBasic != null) {
 					if (!hums.containsKey(enterResp.cBasic.name)) {
@@ -276,6 +287,34 @@ public final class GameScene extends BaseScene {
 						mapActor.add(enterResp.cBasic);
 					}
 				}
+				return true;
+			} else if (msgType == MessageType.OUT_RESP) {
+				var outResp = (OutResp) msg;
+				if (outResp.code != 0) {
+					DialogUtil.alert(null, outResp.serverTip, null);
+					return true;
+				}
+				if (outResp.role.name.equals(App.LastName)) {
+					for (var i = 0; i < App.Roles.length; ++i) {
+						if (App.Roles[i].name.equals(outResp.role.name)) {
+							App.Roles[i] = outResp.role;
+							break;
+						}
+					}
+					App.toChrSel();
+				} else {
+					var cbi = hums.remove(outResp.role.name);
+					if (cbi != null)
+						mapActor.remove(cbi);
+				}
+				return true;
+			} else if (msgType == MessageType.LOGOUT_RESP) {
+				var logoutResp = (LogoutResp) msg;
+				if (logoutResp.code != 0) {
+					DialogUtil.alert(null, logoutResp.serverTip, null);
+					return true;
+				}
+				App.toLogin();
 				return true;
 			}
 			return false;

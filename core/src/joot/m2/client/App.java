@@ -72,6 +72,13 @@ public class App extends Game {
 	 * 去到登陆界面
 	 */
 	public static void toLogin() {
+		Roles = null;
+		LastName = null;
+		MapNo = null;
+		ChrBasic = null;
+		ChrPublic = null;
+		ChrPrivate = null;
+		NetworkUtil.keepAlive(false);
 		me.setScreen(me.loginScene);
 	}
 	
@@ -79,6 +86,11 @@ public class App extends Game {
 	 * 去到角色选择场景
 	 */
 	public static void toChrSel() {
+		MapNo = null;
+		ChrBasic = null;
+		ChrPublic = null;
+		ChrPrivate = null;
+		NetworkUtil.keepAlive(false);
 		me.setScreen(me.chrSelScene);
 	}
 	
@@ -86,6 +98,7 @@ public class App extends Game {
 	 * 去到游戏场景
 	 */
 	public static void toGame() {
+		NetworkUtil.keepAlive(true);
 		me.setScreen(me.gameScene);
 	}
 }

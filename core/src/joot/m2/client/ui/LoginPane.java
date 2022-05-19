@@ -187,13 +187,13 @@ public final class LoginPane extends WidgetGroup {
 
 		});
 
-		bg.setPosition((getWidth() - bg.getWidth()) / 2, (getHeight() - bg.getHeight()) / 2);
-		btnNew.setPosition((getWidth() - bg.getWidth()) / 2 + 25, (getHeight() - bg.getHeight()) / 2 + 17);
-		btnModifyPsw.setPosition((getWidth() - bg.getWidth()) / 2 + 130, (getHeight() - bg.getHeight()) / 2 + 17);
-		btnLogin.setPosition((getWidth() - bg.getWidth()) / 2 + 169, (getHeight() - bg.getHeight()) / 2 + 57);
-		btnExit.setPosition((getWidth() - bg.getWidth()) / 2 + 252, (getHeight() - bg.getHeight()) / 2 + 203);
-		txtUna.setPosition((getWidth() - bg.getWidth()) / 2 + 100, (getHeight() - bg.getHeight()) / 2 + 154);
-		txtPsw.setPosition((getWidth() - bg.getWidth()) / 2 + 100, (getHeight() - bg.getHeight()) / 2 + 122);
+		bg.setPosition((getStage().getWidth() - bg.getWidth()) / 2, (getStage().getHeight() - bg.getHeight()) / 2);
+		btnNew.setPosition((getStage().getWidth() - bg.getWidth()) / 2 + 25, (getStage().getHeight() - bg.getHeight()) / 2 + 17);
+		btnModifyPsw.setPosition((getStage().getWidth() - bg.getWidth()) / 2 + 130, (getStage().getHeight() - bg.getHeight()) / 2 + 17);
+		btnLogin.setPosition((getStage().getWidth() - bg.getWidth()) / 2 + 169, (getStage().getHeight() - bg.getHeight()) / 2 + 57);
+		btnExit.setPosition((getStage().getWidth() - bg.getWidth()) / 2 + 252, (getStage().getHeight() - bg.getHeight()) / 2 + 203);
+		txtUna.setPosition((getStage().getWidth() - bg.getWidth()) / 2 + 100, (getStage().getHeight() - bg.getHeight()) / 2 + 154);
+		txtPsw.setPosition((getStage().getWidth() - bg.getWidth()) / 2 + 100, (getStage().getHeight() - bg.getHeight()) / 2 + 122);
 
 		getStage().setKeyboardFocus(txtUna);
 		inited = true;

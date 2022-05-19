@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -395,7 +394,7 @@ public final class StatusBar extends WidgetGroup {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				App.toChrSel();
+				NetworkUtil.sendOut();
 			}
 
 		});
@@ -404,8 +403,7 @@ public final class StatusBar extends WidgetGroup {
 
 			public void clicked(InputEvent event, float x, float y) {
 				DialogUtil.confirm(null, "确定要退出吗？", () -> {
-					NetworkUtil.shutdown();
-					Gdx.app.exit();
+					NetworkUtil.sendLogout();
 				});
 			}
 
