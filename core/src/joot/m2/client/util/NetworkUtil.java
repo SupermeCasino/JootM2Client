@@ -18,9 +18,12 @@ import com.github.jootnet.m2.core.actor.Occupation;
 import com.github.jootnet.m2.core.net.Message;
 import com.github.jootnet.m2.core.net.MessageType;
 import com.github.jootnet.m2.core.net.Messages;
+import com.github.jootnet.m2.core.net.messages.DeleteChrReq;
 import com.github.jootnet.m2.core.net.messages.EnterReq;
+import com.github.jootnet.m2.core.net.messages.KickedOut;
 import com.github.jootnet.m2.core.net.messages.LoginReq;
 import com.github.jootnet.m2.core.net.messages.LogoutReq;
+import com.github.jootnet.m2.core.net.messages.ModifyPswReq;
 import com.github.jootnet.m2.core.net.messages.NewChrReq;
 import com.github.jootnet.m2.core.net.messages.NewUserReq;
 import com.github.jootnet.m2.core.net.messages.OutReq;
@@ -176,6 +179,36 @@ public final class NetworkUtil {
 		} catch (Exception e) { }
 		lastSendTime = System.currentTimeMillis();
     }
+    
+    /**
+     * 发送修改密码
+     * 
+     * @param una 用户名
+     * @param oldPsw 旧密码
+     * @param newPsw 新密码
+     */
+    public static void sendModifyPsw(String una, String oldPsw, String newPsw) {
+		if (ws == null) return;
+    	try {
+    		ws.send(new ModifyPswReq(una, Base64.getEncoder().encodeToString(MessageDigest.getInstance("MD5").digest(oldPsw.getBytes()))
+    				, Base64.getEncoder().encodeToString(MessageDigest.getInstance("MD5").digest(newPsw.getBytes()))).pack());
+    	} catch (Exception e) { }
+		lastSendTime = System.currentTimeMillis();
+    }
+    
+    /**
+     * 发送删除角色
+     * 
+     * @param nama 角色名称
+     */
+    public static void sendDelteChr(String nama) {
+		if (ws == null) return;
+    	try {
+    		ws.send(new DeleteChrReq(nama).pack());
+    	} catch (Exception e) { }
+		lastSendTime = System.currentTimeMillis();
+    }
+    
     /**
      * 发送创建角色
      * @param name 昵称
@@ -254,6 +287,7 @@ public final class NetworkUtil {
 
 		@Override
 		public boolean onMessage(WebSocket webSocket, byte[] packet) {
+			if (ws == null) return true;
 			lastRecvTime = System.currentTimeMillis();
 			try {
 				synchronized (recvMsgList) {
@@ -267,6 +301,20 @@ public final class NetworkUtil {
 							App.MapNames.put(sysInfo.mapNos[i], sysInfo.mapNames[i]);
 							App.MapMMaps.put(sysInfo.mapNos[i], sysInfo.mapMMaps[i]);
 						}
+						return true;
+					} else if (msg.type() == MessageType.KICKED_OUT) {
+						var kickedOut = (KickedOut) msg;
+						var tip = (String) null;
+						if (kickedOut.reason == 1) {
+							tip = "账号在其他地方登陆";
+						}
+						if (kickedOut.serverTip != null) {
+							tip = kickedOut.serverTip;
+						}
+						ws = null;
+						DialogUtil.alert(null, tip, () -> {
+							Gdx.app.exit();
+						});
 						return true;
 					}
 					recvMsgList.add(msg);

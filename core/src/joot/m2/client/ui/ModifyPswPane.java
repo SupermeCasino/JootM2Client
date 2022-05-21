@@ -10,10 +10,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.github.jootnet.m2.core.net.MessageType;
+import com.github.jootnet.m2.core.net.messages.ModifyPswResp;
 
 import joot.m2.client.image.Images;
+import joot.m2.client.util.DialogUtil;
 import joot.m2.client.util.DrawableUtil;
 import joot.m2.client.util.FontUtil;
+import joot.m2.client.util.NetworkUtil;
 
 /**
  * 修改密码
@@ -55,6 +59,29 @@ public class ModifyPswPane extends WidgetGroup {
 
 	@Override
 	public void act(float delta) {
+		
+		NetworkUtil.recv(msg -> {
+			if (msg.type() == MessageType.MODIFY_PSW_RESP) {
+				var modifyPswResp = (ModifyPswResp) msg;
+				var tip = (String) null;
+				if (modifyPswResp.code == 0) {
+					tip = "密码修改成功";
+				} else if(modifyPswResp.code == 1) {
+					tip = "用户名或密码错误";
+				} else if(modifyPswResp.code == 2) {
+					tip = "用户不存在";
+				}
+				if (modifyPswResp.serverTip != null)
+					tip = modifyPswResp.serverTip;
+				DialogUtil.alert(null, tip, () -> {
+					if (closeConsumer != null)
+						closeConsumer.op();
+				});
+				return true;
+			}
+			return false;
+		});
+		
 		initializeComponents();
 		if (isVisible() && !lastVisible) {
 			getStage().setKeyboardFocus(txtUna);
@@ -116,6 +143,21 @@ public class ModifyPswPane extends WidgetGroup {
 					closeConsumer.op();
 			}
 
+		});
+		
+		btnCommit.addListener(new ClickListener() {
+
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				var una = txtUna.getText();
+				var oldPsw = txtPswO.getText();
+				var newPsw = txtPsw.getText();
+				if (una == null || una.isBlank()) return;
+				if (oldPsw == null || oldPsw.isBlank()) return;
+				if (newPsw == null || newPsw.isBlank()) return;
+				NetworkUtil.sendModifyPsw(una, oldPsw, newPsw);
+			}
+			
 		});
 
 		bg.setPosition((getStage().getWidth() - bg.getWidth()) / 2, (getStage().getHeight() - bg.getHeight()) / 2);

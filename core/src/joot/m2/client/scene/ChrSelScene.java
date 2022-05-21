@@ -22,7 +22,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 import com.github.jootnet.m2.core.net.MessageType;
+import com.github.jootnet.m2.core.net.messages.DeleteChrResp;
 import com.github.jootnet.m2.core.net.messages.EnterResp;
+import com.github.jootnet.m2.core.net.messages.LoginResp;
 import com.github.jootnet.m2.core.net.messages.LogoutResp;
 
 import joot.m2.client.App;
@@ -200,7 +202,7 @@ public final class ChrSelScene extends BaseScene {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				if (App.Roles != null && App.Roles.length > 0) {
+				if (App.Roles != null && App.Roles.length > 0 && !App.Roles[0].name.equals(App.LastName)) {
 					App.LastName = App.Roles[0].name;
 					select(0, true);
 				}
@@ -211,12 +213,24 @@ public final class ChrSelScene extends BaseScene {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				if (App.Roles != null && App.Roles.length > 1) {
+				if (App.Roles != null && App.Roles.length > 1 && !App.Roles[1].name.equals(App.LastName)) {
 					App.LastName = App.Roles[1].name;
 					select(1, true);
 				}
 			}
 
+		});
+		
+		btnRemove.addListener(new ClickListener() {
+			
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				if (App.LastName == null || App.Roles == null) return;
+				DialogUtil.confirm(null, "是否删除角色[" + App.LastName + "]？", () -> {
+					NetworkUtil.sendDelteChr(App.LastName);
+				});
+			}
+			
 		});
 
 		stage.addActor(newChrPane = new NewChrPane(() -> {
@@ -290,13 +304,29 @@ public final class ChrSelScene extends BaseScene {
 							.toArray(new String[0]) } };
 
 	private void loadRoles() {
+		if (lblName1 != null)
+			lblName1.setText("");
+		if (lblLevel1 != null)
+			lblLevel1.setText("");
+		if (lblOccu1 != null)
+			lblOccu1.setText("");
+		if (lblName2 != null)
+			lblName2.setText("");
+		if (lblLevel2 != null)
+			lblLevel2.setText("");
+		if (lblOccu2 != null)
+			lblOccu2.setText("");
+		if (App.Roles == null || App.Roles.length == 0) {
+			select(-1, false);
+			return;
+		}
 		if (App.Roles != null && App.Roles.length > 0) {
 			if (lblName1 != null)
 				stage.getActors().removeValue(lblName1, true);
 			stage.addActor(
 					lblName1 = new Label(App.Roles[0].name, new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
 			if (lblLevel1 != null)
-				stage.getActors().removeValue(lblName1, true);
+				stage.getActors().removeValue(lblLevel1, true);
 			stage.addActor(lblLevel1 = new Label(String.valueOf(App.Roles[0].level),
 					new LabelStyle(FontUtil.Song_12_all_colored, Color.WHITE)));
 			String occuString = App.Roles[0].type == 0 ? "战士"
@@ -408,7 +438,7 @@ public final class ChrSelScene extends BaseScene {
 						Images.get(selectAniTexs[App.Roles[0].gender][App.Roles[0].type]));
 				aniChr1.setPlayMode(PlayMode.LOOP);
 			}
-		} else {
+		} else if (i == 1) {
 			if (effect) {
 				aniChr2 = new Animation<M2Texture>(0.15f,
 						Images.get(reliveAniTexs[App.Roles[1].gender][App.Roles[1].type]));
@@ -498,6 +528,42 @@ public final class ChrSelScene extends BaseScene {
 					return true;
 				}
 				App.toLogin();
+				return true;
+			} else if (msg.type() == MessageType.DELETE_CHR_RESP) {
+				var deleteChrResp = (DeleteChrResp) msg;
+				var tip = (String) null;
+				if (deleteChrResp.code == 0) {
+					var role0 = (LoginResp.Role) null;
+					var role1 = (LoginResp.Role) null;
+					if (App.Roles != null && App.Roles.length > 0 && !App.Roles[0].name.equals(App.LastName)) {
+						role0 = App.Roles[0];
+					}
+					if (App.Roles != null && App.Roles.length > 1 && !App.Roles[1].name.equals(App.LastName)) {
+						role1 = App.Roles[1];
+					}
+					App.Roles = null;
+					App.LastName = null;
+					if (role0 != null) {
+						App.Roles = new LoginResp.Role[1];
+						App.Roles[0] = role0;
+						App.LastName = role0.name;
+					}
+					if (role1 != null) {
+						App.Roles = new LoginResp.Role[1];
+						App.Roles[0] = role1;
+						App.LastName = role1.name;
+					}
+					loadRoles();
+				} else if (deleteChrResp.code == 1) {
+					tip = "角色不存在";
+				} else if (deleteChrResp.code == 2) {
+					tip = "角色被锁定";
+				}
+				if (deleteChrResp.serverTip != null)
+					tip = deleteChrResp.serverTip;
+				if (tip != null) {
+					DialogUtil.alert(null, tip, null);
+				}
 				return true;
 			}
 			return false;
